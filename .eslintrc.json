@@ -2,6 +2,6 @@
   "extends": "react-app",
   "plugins": ["prettier"],
   "rules": {
-    "prettier/prettier": "error", "semi": "off"
+    "prettier/prettier": ["error", {"endOfLine": "auto"}], "semi": "off"
   }
 }
