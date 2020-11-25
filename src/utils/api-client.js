@@ -1,12 +1,11 @@
 import axios from 'axios'
 
-function clientFacade(endPoint, customConfig = {}) {
+function clientFacade(endPoint, {headers: customHeaders, customConfig} = {}) {
   const config = {
     method: 'GET',
     url: `${process.env.REACT_APP_API_URL}/${endPoint}`,
     headers: {
-      'x-auth-token':
-        'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1ZmJjNDkzZWMyMjM0NDBiMTA2MDc5MWYiLCJpYXQiOjE2MDYxNzUwMzgsInVzZXJuYW1lIjoiTWVsLWpyayIsImlkIjoiNWZiYzQ5M2VjMjIzNDQwYjEwNjA3OTFmIn0.FT-uiUkoCkGGI66SM-Pek8Dg0QP9wGyq1OoixuWpQ30',
+      ...customHeaders,
     },
     ...customConfig,
   }
