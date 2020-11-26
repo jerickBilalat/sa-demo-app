@@ -11,10 +11,7 @@ async function getUser() {
   const token = await auth.getToken()
 
   if (token) {
-    const customeHeaders = {'x-auth-token': token}
-    const data = await client('auth/get_user', {
-      headers: customeHeaders,
-    })
+    const data = await client('auth/get_user', {token})
     user = data
   }
   return user
