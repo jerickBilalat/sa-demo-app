@@ -1,10 +1,8 @@
 import axios from 'axios'
 import * as auth from '../auth-provider'
-
 function clientFacade(
   endPoint,
-  data,
-  {headers: customHeaders, customConfig} = {},
+  {data, token, headers: customHeaders, ...restOfCustomConfig} = {},
 ) {
   const config = {
     method: data ? 'POST' : 'GET',
@@ -12,9 +10,10 @@ function clientFacade(
     data: data ? JSON.stringify(data) : undefined,
     headers: {
       'Content-Type': data ? 'application/json' : undefined,
+      'x-auth-token': token || undefined,
       ...customHeaders,
     },
-    ...customConfig,
+    ...restOfCustomConfig,
   }
 
   return axios(config).then(handleResponse, handleError)
