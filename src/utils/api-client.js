@@ -1,11 +1,17 @@
 import axios from 'axios'
 import * as auth from '../auth-provider'
 
-function clientFacade(endPoint, {headers: customHeaders, customConfig} = {}) {
+function clientFacade(
+  endPoint,
+  data,
+  {headers: customHeaders, customConfig} = {},
+) {
   const config = {
-    method: 'GET',
+    method: data ? 'POST' : 'GET',
     url: `${process.env.REACT_APP_API_URL}/${endPoint}`,
+    data: data ? JSON.stringify(data) : undefined,
     headers: {
+      'Content-Type': data ? 'application/json' : undefined,
       ...customHeaders,
     },
     ...customConfig,
