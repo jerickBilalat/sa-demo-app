@@ -21,28 +21,69 @@ async function getUser() {
 }
 
 function App() {
-  const [user, setUser] = React.useState(null)
+  const {
+    data,
+    error,
+    isIdle,
+    isLoading,
+    isSuccess,
+    isError,
+    setData,
+    setError,
+  } = useAsync()
+
   React.useEffect(() => {
-    getUser().then(userData => setUser(userData))
-  }, [])
+    getUser()
+      .then(userData => setData(userData))
+      .catch(console.log)
+  }, [setData])
 
   const login = credentials =>
-    auth.login({...credentials}).then(userData => setUser(userData))
+    auth
+      .login({...credentials})
+      .then(userData => setData(userData))
+      .catch(handleAuthError)
 
   const logout = () => {
     auth.logout()
-    setUser(null)
+    setData(null)
   }
 
   const register = form => {
-    auth.register(form).then(userData => setUser(userData))
+    auth.register(form).then(userData => setData(userData))
   }
 
-  return user ? (
-    <AuthenticatedApp user={user} logout={logout} />
-  ) : (
-    <UnAuthenticatedApp user={user} login={login} register={register} />
-  )
+  function handleAuthError(errorData) {
+    // TODO: make error message consistent on the server for this could cause consistency issue
+    if (errorData && errorData.error.message) {
+      const errorMessage = errorData.error.message
+      return setError(errorMessage)
+    }
+    // FIXME: warning potential exposure of server internals
+    throw new Error(errorData)
+  }
+
+  const props = {user: data, login, logout, register}
+
+  if (isError) {
+    return <h1>Please try again - {error}</h1>
+  }
+
+  if (isLoading) {
+    return <h1>Loading...</h1>
+  }
+
+  if (isIdle) {
+    return <h1>Fetching...</h1>
+  }
+
+  if (isSuccess) {
+    return data ? (
+      <AuthenticatedApp {...props} />
+    ) : (
+      <UnAuthenticatedApp {...props} />
+    )
+  }
 }
 
 export default App

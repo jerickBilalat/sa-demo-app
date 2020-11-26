@@ -51,7 +51,8 @@ function handleResponse(res) {
 }
 
 function handleError(err) {
-  return Promise.reject(err.response.data.message)
+  if (err.response) return Promise.reject(err.response.data)
+  return Promise.reject(err)
 }
 
 export {getToken, login, register, logout, localStorageKey}
