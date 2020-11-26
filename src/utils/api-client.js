@@ -1,4 +1,5 @@
 import axios from 'axios'
+import * as auth from '../auth-provider'
 
 function clientFacade(endPoint, {headers: customHeaders, customConfig} = {}) {
   const config = {
@@ -22,7 +23,12 @@ function handleResponse(res) {
 }
 
 function handleError(err) {
-  return Promise.reject(err.response.data.message)
+  if (err.response.status === '401') {
+    auth.logout().then(() => window.location.assign(window.location))
+    return
+  }
+  if (err.response) return Promise.reject(err.response.data)
+  return Promise.reject(err)
 }
 
 export {clientFacade}
