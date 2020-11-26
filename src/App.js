@@ -5,6 +5,7 @@ import {useAsync} from './utils/hooks'
 import * as auth from './auth-provider'
 import {AuthenticatedApp} from './authenticated-app'
 import {UnAuthenticatedApp} from './unauthenticated-app'
+import {BrowserRouter} from 'react-router-dom'
 
 async function getUser() {
   let user = null
@@ -12,7 +13,7 @@ async function getUser() {
 
   if (token) {
     const customeHeaders = {'x-auth-token': token}
-    const data = await client('auth/get_user', {
+    const data = await client('auth/get_user', undefined, {
       headers: customeHeaders,
     })
     user = data
@@ -79,7 +80,9 @@ function App() {
 
   if (isSuccess) {
     return data ? (
-      <AuthenticatedApp {...props} />
+      <BrowserRouter>
+        <AuthenticatedApp {...props} />
+      </BrowserRouter>
     ) : (
       <UnAuthenticatedApp {...props} />
     )
