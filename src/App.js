@@ -12,8 +12,9 @@ async function getUser() {
   const token = await auth.getToken()
 
   if (token) {
-    const data = await client('auth/get_user', {token})
+    const data = await client('auth/get-user-current-data', {token})
     user = data
+    user.token = token
   }
   return user
 }
@@ -33,7 +34,7 @@ function App() {
   React.useEffect(() => {
     getUser()
       .then(userData => setData(userData))
-      .catch(console.log)
+      .catch(console.log) // TODO: ADD HANDLER
   }, [setData])
 
   const login = credentials =>

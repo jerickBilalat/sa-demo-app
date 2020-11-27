@@ -16,7 +16,23 @@ function NavLink(props) {
   )
 }
 
+function userDataReducer(state, action) {
+  switch (action.type) {
+    case 'add-payPeriod':
+      return {...state, payPeriods: [...state.payPeriods, action.payload]}
+    case 'add-spending':
+      return {
+        ...state,
+        currentSpendings: [...state.currentSpendings, action.payload],
+      }
+    default:
+      return state
+  }
+}
+
 const AuthenticatedApp = ({user, logout}) => {
+  const [userData, dispatch] = React.useReducer(userDataReducer, user)
+
   return (
     <>
       <nav>
@@ -27,7 +43,10 @@ const AuthenticatedApp = ({user, logout}) => {
       <button onClick={logout}>Logout</button>
       <Routes>
         <Route path="/" element={<About />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route
+          path="/dashboard"
+          element={<Dashboard data={userData} dispatch={dispatch} />}
+        />
         <Route path="/user-settings" element={<UserSettings />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
