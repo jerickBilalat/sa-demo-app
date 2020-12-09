@@ -11,9 +11,9 @@ async function getToken() {
   return window.localStorage.getItem(localStorageKey)
 }
 
-function handleUserResponse({user, token}) {
-  window.localStorage.setItem(localStorageKey, token)
-  return user
+function handleUserResponse(userData) {
+  window.localStorage.setItem(localStorageKey, userData.token)
+  return userData
 }
 
 function login({username, password}) {
