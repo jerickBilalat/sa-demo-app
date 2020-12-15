@@ -1,5 +1,4 @@
 import * as React from 'react'
-import {useQuery} from 'react-query'
 import {clientFacade as client} from '../utils/api-client'
 
 function CreateIntialPayPeriod({data, dispatch}) {
@@ -16,7 +15,6 @@ function CreateIntialPayPeriod({data, dispatch}) {
       data: {pay: form.pay},
       token: data.token,
     }).then(res => {
-      console.log(res)
       return dispatch({type: 'add-payPeriod', payload: res})
     })
   }
@@ -31,13 +29,32 @@ function CreateIntialPayPeriod({data, dispatch}) {
   )
 }
 
+function List({list}) {
+  return (
+    <ol>
+      {list.map(x => (
+        <li key={x._id}>{x.description}</li>
+      ))}
+    </ol>
+  )
+}
 function AddSpending({data, dispatch}) {
-  const [spending, setSpending] = React.useState({description: '', amount: 0})
+  const [spending, setSpending] = React.useState({
+    description: '',
+    amount: 0,
+    type: 'normal',
+    payPeriodId: data.payPeriods[data.payPeriods.length - 1]._id,
+  })
 
   const onChange = e => {
     const target = e.target
     setSpending({...spending, [target.name]: target.value})
   }
+
+  const onSelectTypeHandler = e => {
+    setSpending({...spending, type: e.target.value})
+  }
+
   // FIXME: DUMMY DATA
   const dummyData = {
     description: 'flat screentv',
@@ -48,7 +65,7 @@ function AddSpending({data, dispatch}) {
   const onSubmit = e => {
     e.preventDefault()
     client('spending/create-spending', {
-      data: dummyData,
+      data: spending,
       token: data.token,
     })
       .then(res => dispatch({type: 'add-spending', payload: res}))
@@ -68,6 +85,13 @@ function AddSpending({data, dispatch}) {
         onChange={onChange}
         value={spending.amount}
       />
+      <select value={spending.type} onChange={onSelectTypeHandler}>
+        <option value="normal">normal</option>
+        <option value="free">free</option>
+        <option value="emr">emr</option>
+        <option value="goal">goal</option>
+        <option value="fixed">fixed</option>
+      </select>
       <button type="sumibt">Add</button>
     </form>
   )
@@ -79,18 +103,41 @@ const Dashboard = ({data, dispatch}) => {
 
   const {username, currentSpendings, token} = data
 
+  const currentPayPeriod = data.payPeriods[data.payPeriods.length - 1]
+
+  const filterSpendingsByType = filter(currentSpendings)
+  const normalSpendings = filterSpendingsByType('normal')
+  const fixedSpendings = filterSpendingsByType('fixed')
+  const emrSpendings = filterSpendingsByType('emr')
+  const freeSpendings = filterSpendingsByType('free')
+  const goalSpendings = filterSpendingsByType('goal')
+
   return (
     <>
       <h1>Dashboard</h1>
       <p>{username}</p>
-      <ol>
-        {currentSpendings.map(x => (
-          <li key={x._id}>{x.description}</li>
-        ))}
-      </ol>
+      <h1>EMR Fund Status: </h1>
+      <List list={emrSpendings} />
+      <span>Use EMR Fund</span> | <span>View Usage</span>
+      <hr />
+      <h1>Free Money: </h1>
+      <List list={freeSpendings} />
+      <span>Use EMR Fund</span> | <span>View Usage</span>
+      <hr />
+      <h1>Current Budget: </h1>
+      <List list={normalSpendings} />
       <AddSpending data={data} dispatch={dispatch} />
+      <h1>Fixed Spendings: </h1>
+      <span>(Convered to Monthly)</span>
+      <hr />
+      <h1>Goals: </h1>
     </>
   )
+}
+
+// util functions
+function filter(spendings) {
+  return type => spendings.filter(x => x.type === type)
 }
 
 export {Dashboard}
