@@ -115,7 +115,9 @@ const Dashboard = ({data, dispatch}) => {
   return (
     <>
       <h1>Dashboard</h1>
-      <p>{username}</p>
+      <p>Username: {username}</p>
+      <p>Add Spending by type: </p>
+      <AddSpending data={data} dispatch={dispatch} />
       <h1>EMR Fund Status: </h1>
       <List list={emrSpendings} />
       <span>Use EMR Fund</span> | <span>View Usage</span>
@@ -126,11 +128,11 @@ const Dashboard = ({data, dispatch}) => {
       <hr />
       <h1>Current Budget: </h1>
       <List list={normalSpendings} />
-      <AddSpending data={data} dispatch={dispatch} />
       <h1>Fixed Spendings: </h1>
       <span>(Convered to Monthly)</span>
       <hr />
       <h1>Goals: </h1>
+      <hr />
     </>
   )
 }
