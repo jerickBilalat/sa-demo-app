@@ -174,14 +174,20 @@ numberOfPayPeriodPerMonth: 2
     .multiply(data.numberOfPayPeriodPerMonth)
     .multiply(data.emrtype).value
 
-  const sumOfSpedings = spendings =>
+  const sumOf = spendings =>
     spendings
       .map(x => currency(x.amount).value)
-      .reduce((a, b) => currency(a).add(b).value)
+      .reduce((a, b) => currency(a).add(b).value, 0)
 
   const emrCurrentBalance = currency(data.emrRemainingBalance)
     .add(data.emrCommitmentAmount)
-    .subtract(sumOfSpedings(emrSpendings)).value
+    .subtract(sumOf(emrSpendings)).value
+  const budget = currency(currentPayPeriod.pay)
+    .subtract(data.emrCommitmentAmount)
+    .subtract(sumOf(fixedSpendings))
+    .subtract(sumOf(goalSpendings)).value
+  const remainingBudget = currency(budget).subtract(sumOf(normalSpendings))
+    .value
 
   return (
     <>
@@ -201,6 +207,9 @@ numberOfPayPeriodPerMonth: 2
       <span>Use EMR Fund</span> | <span>View Usage</span>
       <hr />
       <h1>Current Budget: </h1>
+      <p>
+        {remainingBudget} / {budget}
+      </p>
       <List list={normalSpendings} />
       <h1>Fixed Spendings: </h1>
       <span>(Convered to Monthly)</span>
