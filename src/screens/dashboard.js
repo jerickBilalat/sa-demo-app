@@ -184,7 +184,10 @@ numberOfPayPeriodPerMonth: 2
     .subtract(sumOf(emrSpendings)).value
   const budget = currency(currentPayPeriod.pay)
     .subtract(data.emrCommitmentAmount)
-    .subtract(sumOf(fixedSpendings))
+    .subtract(
+      currency(sumOf(fixedSpendings)).divide(data.numberOfPayPeriodPerMonth)
+        .value,
+    )
     .subtract(sumOf(goalSpendings)).value
   const remainingBudget = currency(budget).subtract(sumOf(normalSpendings))
     .value
