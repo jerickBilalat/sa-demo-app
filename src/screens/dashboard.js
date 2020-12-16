@@ -30,13 +30,22 @@ function CreateIntialPayPeriod({data, dispatch}) {
 }
 
 function List({list}) {
-  return (
-    <ol>
-      {list.map(x => (
-        <li key={x._id}>{x.description}</li>
-      ))}
-    </ol>
-  )
+  const renderListByType = list.map(x => {
+    if (x.type === 'goal')
+      return (
+        <li key={x._id}>
+          {x.description} commitment: {x.amount} balance: {x.goalBalance}
+        </li>
+      )
+
+    return (
+      <li key={x._id}>
+        {x.description} amount: {x.amount}
+      </li>
+    )
+  })
+
+  return <ol>{renderListByType}</ol>
 }
 function AddSpending({data, dispatch}) {
   const [spending, setSpending] = React.useState({
@@ -44,6 +53,7 @@ function AddSpending({data, dispatch}) {
     amount: 0,
     type: 'normal',
     payPeriodId: data.payPeriods[data.payPeriods.length - 1]._id,
+    goalAmount: '',
   })
 
   const onChange = e => {
@@ -64,13 +74,30 @@ function AddSpending({data, dispatch}) {
   }
   const onSubmit = e => {
     e.preventDefault()
+    let body = {...spending}
+    if (spending.type === 'goal') {
+      body = {
+        ...body,
+        goalBalance: spending.amount,
+      }
+    }
+
     client('spending/create-spending', {
-      data: spending,
+      data: body,
       token: data.token,
     })
       .then(res => dispatch({type: 'add-spending', payload: res}))
       .catch(console.log) // TODO: handle error to render error message
   }
+
+  const renderFeildsForGoals = () => (
+    <input
+      type="text"
+      name="goalAmount"
+      onChange={onChange}
+      value={spending.goalAmount}
+    />
+  )
   return (
     <form onSubmit={onSubmit}>
       <input
@@ -92,6 +119,7 @@ function AddSpending({data, dispatch}) {
         <option value="goal">goal</option>
         <option value="fixed">fixed</option>
       </select>
+      {spending.type === 'goal' && renderFeildsForGoals()}
       <button type="sumibt">Add</button>
     </form>
   )
@@ -130,8 +158,10 @@ const Dashboard = ({data, dispatch}) => {
       <List list={normalSpendings} />
       <h1>Fixed Spendings: </h1>
       <span>(Convered to Monthly)</span>
+      <List list={fixedSpendings} />
       <hr />
       <h1>Goals: </h1>
+      <List list={goalSpendings} />
       <hr />
     </>
   )
