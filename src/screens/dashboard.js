@@ -35,7 +35,8 @@ function List({list}) {
     if (x.type === 'goal')
       return (
         <li key={x._id}>
-          {x.description} commitment: {x.amount} balance: {x.goalBalance}
+          {x.description} commitment: {x.amount} balance: {x.goalBalance}{' '}
+          TotalGoal: {x.goalAmount}
         </li>
       )
 
@@ -80,6 +81,7 @@ function AddSpending({data, dispatch}) {
       body = {
         ...body,
         goalBalance: spending.amount,
+        goalAmount: spending.goalAmount,
       }
     }
 
@@ -174,16 +176,24 @@ numberOfPayPeriodPerMonth: 2
     .multiply(data.numberOfPayPeriodPerMonth)
     .multiply(data.emrtype).value
 
-  const sumOf = spendings =>
-    spendings
-      .map(x => currency(x.amount).value)
+  const sumOf = spendings => {
+    if (spendings.length === 0) return 0
+    return spendings
+      .map(x => {
+        if (x.type === 'goal' && x.goalBalance >= x.goalAmount) return
+        return currency(x.amount).value
+      })
       .reduce((a, b) => currency(a).add(b).value, 0)
+  }
 
   const emrCurrentBalance = currency(data.emrRemainingBalance)
     .add(data.emrCommitmentAmount)
     .subtract(sumOf(emrSpendings)).value
+
+  const emrCommitment =
+    emrCurrentBalance >= emrGoal ? '0.00' : data.emrCommitmentAmount
   const budget = currency(currentPayPeriod.pay)
-    .subtract(data.emrCommitmentAmount)
+    .subtract(emrCommitment)
     .subtract(
       currency(sumOf(fixedSpendings)).divide(data.numberOfPayPeriodPerMonth)
         .value,
