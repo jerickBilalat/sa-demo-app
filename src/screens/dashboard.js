@@ -1,5 +1,6 @@
 import * as React from 'react'
 import {clientFacade as client} from '../utils/api-client'
+import currency from 'currency.js'
 
 function CreateIntialPayPeriod({data, dispatch}) {
   // TODO: normalize the input into the right format of type string
@@ -140,6 +141,48 @@ const Dashboard = ({data, dispatch}) => {
   const freeSpendings = filterSpendingsByType('free')
   const goalSpendings = filterSpendingsByType('goal')
 
+  /**
+   * averagePayPerPeriod: "1600.00"
+emrCommitmentAmount: "100.00"
+emrRemainingBalance: "0.00"
+emrtype: 3
+numberOfPayPeriodPerMonth: 2
+   */
+
+  /**
+   * calculate EMR status
+   * avgPay = reduce payPeriods.pay
+   *
+   * emrGoalBalance = avgPay * numberOfPayPeriodPerMonth * emrType
+   *
+   * currentBalance = emrCommitmentAmount + emrRemainingBalance - reduce(emrSpendings)
+   *
+   * render -> {currentBalance/emrGoalBalance}
+   *
+   */
+
+  /**
+   * calculate budget:
+   *
+   * budget = pay - emr - reduced(goals) - reduced(fixed)
+   * remainingBudget: budget - reduced(normal)
+   */
+  const avgPay = data.payPeriods
+    .map(x => currency(x.pay).value)
+    .reduce((a, b) => currency(a).add(b).value)
+  const emrGoal = currency(avgPay)
+    .multiply(data.numberOfPayPeriodPerMonth)
+    .multiply(data.emrtype).value
+
+  const sumOfSpedings = spendings =>
+    spendings
+      .map(x => currency(x.amount).value)
+      .reduce((a, b) => currency(a).add(b).value)
+
+  const emrCurrentBalance = currency(data.emrRemainingBalance)
+    .add(data.emrCommitmentAmount)
+    .subtract(sumOfSpedings(emrSpendings)).value
+
   return (
     <>
       <h1>Dashboard</h1>
@@ -147,6 +190,9 @@ const Dashboard = ({data, dispatch}) => {
       <p>Add Spending by type: </p>
       <AddSpending data={data} dispatch={dispatch} />
       <h1>EMR Fund Status: </h1>
+      <p>
+        {emrCurrentBalance}/{emrGoal}
+      </p>
       <List list={emrSpendings} />
       <span>Use EMR Fund</span> | <span>View Usage</span>
       <hr />
