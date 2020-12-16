@@ -189,6 +189,24 @@ numberOfPayPeriodPerMonth: 2
   const remainingBudget = currency(budget).subtract(sumOf(normalSpendings))
     .value
 
+  // calculater free money
+  /**
+   * freeMoney = sumOfSurplus - sumOf(freeSpendings)
+   */
+  const previousPayPeriods = data.payPeriods.slice(
+    0,
+    data.payPeriods.length - 1,
+  )
+
+  const surplus =
+    previousPayPeriods.length != 0
+      ? previousPayPeriods
+          .map(x => x.remainingBalance)
+          .reduce((a, b) => currency(a).add(b).value, 0)
+      : 0
+
+  const freeMoney = currency(surplus).subtract(sumOf(freeSpendings)).format()
+
   return (
     <>
       <h1>Dashboard</h1>
@@ -202,7 +220,7 @@ numberOfPayPeriodPerMonth: 2
       <List list={emrSpendings} />
       <span>Use EMR Fund</span> | <span>View Usage</span>
       <hr />
-      <h1>Free Money: </h1>
+      <h1>Free Money: {freeMoney}</h1>
       <List list={freeSpendings} />
       <span>Use EMR Fund</span> | <span>View Usage</span>
       <hr />
