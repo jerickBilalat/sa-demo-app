@@ -36,17 +36,17 @@ const AuthenticatedApp = ({user, logout}) => {
   return (
     <>
       <nav>
-        <NavLink to="/">About</NavLink> |{' '}
-        <NavLink to="/dashboard">Dashboard</NavLink> |
+        <NavLink to="/">Dashboard</NavLink> |{' '}
+        <NavLink to="/about">About</NavLink> |
         <NavLink to="/user-settings">Settings</NavLink>
       </nav>
       <button onClick={logout}>Logout</button>
       <Routes>
-        <Route path="/" element={<About />} />
         <Route
-          path="/dashboard"
+          path="/"
           element={<Dashboard data={userData} dispatch={dispatch} />}
         />
+        <Route path="/about" element={<About />} />
         <Route path="/user-settings" element={<UserSettings />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
