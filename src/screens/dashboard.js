@@ -1,6 +1,7 @@
 import * as React from 'react'
 import {clientFacade as client} from '../utils/api-client'
 import currency from 'currency.js'
+import {CreateNextPayPeriod} from '../components/createNextPeriod'
 
 function CreateIntialPayPeriod({data, dispatch}) {
   // TODO: normalize the input into the right format of type string
@@ -171,7 +172,8 @@ numberOfPayPeriodPerMonth: 2
    */
   const avgPay = data.payPeriods
     .map(x => currency(x.pay).value)
-    .reduce((a, b) => currency(a).add(b).value)
+    .reduce((a, b) => currency(a).add(b), 0)
+    .divide(data.payPeriods.length).value
   const emrGoal = currency(avgPay)
     .multiply(data.numberOfPayPeriodPerMonth)
     .multiply(data.emrtype).value
@@ -180,7 +182,11 @@ numberOfPayPeriodPerMonth: 2
     if (spendings.length === 0) return 0
     return spendings
       .map(x => {
-        if (x.type === 'goal' && x.goalBalance >= x.goalAmount) return
+        if (
+          x.type === 'goal' &&
+          parseInt(x.goalBalance) >= parseInt(x.goalAmount)
+        )
+          return 0
         return currency(x.amount).value
       })
       .reduce((a, b) => currency(a).add(b).value, 0)
@@ -201,7 +207,6 @@ numberOfPayPeriodPerMonth: 2
     .subtract(sumOf(goalSpendings)).value
   const remainingBudget = currency(budget).subtract(sumOf(normalSpendings))
     .value
-
   // calculater free money
   /**
    * freeMoney = sumOfSurplus - sumOf(freeSpendings)
@@ -214,14 +219,25 @@ numberOfPayPeriodPerMonth: 2
   const surplus =
     previousPayPeriods.length != 0
       ? previousPayPeriods
-          .map(x => x.remainingBalance)
+          .map(x => x.remainingBudget)
           .reduce((a, b) => currency(a).add(b).value, 0)
       : 0
 
   const freeMoney = currency(surplus).subtract(sumOf(freeSpendings)).format()
-
+  const actualRemainingBudget = currency(remainingBudget)
+    .subtract(sumOf(freeSpendings))
+    .format()
   return (
     <>
+      <button>Create Next Period</button>
+      <CreateNextPayPeriod
+        data={data}
+        fixedSpendings={fixedSpendings}
+        goalSpendings={goalSpendings}
+        remainingBudget={actualRemainingBudget}
+        prevPayPeriodID={currentPayPeriod._id}
+        emrCurrentBalance={emrCurrentBalance}
+      />
       <h1>Dashboard</h1>
       <p>Username: {username}</p>
       <p>Add Spending by type: </p>
