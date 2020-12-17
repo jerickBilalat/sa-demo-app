@@ -35,9 +35,14 @@ function CreateNextPayPeriod({
         emrCurrentBalance,
       },
       token: data.token,
-    }).then(res => {
-      return null
     })
+      .then(() => {
+        window.location.assign(window.location.origin)
+      })
+      .catch(error => {
+        // TODO: come up with a better centralized error
+        throw new Error(error)
+      })
   }
   return (
     <>
