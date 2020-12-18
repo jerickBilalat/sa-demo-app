@@ -1,20 +1,16 @@
 import * as React from 'react'
-import {Link, Routes, Route, useMatch} from 'react-router-dom'
+import {Link as RouterLink, Routes, Route, useMatch} from 'react-router-dom'
+
 import {About} from './screens/about'
-import {Dashboard} from './screens/dashboard'
+import {Dashboard, Dashboard2} from './screens/dashboard'
 import {NotFound} from './screens/notFound'
 import {UserSettings} from './screens/userSettings'
 
-function NavLink(props) {
-  const match = useMatch(props.to)
-  return (
-    <Link
-      style={{textDecoration: match ? 'underline' : 'none'}}
-      to={props.to}
-      {...props}
-    />
-  )
-}
+import Typography from '@material-ui/core/Typography'
+import Button from '@material-ui/core/Button'
+import Link from '@material-ui/core/Link'
+import Toolbar from '@material-ui/core/Toolbar'
+import {makeStyles} from '@material-ui/core/styles'
 
 function userDataReducer(state, action) {
   switch (action.type) {
@@ -30,17 +26,68 @@ function userDataReducer(state, action) {
   }
 }
 
+const useStyles = makeStyles(theme => ({
+  toolbar: {
+    borderBottom: `1px solid ${theme.palette.divider}`,
+  },
+  toolbarTitle: {
+    flex: 1,
+  },
+  toolbarSecondary: {
+    justifyContent: 'space-between',
+    overflowX: 'auto',
+  },
+  toolbarLink: {
+    padding: theme.spacing(1),
+    flexShrink: 0,
+  },
+}))
+
 const AuthenticatedApp = ({user, logout}) => {
   const [userData, dispatch] = React.useReducer(userDataReducer, user)
-
+  const classes = useStyles()
+  const sections = [
+    {title: 'Dashboard', url: '/'},
+    {title: 'About', url: '/about'},
+    {title: 'Settings', url: '/user-settigs'},
+  ]
   return (
     <>
-      <nav>
-        <NavLink to="/">Dashboard</NavLink> |{' '}
-        <NavLink to="/about">About</NavLink> |
-        <NavLink to="/user-settings">Settings</NavLink>
-      </nav>
-      <button onClick={logout}>Logout</button>
+      <Toolbar className={classes.toolbar}>
+        <Typography
+          component="h2"
+          variant="h5"
+          color="inherit"
+          noWrap
+          className={classes.toolbarTitle}
+        >
+          Spending Awareness
+        </Typography>
+        <Button variant="outlined" onClick={logout} size="small">
+          Log out
+        </Button>
+      </Toolbar>
+      <Toolbar
+        component="nav"
+        variant="dense"
+        className={classes.toolbarSecondary}
+      >
+        {sections.map(section => {
+          return (
+            <Link
+              color="inherit"
+              component={RouterLink}
+              noWrap
+              key={section.title}
+              variant="body2"
+              to={section.url}
+              className={classes.toolbarLink}
+            >
+              {section.title}
+            </Link>
+          )
+        })}
+      </Toolbar>
       <Routes>
         <Route
           path="/"
