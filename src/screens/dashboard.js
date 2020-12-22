@@ -17,8 +17,17 @@ import Grid from '@material-ui/core/Grid'
 import Paper from '@material-ui/core/Paper'
 import Link from '@material-ui/core/Link'
 import NotificationsIcon from '@material-ui/icons/Notifications'
-import Deposits from '../components/balanceCard'
+import {
+  EmrFundCard,
+  FreeMoneyCard,
+  BudgetCard,
+} from '../components/balanceCardLib'
 import Orders from '../components/list'
+import {
+  NormalSpendingSheets,
+  FixedSpendingSheet,
+  GoalSpendingSheet,
+} from '../components/spendingSheetLib'
 
 function Copyright() {
   return (
@@ -131,16 +140,40 @@ function Dashboard() {
       <main className={classes.content}>
         <Container maxWidth="lg" className={classes.container}>
           <Grid container spacing={3}>
-            {/* Recent Deposits */}
+            {/* Budget Card */}
             <Grid item xs={12} md={4} lg={3}>
               <Paper className={fixedHeightPaper}>
-                <Deposits />
+                <BudgetCard />
               </Paper>
             </Grid>
-            {/* Recent Orders */}
+            {/* Spendings */}
             <Grid item xs={12}>
               <Paper className={classes.paper}>
-                <Orders />
+                <NormalSpendingSheets />
+              </Paper>
+            </Grid>
+            {/* Emergency Fund */}
+            <Grid item xs={12} md={4} lg={3}>
+              <Paper className={fixedHeightPaper}>
+                <EmrFundCard />
+              </Paper>
+            </Grid>
+            {/* Spludge Money */}
+            <Grid item xs={12} md={4} lg={3}>
+              <Paper className={fixedHeightPaper}>
+                <FreeMoneyCard />
+              </Paper>
+            </Grid>
+            {/* Bills */}
+            <Grid item xs={12} md={6}>
+              <Paper className={classes.paper}>
+                <FixedSpendingSheet />
+              </Paper>
+            </Grid>
+            {/* Goals */}
+            <Grid item xs={12} md={6}>
+              <Paper className={classes.paper}>
+                <GoalSpendingSheet />
               </Paper>
             </Grid>
           </Grid>
