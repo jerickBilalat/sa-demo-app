@@ -3,6 +3,7 @@ import Link from '@material-ui/core/Link'
 import {makeStyles} from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 import {LinearProgressWithLabel} from './lib'
+import currency from 'currency.js'
 
 function Title(props) {
   return (
@@ -21,6 +22,10 @@ const useStyles = makeStyles({
     flex: 1,
   },
 })
+
+function formatWithCurrency(value) {
+  return currency(value).format()
+}
 
 function EmrFundCard() {
   const classes = useStyles()
@@ -47,18 +52,19 @@ function EmrFundCard() {
   )
 }
 
-function BudgetCard() {
+function BudgetCard({remainingBudget, budget, spent, status}) {
+  console.log(status)
   const classes = useStyles()
   return (
     <React.Fragment>
       <Title>Remaining Budget</Title>
       <Typography component="p" variant="h4">
-        $3,024.00
+        {remainingBudget}
       </Typography>
-      <LinearProgressWithLabel value={10} />
+      <LinearProgressWithLabel value={status} />
       <Typography color="textSecondary" className={classes.cardContext}>
-        You have spent $400 out of your $1000 budget for this period. Please
-        spend wisely.
+        Spent {spent} out of your {budget} budget for this period. Please spend
+        wisely.
       </Typography>
       <div>
         <Link color="primary" href="#" onClick={preventDefault}>

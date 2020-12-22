@@ -123,17 +123,85 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-function Dashboard() {
+function Dashboard({data, dispatch}) {
   const classes = useStyles()
-  const [open, setOpen] = React.useState(true)
-  const handleDrawerOpen = () => {
-    setOpen(true)
-  }
-  const handleDrawerClose = () => {
-    setOpen(false)
-  }
+
+  if (data.payPeriods.length === 0)
+    return <CreateIntialPayPeriod data={data} dispatch={dispatch} />
+
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight)
 
+  const {username, currentSpendings, token} = data
+
+  const currentPayPeriod = data.payPeriods[data.payPeriods.length - 1]
+
+  const filterSpendingsByType = filter(currentSpendings)
+  const normalSpendings = filterSpendingsByType('normal')
+  const fixedSpendings = filterSpendingsByType('fixed')
+  const emrSpendings = filterSpendingsByType('emr')
+  const freeSpendings = filterSpendingsByType('free')
+  const goalSpendings = filterSpendingsByType('goal')
+
+  const avgPay = data.payPeriods
+    .map(x => currency(x.pay).value)
+    .reduce((a, b) => currency(a).add(b), 0)
+    .divide(data.payPeriods.length).value
+  const emrGoal = currency(avgPay)
+    .multiply(data.numberOfPayPeriodPerMonth)
+    .multiply(data.emrtype).value
+
+  const sumOf = spendings => {
+    if (spendings.length === 0) return 0
+    return spendings
+      .map(x => {
+        if (
+          x.type === 'goal' &&
+          parseInt(x.goalBalance) >= parseInt(x.goalAmount)
+        )
+          return 0
+        return currency(x.amount).value
+      })
+      .reduce((a, b) => currency(a).add(b).value, 0)
+  }
+
+  const emrCurrentBalance = currency(data.emrRemainingBalance)
+    .add(data.emrCommitmentAmount)
+    .subtract(sumOf(emrSpendings)).value
+
+  const emrCommitment =
+    emrCurrentBalance >= emrGoal ? '0.00' : data.emrCommitmentAmount
+  const budget = currency(currentPayPeriod.pay)
+    .subtract(emrCommitment)
+    .subtract(
+      currency(sumOf(fixedSpendings)).divide(data.numberOfPayPeriodPerMonth)
+        .value,
+    )
+    .subtract(sumOf(goalSpendings)).value
+  const remainingBudget = currency(budget).subtract(sumOf(normalSpendings))
+    .value
+  // calculater free money
+  /**
+   * freeMoney = sumOfSurplus - sumOf(freeSpendings)
+   */
+  const previousPayPeriods = data.payPeriods.slice(
+    0,
+    data.payPeriods.length - 1,
+  )
+
+  const surplus =
+    previousPayPeriods.length != 0
+      ? previousPayPeriods
+          .map(x => x.remainingBudget)
+          .reduce((a, b) => currency(a).add(b).value, 0)
+      : 0
+
+  const freeMoney = currency(surplus).subtract(sumOf(freeSpendings)).format()
+  const actualRemainingBudget = currency(remainingBudget)
+    .subtract(sumOf(freeSpendings))
+    .format()
+  const formatWithCurrency = value => {
+    return currency(value).format()
+  }
   return (
     <div className={classes.root}>
       <CssBaseline />
@@ -143,7 +211,16 @@ function Dashboard() {
             {/* Budget Card */}
             <Grid item xs={12} md={4} lg={3}>
               <Paper className={fixedHeightPaper}>
-                <BudgetCard />
+                <BudgetCard
+                  spent={formatWithCurrency(sumOf(normalSpendings))}
+                  remainingBudget={formatWithCurrency(remainingBudget)}
+                  budget={formatWithCurrency(budget)}
+                  status={
+                    currency(sumOf(normalSpendings))
+                      .divide(budget)
+                      .multiply(100).value
+                  }
+                />
               </Paper>
             </Grid>
             {/* Spendings */}
