@@ -27,18 +27,18 @@ function formatWithCurrency(value) {
   return currency(value).format()
 }
 
-function EmrFundCard() {
+function EmrFundCard({emrCommitment, emrGoal, emrCurrentBalance, status}) {
   const classes = useStyles()
   return (
     <React.Fragment>
       <Title>Emergency Fund</Title>
       <Typography component="p" variant="h4">
-        $3,024.00
+        {emrCurrentBalance}
       </Typography>
-      <LinearProgressWithLabel value={10} />
+      <LinearProgressWithLabel value={status} />
       <Typography color="textSecondary" className={classes.cardContext}>
-        $100 is transfered to this fund every period <br />
-        (see user settings to change this amount)
+        {emrGoal} is your current Emergency Fund Goal. {emrCommitment} is
+        transfered to this fund every period (change this amount in settings).
       </Typography>
       <div>
         <Link color="primary" href="#" onClick={preventDefault}>
@@ -53,7 +53,6 @@ function EmrFundCard() {
 }
 
 function BudgetCard({remainingBudget, budget, spent, status}) {
-  console.log(status)
   const classes = useStyles()
   return (
     <React.Fragment>

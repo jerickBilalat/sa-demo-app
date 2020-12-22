@@ -150,20 +150,6 @@ function Dashboard({data, dispatch}) {
     .multiply(data.numberOfPayPeriodPerMonth)
     .multiply(data.emrtype).value
 
-  const sumOf = spendings => {
-    if (spendings.length === 0) return 0
-    return spendings
-      .map(x => {
-        if (
-          x.type === 'goal' &&
-          parseInt(x.goalBalance) >= parseInt(x.goalAmount)
-        )
-          return 0
-        return currency(x.amount).value
-      })
-      .reduce((a, b) => currency(a).add(b).value, 0)
-  }
-
   const emrCurrentBalance = currency(data.emrRemainingBalance)
     .add(data.emrCommitmentAmount)
     .subtract(sumOf(emrSpendings)).value
@@ -199,9 +185,7 @@ function Dashboard({data, dispatch}) {
   const actualRemainingBudget = currency(remainingBudget)
     .subtract(sumOf(freeSpendings))
     .format()
-  const formatWithCurrency = value => {
-    return currency(value).format()
-  }
+
   return (
     <div className={classes.root}>
       <CssBaseline />
@@ -215,11 +199,7 @@ function Dashboard({data, dispatch}) {
                   spent={formatWithCurrency(sumOf(normalSpendings))}
                   remainingBudget={formatWithCurrency(remainingBudget)}
                   budget={formatWithCurrency(budget)}
-                  status={
-                    currency(sumOf(normalSpendings))
-                      .divide(budget)
-                      .multiply(100).value
-                  }
+                  status={calculateStatus(sumOf(normalSpendings), budget)}
                 />
               </Paper>
             </Grid>
@@ -232,7 +212,12 @@ function Dashboard({data, dispatch}) {
             {/* Emergency Fund */}
             <Grid item xs={12} md={4} lg={3}>
               <Paper className={fixedHeightPaper}>
-                <EmrFundCard />
+                <EmrFundCard
+                  emrCommitment={formatWithCurrency(emrCommitment)}
+                  emrGoal={formatWithCurrency(emrGoal)}
+                  emrCurrentBalance={formatWithCurrency(emrCurrentBalance)}
+                  status={calculateStatus(emrCurrentBalance, emrGoal)}
+                />
               </Paper>
             </Grid>
             {/* Spludge Money */}
@@ -532,6 +517,28 @@ numberOfPayPeriodPerMonth: 2
 // util functions
 function filter(spendings) {
   return type => spendings.filter(x => x.type === type)
+}
+
+function sumOf(spendings) {
+  if (spendings.length === 0) return 0
+  return spendings
+    .map(x => {
+      if (
+        x.type === 'goal' &&
+        parseInt(x.goalBalance) >= parseInt(x.goalAmount)
+      )
+        return 0
+      return currency(x.amount).value
+    })
+    .reduce((a, b) => currency(a).add(b).value, 0)
+}
+
+function formatWithCurrency(value) {
+  return currency(value).format()
+}
+
+function calculateStatus(x, y) {
+  return currency(x).divide(y).multiply(100).value
 }
 
 export {Dashboard, Dashboard2}
