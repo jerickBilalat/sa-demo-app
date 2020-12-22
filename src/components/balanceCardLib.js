@@ -77,13 +77,13 @@ function BudgetCard({remainingBudget, budget, spent, status}) {
   )
 }
 
-function FreeMoneyCard() {
+function FreeMoneyCard({freeMoney}) {
   const classes = useStyles()
   return (
     <React.Fragment>
       <Title>Sludge Money</Title>
       <Typography component="p" variant="h4">
-        $3,024.00
+        {freeMoney}
       </Typography>
       <Typography color="textSecondary" className={classes.cardContext}>
         Spludge! You deserve it. Spend it freely. Make mermories out it.

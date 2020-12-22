@@ -223,7 +223,7 @@ function Dashboard({data, dispatch}) {
             {/* Spludge Money */}
             <Grid item xs={12} md={4} lg={3}>
               <Paper className={fixedHeightPaper}>
-                <FreeMoneyCard />
+                <FreeMoneyCard freeMoney={formatWithCurrency(freeMoney)} />
               </Paper>
             </Grid>
             {/* Bills */}
