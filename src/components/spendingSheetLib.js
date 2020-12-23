@@ -7,6 +7,9 @@ import TableCell from '@material-ui/core/TableCell'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 import Typography from '@material-ui/core/Typography'
+import Button from '@material-ui/core/Button'
+import AddIcon from '@material-ui/icons/Add'
+
 import {LinearProgressWithLabel} from './lib'
 import {
   formatWithCurrency,
@@ -30,6 +33,9 @@ function preventDefault(event) {
 const useStyles = makeStyles(theme => ({
   seeMore: {
     marginTop: theme.spacing(3),
+  },
+  button: {
+    margin: theme.spacing(1),
   },
 }))
 
@@ -71,7 +77,17 @@ function FixedSpendingSheet({spendings, numberOfPayPeriodPerMonth}) {
   const classes = useStyles()
   return (
     <React.Fragment>
-      <Title>Fixed Spendings( e.g. Bills )</Title>
+      <Title>
+        Fixed Spendings( e.g. Bills ){' '}
+        <Button
+          variant="contained"
+          color="default"
+          className={classes.button}
+          startIcon={<AddIcon />}
+        >
+          Add
+        </Button>
+      </Title>
       <Table size="small">
         <TableHead>
           <TableRow>
@@ -114,7 +130,17 @@ function GoalSpendingSheet({spendings}) {
   const classes = useStyles()
   return (
     <React.Fragment>
-      <Title>Goals</Title>
+      <Title>
+        Goals
+        <Button
+          variant="contained"
+          color="default"
+          className={classes.button}
+          startIcon={<AddIcon />}
+        >
+          Create
+        </Button>
+      </Title>
       <Table size="small">
         <TableHead>
           <TableRow>

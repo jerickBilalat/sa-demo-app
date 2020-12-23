@@ -3,6 +3,7 @@ import Link from '@material-ui/core/Link'
 import {makeStyles} from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 import {LinearProgressWithLabel} from './lib'
+import Button from '@material-ui/core/Button'
 
 function Title(props) {
   return (
@@ -16,31 +17,36 @@ function preventDefault(event) {
   event.preventDefault()
 }
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   cardContext: {
     flex: 1,
   },
-})
+  button: {
+    margin: theme.spacing(0.5),
+  },
+}))
 
 function EmrFundCard({emrCommitment, emrGoal, emrCurrentBalance, status}) {
   const classes = useStyles()
   return (
     <React.Fragment>
-      <Title>Emergency Fund</Title>
+      <Title>
+        Emergency Fund{' '}
+        <Button variant="contained" color="default" className={classes.button}>
+          Use
+        </Button>
+      </Title>
       <Typography component="p" variant="h4">
         {emrCurrentBalance}
       </Typography>
       <LinearProgressWithLabel value={status} />
       <Typography color="textSecondary" className={classes.cardContext}>
-        {emrGoal} is your current Emergency Fund Goal. {emrCommitment} is
-        transfered to this fund every period (change this amount in settings).
+        {emrCommitment} is transfered to this fund every period (change this
+        amount in settings). Goal is {emrGoal}.
       </Typography>
       <div>
         <Link color="primary" href="#" onClick={preventDefault}>
-          Use Fund |
-        </Link>
-        <Link color="primary" href="#" onClick={preventDefault}>
-          | View Transactions
+          View Transactions
         </Link>
       </div>
     </React.Fragment>
@@ -51,7 +57,12 @@ function BudgetCard({remainingBudget, budget, spent, status}) {
   const classes = useStyles()
   return (
     <React.Fragment>
-      <Title>Remaining Budget</Title>
+      <Title>
+        Remaining Budget{' '}
+        <Button variant="contained" color="default" className={classes.button}>
+          Spend
+        </Button>
+      </Title>
       <Typography component="p" variant="h4">
         {remainingBudget}
       </Typography>
@@ -62,10 +73,7 @@ function BudgetCard({remainingBudget, budget, spent, status}) {
       </Typography>
       <div>
         <Link color="primary" href="#" onClick={preventDefault}>
-          Use Fund |
-        </Link>
-        <Link color="primary" href="#" onClick={preventDefault}>
-          | View Transactions
+          View Transactions
         </Link>
       </div>
     </React.Fragment>
@@ -76,7 +84,12 @@ function FreeMoneyCard({freeMoney}) {
   const classes = useStyles()
   return (
     <React.Fragment>
-      <Title>Spludge Money</Title>
+      <Title>
+        Spludge Money{' '}
+        <Button variant="contained" color="default" className={classes.button}>
+          Spludge
+        </Button>
+      </Title>
       <Typography component="p" variant="h4">
         {freeMoney}
       </Typography>
@@ -85,10 +98,7 @@ function FreeMoneyCard({freeMoney}) {
       </Typography>
       <div>
         <Link color="primary" href="#" onClick={preventDefault}>
-          Spludge |
-        </Link>
-        <Link color="primary" href="#" onClick={preventDefault}>
-          | View Spludges
+          View Spludges
         </Link>
       </div>
     </React.Fragment>
