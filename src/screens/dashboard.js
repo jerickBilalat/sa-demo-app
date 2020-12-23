@@ -165,10 +165,6 @@ function Dashboard({data, dispatch}) {
     .subtract(sumOf(goalSpendings)).value
   const remainingBudget = currency(budget).subtract(sumOf(normalSpendings))
     .value
-  // calculater free money
-  /**
-   * freeMoney = sumOfSurplus - sumOf(freeSpendings)
-   */
   const previousPayPeriods = data.payPeriods.slice(
     0,
     data.payPeriods.length - 1,
@@ -203,12 +199,6 @@ function Dashboard({data, dispatch}) {
                 />
               </Paper>
             </Grid>
-            {/* Spendings */}
-            <Grid item xs={12}>
-              <Paper className={classes.paper}>
-                <NormalSpendingSheets />
-              </Paper>
-            </Grid>
             {/* Emergency Fund */}
             <Grid item xs={12} md={4} lg={3}>
               <Paper className={fixedHeightPaper}>
@@ -226,16 +216,25 @@ function Dashboard({data, dispatch}) {
                 <FreeMoneyCard freeMoney={formatWithCurrency(freeMoney)} />
               </Paper>
             </Grid>
+            {/* Spendings */}
+            <Grid item xs={12}>
+              <Paper className={classes.paper}>
+                <NormalSpendingSheets spendings={normalSpendings} />
+              </Paper>
+            </Grid>
             {/* Bills */}
             <Grid item xs={12} md={6}>
               <Paper className={classes.paper}>
-                <FixedSpendingSheet />
+                <FixedSpendingSheet
+                  spendings={fixedSpendings}
+                  numberOfPayPeriodPerMonth={data.numberOfPayPeriodPerMonth}
+                />
               </Paper>
             </Grid>
             {/* Goals */}
             <Grid item xs={12} md={6}>
               <Paper className={classes.paper}>
-                <GoalSpendingSheet />
+                <GoalSpendingSheet spendings={goalSpendings} />
               </Paper>
             </Grid>
           </Grid>

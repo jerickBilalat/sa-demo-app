@@ -8,6 +8,12 @@ import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 import Typography from '@material-ui/core/Typography'
 import {LinearProgressWithLabel} from './lib'
+import {
+  formatWithCurrency,
+  formatIsoDateString,
+  convertMontlyValueToPerPeriod,
+  calculateStatus,
+} from './utils'
 
 function Title(props) {
   return (
@@ -16,19 +22,6 @@ function Title(props) {
     </Typography>
   )
 }
-
-// Generate Order Data
-function createData(id, date, name, amount) {
-  return {id, date, name, amount}
-}
-
-const normalSpendings = [
-  createData(0, '16 Mar, 2019', 'Elvis Presley', 312.44),
-  createData(1, '16 Mar, 2019', 'Paul McCartney', 866.99),
-  createData(2, '16 Mar, 2019', 'Tom Scholz', 100.81),
-  createData(3, '16 Mar, 2019', 'Michael Jackson', 654.39),
-  createData(4, '15 Mar, 2019', 'Bruce Springsteen', 212.79),
-]
 
 function preventDefault(event) {
   event.preventDefault()
@@ -40,7 +33,7 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-function NormalSpendingSheets() {
+function NormalSpendingSheets({spendings}) {
   const classes = useStyles()
   return (
     <React.Fragment>
@@ -48,17 +41,19 @@ function NormalSpendingSheets() {
       <Table size="small">
         <TableHead>
           <TableRow>
-            <TableCell>Transaction Date</TableCell>
+            <TableCell>Posted Date</TableCell>
             <TableCell>Description</TableCell>
             <TableCell align="right">Amount</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {normalSpendings.map(row => (
-            <TableRow key={row.id}>
-              <TableCell>{row.date}</TableCell>
-              <TableCell>{row.name}</TableCell>
-              <TableCell align="right">{row.amount}</TableCell>
+          {spendings.map(row => (
+            <TableRow key={row._id}>
+              <TableCell>{formatIsoDateString(row.updatedAt)}</TableCell>
+              <TableCell>{row.description}</TableCell>
+              <TableCell align="right">
+                {formatWithCurrency(row.amount)}
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
@@ -72,15 +67,7 @@ function NormalSpendingSheets() {
   )
 }
 
-const fixedSpendings = [
-  createData(0, '16 Mar, 2019', 'Elvisfhlshdfsjlfjsdlkfjsdk Presley', 312.44),
-  createData(1, '16 Mar, 2019', 'Paul McCartney', 866.99),
-  createData(2, '16 Mar, 2019', 'Tom Scholz', 100.81),
-  createData(3, '16 Mar, 2019', 'Michael Jackson', 654.39),
-  createData(4, '15 Mar, 2019', 'Bruce Springsteen', 212.79),
-]
-
-function FixedSpendingSheet() {
+function FixedSpendingSheet({spendings, numberOfPayPeriodPerMonth}) {
   const classes = useStyles()
   return (
     <React.Fragment>
@@ -88,17 +75,28 @@ function FixedSpendingSheet() {
       <Table size="small">
         <TableHead>
           <TableRow>
-            <TableCell>Date Added</TableCell>
+            <TableCell>Posted</TableCell>
             <TableCell>Description</TableCell>
-            <TableCell align="right">Amount</TableCell>
+            <TableCell align="right">Cost per Month</TableCell>
+            <TableCell align="right">Cost per Period</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {fixedSpendings.map(row => (
-            <TableRow key={row.id}>
-              <TableCell>{row.date}</TableCell>
-              <TableCell>{row.name}</TableCell>
-              <TableCell align="right">{row.amount}</TableCell>
+          {spendings.map(row => (
+            <TableRow key={row._id}>
+              <TableCell>{formatIsoDateString(row.updatedAt)}</TableCell>
+              <TableCell>{row.description}</TableCell>
+              <TableCell align="right">
+                {formatWithCurrency(row.amount)}
+              </TableCell>
+              <TableCell align="right">
+                {formatWithCurrency(
+                  convertMontlyValueToPerPeriod(
+                    row.amount,
+                    numberOfPayPeriodPerMonth,
+                  ),
+                )}
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
@@ -122,7 +120,18 @@ function createGoalSheetData(id, description, commitmentAmount, goalAmount) {
   return {id, description, commitmentAmount, goalAmount}
 }
 
-function GoalSpendingSheet() {
+function GoalSpendingSheet({spendings}) {
+  //     amount: "100"
+  // createdAt: "2020-12-23T00:51:52.102Z"
+  // description: "vacation"
+  // goalAmount: "2000"
+  // goalBalance: "100"
+  // refPayPeriods: ["5fe269dc9dc2620419768fa1"]
+  // refUser: "5fe147ad9dc2620419768fa0"
+  // type: "goal"
+  // updatedAt: "2020-12-23T00:51:52.102Z"
+  // __v: 0
+  // _id: "5fe294a89dc2620419768fab"
   const classes = useStyles()
   return (
     <React.Fragment>
@@ -131,20 +140,26 @@ function GoalSpendingSheet() {
         <TableHead>
           <TableRow>
             <TableCell>Description</TableCell>
-            <TableCell>Status Commitment/Goal</TableCell>
+            <TableCell>Status percentage</TableCell>
             <TableCell>Commitment</TableCell>
             <TableCell align="right">Goal</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {goalSpendings.map(row => (
-            <TableRow key={row.id}>
+          {spendings.map(row => (
+            <TableRow key={row._id}>
               <TableCell>{row.description}</TableCell>
               <TableCell>
-                <LinearProgressWithLabel value={10} />
+                <LinearProgressWithLabel
+                  value={calculateStatus(row.goalBalance, row.goalAmount)}
+                />
               </TableCell>
-              <TableCell align="right">{row.commitmentAmount}</TableCell>
-              <TableCell align="right">{row.goalAmount}</TableCell>
+              <TableCell align="right">
+                {formatWithCurrency(row.amount)}
+              </TableCell>
+              <TableCell align="right">
+                {formatWithCurrency(row.goalAmount)}
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
