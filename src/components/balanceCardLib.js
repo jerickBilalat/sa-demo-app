@@ -3,7 +3,6 @@ import Link from '@material-ui/core/Link'
 import {makeStyles} from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 import {LinearProgressWithLabel} from './lib'
-import currency from 'currency.js'
 
 function Title(props) {
   return (
@@ -22,10 +21,6 @@ const useStyles = makeStyles({
     flex: 1,
   },
 })
-
-function formatWithCurrency(value) {
-  return currency(value).format()
-}
 
 function EmrFundCard({emrCommitment, emrGoal, emrCurrentBalance, status}) {
   const classes = useStyles()
@@ -81,7 +76,7 @@ function FreeMoneyCard({freeMoney}) {
   const classes = useStyles()
   return (
     <React.Fragment>
-      <Title>Sludge Money</Title>
+      <Title>Spludge Money</Title>
       <Typography component="p" variant="h4">
         {freeMoney}
       </Typography>

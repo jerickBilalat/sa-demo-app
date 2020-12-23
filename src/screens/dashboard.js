@@ -7,22 +7,16 @@ import clsx from 'clsx'
 import {makeStyles} from '@material-ui/core/styles'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import Box from '@material-ui/core/Box'
-import AppBar from '@material-ui/core/AppBar'
-import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
-import IconButton from '@material-ui/core/IconButton'
-import Badge from '@material-ui/core/Badge'
 import Container from '@material-ui/core/Container'
 import Grid from '@material-ui/core/Grid'
 import Paper from '@material-ui/core/Paper'
 import Link from '@material-ui/core/Link'
-import NotificationsIcon from '@material-ui/icons/Notifications'
 import {
   EmrFundCard,
   FreeMoneyCard,
   BudgetCard,
 } from '../components/balanceCardLib'
-import Orders from '../components/list'
 import {
   NormalSpendingSheets,
   FixedSpendingSheet,
@@ -171,7 +165,7 @@ function Dashboard({data, dispatch}) {
   )
 
   const surplus =
-    previousPayPeriods.length != 0
+    previousPayPeriods.length !== 0
       ? previousPayPeriods
           .map(x => x.remainingBudget)
           .reduce((a, b) => currency(a).add(b).value, 0)
@@ -312,13 +306,6 @@ function AddSpending({data, dispatch}) {
     setSpending({...spending, type: e.target.value})
   }
 
-  // FIXME: DUMMY DATA
-  const dummyData = {
-    description: 'flat screentv',
-    amount: '255.00',
-    payPeriodId: data.payPeriods[data.payPeriods.length - 1]._id,
-    type: 'normal',
-  }
   const onSubmit = e => {
     e.preventDefault()
     let body = {...spending}
@@ -388,32 +375,6 @@ const Dashboard2 = ({data, dispatch}) => {
   const freeSpendings = filterSpendingsByType('free')
   const goalSpendings = filterSpendingsByType('goal')
 
-  /**
-   * averagePayPerPeriod: "1600.00"
-emrCommitmentAmount: "100.00"
-emrRemainingBalance: "0.00"
-emrtype: 3
-numberOfPayPeriodPerMonth: 2
-   */
-
-  /**
-   * calculate EMR status
-   * avgPay = reduce payPeriods.pay
-   *
-   * emrGoalBalance = avgPay * numberOfPayPeriodPerMonth * emrType
-   *
-   * currentBalance = emrCommitmentAmount + emrRemainingBalance - reduce(emrSpendings)
-   *
-   * render -> {currentBalance/emrGoalBalance}
-   *
-   */
-
-  /**
-   * calculate budget:
-   *
-   * budget = pay - emr - reduced(goals) - reduced(fixed)
-   * remainingBudget: budget - reduced(normal)
-   */
   const avgPay = data.payPeriods
     .map(x => currency(x.pay).value)
     .reduce((a, b) => currency(a).add(b), 0)
@@ -451,17 +412,13 @@ numberOfPayPeriodPerMonth: 2
     .subtract(sumOf(goalSpendings)).value
   const remainingBudget = currency(budget).subtract(sumOf(normalSpendings))
     .value
-  // calculater free money
-  /**
-   * freeMoney = sumOfSurplus - sumOf(freeSpendings)
-   */
   const previousPayPeriods = data.payPeriods.slice(
     0,
     data.payPeriods.length - 1,
   )
 
   const surplus =
-    previousPayPeriods.length != 0
+    previousPayPeriods.length !== 0
       ? previousPayPeriods
           .map(x => x.remainingBudget)
           .reduce((a, b) => currency(a).add(b).value, 0)

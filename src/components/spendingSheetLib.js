@@ -110,28 +110,7 @@ function FixedSpendingSheet({spendings, numberOfPayPeriodPerMonth}) {
   )
 }
 
-const goalSpendings = [
-  createGoalSheetData(0, 'elvis esley', 30.0, 312.44),
-  createGoalSheetData(1, 'Elvis Presley', 30.0, 312.44),
-  createGoalSheetData(2, 'Elvis Presley', 30.0, 312.44),
-]
-
-function createGoalSheetData(id, description, commitmentAmount, goalAmount) {
-  return {id, description, commitmentAmount, goalAmount}
-}
-
 function GoalSpendingSheet({spendings}) {
-  //     amount: "100"
-  // createdAt: "2020-12-23T00:51:52.102Z"
-  // description: "vacation"
-  // goalAmount: "2000"
-  // goalBalance: "100"
-  // refPayPeriods: ["5fe269dc9dc2620419768fa1"]
-  // refUser: "5fe147ad9dc2620419768fa0"
-  // type: "goal"
-  // updatedAt: "2020-12-23T00:51:52.102Z"
-  // __v: 0
-  // _id: "5fe294a89dc2620419768fab"
   const classes = useStyles()
   return (
     <React.Fragment>
