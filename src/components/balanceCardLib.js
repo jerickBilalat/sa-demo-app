@@ -26,13 +26,24 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-function EmrFundCard({emrCommitment, emrGoal, emrCurrentBalance, status}) {
+function EmrFundCard({
+  emrCommitment,
+  emrGoal,
+  emrCurrentBalance,
+  status,
+  doOpenModal,
+}) {
   const classes = useStyles()
   return (
     <React.Fragment>
       <Title>
         Emergency Fund{' '}
-        <Button variant="contained" color="default" className={classes.button}>
+        <Button
+          onClick={doOpenModal}
+          variant="contained"
+          color="default"
+          className={classes.button}
+        >
           Use
         </Button>
       </Title>
@@ -53,13 +64,18 @@ function EmrFundCard({emrCommitment, emrGoal, emrCurrentBalance, status}) {
   )
 }
 
-function BudgetCard({remainingBudget, budget, spent, status}) {
+function BudgetCard({remainingBudget, budget, spent, status, doOpenModal}) {
   const classes = useStyles()
   return (
     <React.Fragment>
       <Title>
         Remaining Budget{' '}
-        <Button variant="contained" color="default" className={classes.button}>
+        <Button
+          onClick={doOpenModal}
+          variant="contained"
+          color="default"
+          className={classes.button}
+        >
           Spend
         </Button>
       </Title>
@@ -80,13 +96,18 @@ function BudgetCard({remainingBudget, budget, spent, status}) {
   )
 }
 
-function FreeMoneyCard({freeMoney}) {
+function FreeMoneyCard({freeMoney, doOpenModal}) {
   const classes = useStyles()
   return (
     <React.Fragment>
       <Title>
         Spludge Money{' '}
-        <Button variant="contained" color="default" className={classes.button}>
+        <Button
+          onClick={doOpenModal}
+          variant="contained"
+          color="default"
+          className={classes.button}
+        >
           Spludge
         </Button>
       </Title>

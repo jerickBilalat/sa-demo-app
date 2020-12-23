@@ -22,7 +22,11 @@ import {
   FixedSpendingSheet,
   GoalSpendingSheet,
 } from '../components/spendingSheetLib'
-
+import {
+  AddSpendingFormDialog,
+  EmrFundFormDialog,
+  FreeMoneyFormDialog,
+} from '../components/modal'
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
@@ -120,6 +124,34 @@ const useStyles = makeStyles(theme => ({
 function Dashboard({data, dispatch}) {
   const classes = useStyles()
 
+  const [toggleAddSpendingModal, setAddSpendingModal] = React.useState(false)
+  const [toggleUseEmrFundModal, setUseEmrFundModal] = React.useState(false)
+  const [toggleUseFreeMoneyModal, setUseFreeMoneyModal] = React.useState(false)
+
+  const doOpenAddSpendingModal = () => {
+    setAddSpendingModal(true)
+  }
+
+  const doOpenUseEmrFundModal = () => {
+    setUseEmrFundModal(true)
+  }
+
+  const doOpenFreeMoneyModal = () => {
+    setUseFreeMoneyModal(true)
+  }
+
+  const doCloseAddSpendingModal = () => {
+    setAddSpendingModal(false)
+  }
+
+  const doCloseUseEmrFundModal = () => {
+    setUseEmrFundModal(false)
+  }
+
+  const doCloseFreeMoneyModal = () => {
+    setUseFreeMoneyModal(false)
+  }
+
   if (data.payPeriods.length === 0)
     return <CreateIntialPayPeriod data={data} dispatch={dispatch} />
 
@@ -189,6 +221,7 @@ function Dashboard({data, dispatch}) {
                   spent={formatWithCurrency(sumOf(normalSpendings))}
                   remainingBudget={formatWithCurrency(remainingBudget)}
                   budget={formatWithCurrency(budget)}
+                  doOpenModal={doOpenAddSpendingModal}
                   status={calculateStatus(sumOf(normalSpendings), budget)}
                 />
               </Paper>
@@ -199,6 +232,7 @@ function Dashboard({data, dispatch}) {
                 <EmrFundCard
                   emrCommitment={formatWithCurrency(emrCommitment)}
                   emrGoal={formatWithCurrency(emrGoal)}
+                  doOpenModal={doOpenUseEmrFundModal}
                   emrCurrentBalance={formatWithCurrency(emrCurrentBalance)}
                   status={calculateStatus(emrCurrentBalance, emrGoal)}
                 />
@@ -207,7 +241,10 @@ function Dashboard({data, dispatch}) {
             {/* Spludge Money */}
             <Grid item xs={12} md={4} lg={3}>
               <Paper className={fixedHeightPaper}>
-                <FreeMoneyCard freeMoney={formatWithCurrency(freeMoney)} />
+                <FreeMoneyCard
+                  doOpenModal={doOpenFreeMoneyModal}
+                  freeMoney={formatWithCurrency(freeMoney)}
+                />
               </Paper>
             </Grid>
             {/* Spendings */}
@@ -237,6 +274,18 @@ function Dashboard({data, dispatch}) {
           </Box>
         </Container>
       </main>
+      <AddSpendingFormDialog
+        doCloseModal={doCloseAddSpendingModal}
+        modalToggle={toggleAddSpendingModal}
+      />
+      <EmrFundFormDialog
+        modalToggle={toggleUseEmrFundModal}
+        doCloseModal={doCloseUseEmrFundModal}
+      />
+      <FreeMoneyFormDialog
+        modalToggle={toggleUseFreeMoneyModal}
+        doCloseModal={doCloseFreeMoneyModal}
+      />
     </div>
   )
 }
