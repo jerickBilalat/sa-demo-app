@@ -49,14 +49,22 @@ function NormalSpendingSheets({spendings}) {
           <TableRow>
             <TableCell>Posted Date</TableCell>
             <TableCell>Description</TableCell>
+            <TableCell>Special Note</TableCell>
             <TableCell align="right">Amount</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {spendings.map(row => (
             <TableRow key={row._id}>
-              <TableCell>{formatIsoDateString(row.updatedAt)}</TableCell>
+              <TableCell>{formatIsoDateString(row.createdAt)}</TableCell>
               <TableCell>{row.description}</TableCell>
+              <TableCell>
+                {row.type === 'emr'
+                  ? 'Emergency'
+                  : row.type === 'free'
+                  ? 'Spludge'
+                  : null}
+              </TableCell>
               <TableCell align="right">
                 {formatWithCurrency(row.amount)}
               </TableCell>
@@ -105,7 +113,7 @@ function FixedSpendingSheet({
         <TableBody>
           {spendings.map(row => (
             <TableRow key={row._id}>
-              <TableCell>{formatIsoDateString(row.updatedAt)}</TableCell>
+              <TableCell>{formatIsoDateString(row.createdAt)}</TableCell>
               <TableCell>{row.description}</TableCell>
               <TableCell align="right">
                 {formatWithCurrency(row.amount)}

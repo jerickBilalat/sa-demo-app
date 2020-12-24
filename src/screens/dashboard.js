@@ -231,6 +231,17 @@ function Dashboard({data, dispatch}) {
     .subtract(sumOf(freeSpendings))
     .format()
 
+  function sortDatesLatestFirst(a, b) {
+    const prev = new Date(a.createdAt)
+    const next = new Date(b.createdAt)
+    return next - prev
+  }
+  const regularSpendings = [
+    ...normalSpendings,
+    ...freeSpendings,
+    ...emrSpendings,
+  ].sort(sortDatesLatestFirst)
+
   return (
     <div className={classes.root}>
       <CssBaseline />
@@ -273,7 +284,7 @@ function Dashboard({data, dispatch}) {
             {/* Spendings */}
             <Grid item xs={12}>
               <Paper className={classes.paper}>
-                <NormalSpendingSheets spendings={normalSpendings} />
+                <NormalSpendingSheets spendings={regularSpendings} />
               </Paper>
             </Grid>
             {/* Bills */}
