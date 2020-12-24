@@ -3,8 +3,9 @@ import PropTypes from 'prop-types'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import Typography from '@material-ui/core/Typography'
 import Box from '@material-ui/core/Box'
-import {makeStyles} from '@material-ui/core/styles'
 import LinearProgress from '@material-ui/core/LinearProgress'
+
+import NumberFormat from 'react-number-format'
 
 function CircularProgressWithLabel(props) {
   return (
@@ -61,4 +62,32 @@ LinearProgressWithLabel.propTypes = {
   value: PropTypes.number.isRequired,
 }
 
-export {CircularProgressWithLabel, LinearProgressWithLabel}
+function NumberFormatCustom(props) {
+  const {inputRef, onChange, ...other} = props
+
+  return (
+    <NumberFormat
+      {...other}
+      getInputRef={inputRef}
+      onValueChange={values => {
+        onChange({
+          target: {
+            name: props.name,
+            value: values.value,
+          },
+        })
+      }}
+      thousandSeparator
+      isNumericString
+      prefix="$"
+    />
+  )
+}
+
+NumberFormatCustom.propTypes = {
+  inputRef: PropTypes.func.isRequired,
+  name: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired,
+}
+
+export {CircularProgressWithLabel, LinearProgressWithLabel, NumberFormatCustom}

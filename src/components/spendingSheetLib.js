@@ -159,8 +159,8 @@ function GoalSpendingSheet({spendings, doOpenModal}) {
         <TableHead>
           <TableRow>
             <TableCell>Description</TableCell>
-            <TableCell>Status percentage</TableCell>
-            <TableCell>Commitment</TableCell>
+            <TableCell>Progress(%)</TableCell>
+            <TableCell align="right">Commitment per period</TableCell>
             <TableCell align="right">Goal</TableCell>
           </TableRow>
         </TableHead>
