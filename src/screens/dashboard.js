@@ -26,6 +26,8 @@ import {
   AddSpendingFormDialog,
   EmrFundFormDialog,
   FreeMoneyFormDialog,
+  FixedSpendingFormDialog,
+  CreateGoalFormDialog,
 } from '../components/modal'
 function Copyright() {
   return (
@@ -127,6 +129,11 @@ function Dashboard({data, dispatch}) {
   const [toggleAddSpendingModal, setAddSpendingModal] = React.useState(false)
   const [toggleUseEmrFundModal, setUseEmrFundModal] = React.useState(false)
   const [toggleUseFreeMoneyModal, setUseFreeMoneyModal] = React.useState(false)
+  const [
+    toggleAddFixedSpendingModal,
+    setAddFixedSpendingModal,
+  ] = React.useState(false)
+  const [toggleCreateGoalModal, setCreateGoalModal] = React.useState(false)
 
   const doOpenAddSpendingModal = () => {
     setAddSpendingModal(true)
@@ -140,6 +147,14 @@ function Dashboard({data, dispatch}) {
     setUseFreeMoneyModal(true)
   }
 
+  const doOpenAddFixedSpendingModal = () => {
+    setAddFixedSpendingModal(true)
+  }
+
+  const doOpenCreateGoalModal = () => {
+    setCreateGoalModal(true)
+  }
+
   const doCloseAddSpendingModal = () => {
     setAddSpendingModal(false)
   }
@@ -150,6 +165,14 @@ function Dashboard({data, dispatch}) {
 
   const doCloseFreeMoneyModal = () => {
     setUseFreeMoneyModal(false)
+  }
+
+  const doCloseAddFixedSpendingModal = () => {
+    setAddFixedSpendingModal(false)
+  }
+
+  const doCloseCreateGoalModal = () => {
+    setCreateGoalModal(false)
   }
 
   if (data.payPeriods.length === 0)
@@ -215,7 +238,7 @@ function Dashboard({data, dispatch}) {
         <Container maxWidth="lg" className={classes.container}>
           <Grid container spacing={3}>
             {/* Budget Card */}
-            <Grid item xs={12} md={4} lg={3}>
+            <Grid item xs={12} md={4}>
               <Paper className={fixedHeightPaper}>
                 <BudgetCard
                   spent={formatWithCurrency(sumOf(normalSpendings))}
@@ -227,7 +250,7 @@ function Dashboard({data, dispatch}) {
               </Paper>
             </Grid>
             {/* Emergency Fund */}
-            <Grid item xs={12} md={4} lg={3}>
+            <Grid item xs={12} md={4}>
               <Paper className={fixedHeightPaper}>
                 <EmrFundCard
                   emrCommitment={formatWithCurrency(emrCommitment)}
@@ -239,7 +262,7 @@ function Dashboard({data, dispatch}) {
               </Paper>
             </Grid>
             {/* Spludge Money */}
-            <Grid item xs={12} md={4} lg={3}>
+            <Grid item xs={12} md={4}>
               <Paper className={fixedHeightPaper}>
                 <FreeMoneyCard
                   doOpenModal={doOpenFreeMoneyModal}
@@ -259,13 +282,17 @@ function Dashboard({data, dispatch}) {
                 <FixedSpendingSheet
                   spendings={fixedSpendings}
                   numberOfPayPeriodPerMonth={data.numberOfPayPeriodPerMonth}
+                  doOpenModal={doOpenAddFixedSpendingModal}
                 />
               </Paper>
             </Grid>
             {/* Goals */}
             <Grid item xs={12} md={6}>
               <Paper className={classes.paper}>
-                <GoalSpendingSheet spendings={goalSpendings} />
+                <GoalSpendingSheet
+                  spendings={goalSpendings}
+                  doOpenModal={doOpenCreateGoalModal}
+                />
               </Paper>
             </Grid>
           </Grid>
@@ -285,6 +312,14 @@ function Dashboard({data, dispatch}) {
       <FreeMoneyFormDialog
         modalToggle={toggleUseFreeMoneyModal}
         doCloseModal={doCloseFreeMoneyModal}
+      />
+      <FixedSpendingFormDialog
+        modalToggle={toggleAddFixedSpendingModal}
+        doCloseModal={doCloseAddFixedSpendingModal}
+      />
+      <CreateGoalFormDialog
+        modalToggle={toggleCreateGoalModal}
+        doCloseModal={doCloseCreateGoalModal}
       />
     </div>
   )

@@ -100,4 +100,72 @@ function FreeMoneyFormDialog({modalToggle, doCloseModal}) {
   )
 }
 
-export {AddSpendingFormDialog, EmrFundFormDialog, FreeMoneyFormDialog}
+function FixedSpendingFormDialog({modalToggle, doCloseModal}) {
+  return (
+    <Dialog
+      open={modalToggle}
+      onClose={doCloseModal}
+      aria-labelledby="form-dialog-title"
+    >
+      <DialogTitle id="form-dialog-title">Add Fixed Spending</DialogTitle>
+      <DialogContent>
+        <DialogContentText>Treat yourself like royalty</DialogContentText>
+        <TextField
+          autoFocus
+          margin="dense"
+          id="name"
+          label="Email Address"
+          type="email"
+          fullWidth
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={doCloseModal} color="primary">
+          Cancel
+        </Button>
+        <Button onClick={doCloseModal} color="primary">
+          Subscribe
+        </Button>
+      </DialogActions>
+    </Dialog>
+  )
+}
+
+function CreateGoalFormDialog({modalToggle, doCloseModal}) {
+  return (
+    <Dialog
+      open={modalToggle}
+      onClose={doCloseModal}
+      aria-labelledby="form-dialog-title"
+    >
+      <DialogTitle id="form-dialog-title">Create a Goal</DialogTitle>
+      <DialogContent>
+        <DialogContentText>Treat yourself like royalty</DialogContentText>
+        <TextField
+          autoFocus
+          margin="dense"
+          id="name"
+          label="Email Address"
+          type="email"
+          fullWidth
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={doCloseModal} color="primary">
+          Cancel
+        </Button>
+        <Button onClick={doCloseModal} color="primary">
+          Subscribe
+        </Button>
+      </DialogActions>
+    </Dialog>
+  )
+}
+
+export {
+  AddSpendingFormDialog,
+  EmrFundFormDialog,
+  FreeMoneyFormDialog,
+  CreateGoalFormDialog,
+  FixedSpendingFormDialog,
+}

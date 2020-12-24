@@ -73,7 +73,11 @@ function NormalSpendingSheets({spendings}) {
   )
 }
 
-function FixedSpendingSheet({spendings, numberOfPayPeriodPerMonth}) {
+function FixedSpendingSheet({
+  spendings,
+  numberOfPayPeriodPerMonth,
+  doOpenModal,
+}) {
   const classes = useStyles()
   return (
     <React.Fragment>
@@ -84,6 +88,7 @@ function FixedSpendingSheet({spendings, numberOfPayPeriodPerMonth}) {
           color="default"
           className={classes.button}
           startIcon={<AddIcon />}
+          onClick={doOpenModal}
         >
           Add
         </Button>
@@ -126,7 +131,7 @@ function FixedSpendingSheet({spendings, numberOfPayPeriodPerMonth}) {
   )
 }
 
-function GoalSpendingSheet({spendings}) {
+function GoalSpendingSheet({spendings, doOpenModal}) {
   const classes = useStyles()
   return (
     <React.Fragment>
@@ -137,6 +142,7 @@ function GoalSpendingSheet({spendings}) {
           color="default"
           className={classes.button}
           startIcon={<AddIcon />}
+          onClick={doOpenModal}
         >
           Create
         </Button>
