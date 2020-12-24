@@ -321,6 +321,8 @@ function Dashboard({data, dispatch}) {
       <EmrFundFormDialog
         modalToggle={toggleUseEmrFundModal}
         doCloseModal={doCloseUseEmrFundModal}
+        data={data}
+        dispatch={dispatch}
       />
       <FreeMoneyFormDialog
         modalToggle={toggleUseFreeMoneyModal}
