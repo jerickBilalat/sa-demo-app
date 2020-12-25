@@ -381,10 +381,101 @@ function CreateGoalFormDialog({modalToggle, doCloseModal, data, dispatch}) {
   )
 }
 
+function CreateNextPeriodFormDialog({
+  fixedSpendings,
+  goalSpendings,
+  remainingBudget,
+  prevPayPeriodID,
+  emrCurrentBalance,
+  modalToggle,
+  doCloseModal,
+  data,
+}) {
+  // TODO: normalize the input into the right format of type string
+  const [form, setForm] = React.useState({pay: ''})
+  const [carryOverGoals, setCarryOverGoals] = React.useState(
+    goalSpendings.map(x => x._id),
+  )
+  const [carryOverFixed, setCarryOverFixed] = React.useState(
+    fixedSpendings.map(x => x._id),
+  )
+
+  const onChange = e => {
+    const target = e.target
+    setForm({...form, [target.name]: target.value})
+  }
+
+  const onSubmit = event => {
+    event.preventDefault()
+    client('pay-period/create-pay-period', {
+      data: {
+        pay: form.pay,
+        remainingBudget,
+        continuedFixedSpendings: carryOverFixed,
+        continuedGoals: carryOverGoals,
+        prevPayPeriodID,
+        emrCurrentBalance,
+      },
+      token: data.token,
+    })
+      .then(() => {
+        window.location.assign(window.location.origin)
+      })
+      .catch(error => {
+        // TODO: come up with a better centralized error
+        throw new Error(error)
+      })
+  }
+  return (
+    <Dialog
+      open={modalToggle}
+      onClose={doCloseModal}
+      aria-labelledby="form-dialog-title"
+    >
+      <DialogTitle id="form-dialog-title">Create Goal</DialogTitle>
+      <DialogContent>
+        <DialogContentText>How much is your starting income?</DialogContentText>
+        <TextField
+          autoFocus
+          margin="dense"
+          id="pay"
+          name="pay"
+          label="Income"
+          type="text"
+          value={form.pay}
+          onChange={onChange}
+          InputProps={{
+            inputComponent: NumberFormatCustom,
+          }}
+        />
+        {fixedSpendings.length > 0 ? (
+          <DialogContentText>
+            Unchecked fixed spendings that does not apply to this period:
+          </DialogContentText>
+        ) : null}
+        {goalSpendings.length > 0 ? (
+          <DialogContentText>
+            Unchecked goals that does not apply to this period:
+          </DialogContentText>
+        ) : null}
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={doCloseModal} color="primary">
+          Cancel
+        </Button>
+        <Button onClick={onSubmit} color="primary">
+          Create
+        </Button>
+      </DialogActions>
+    </Dialog>
+  )
+}
+
 export {
   AddSpendingFormDialog,
   EmrFundFormDialog,
   FreeMoneyFormDialog,
   CreateGoalFormDialog,
   FixedSpendingFormDialog,
+  CreateNextPeriodFormDialog,
 }

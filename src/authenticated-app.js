@@ -41,16 +41,28 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(1),
     flexShrink: 0,
   },
+  button: {
+    margin: theme.spacing(0.5),
+  },
 }))
 
 const AuthenticatedApp = ({user, logout}) => {
   const [userData, dispatch] = React.useReducer(userDataReducer, user)
+  const [toggleCreatePayPeriodModal, setCreatePayPeriodModal] = React.useState(
+    false,
+  )
   const classes = useStyles()
   const sections = [
     {title: 'Dashboard', url: '/'},
     {title: 'About', url: '/about'},
     {title: 'Settings', url: '/user-settigs'},
   ]
+  const doOpenCreatePayPeriodModal = () => {
+    setCreatePayPeriodModal(true)
+  }
+  const doCloseCreatePayPeriodModal = () => {
+    setCreatePayPeriodModal(false)
+  }
   return (
     <>
       <Toolbar className={classes.toolbar}>
@@ -87,11 +99,29 @@ const AuthenticatedApp = ({user, logout}) => {
             </Link>
           )
         })}
+        <Link>
+          <Button
+            onClick={doOpenCreatePayPeriodModal}
+            variant="contained"
+            color="default"
+            className={classes.button}
+            size="small"
+          >
+            Next Period
+          </Button>
+        </Link>
       </Toolbar>
       <Routes>
         <Route
           path="/"
-          element={<Dashboard data={userData} dispatch={dispatch} />}
+          element={
+            <Dashboard
+              data={userData}
+              dispatch={dispatch}
+              toggleCreatePayPeriodModal={toggleCreatePayPeriodModal}
+              doCloseCreatePayPeriodModal={doCloseCreatePayPeriodModal}
+            />
+          }
         />
         <Route path="/about" element={<About />} />
         <Route path="/user-settings" element={<UserSettings />} />

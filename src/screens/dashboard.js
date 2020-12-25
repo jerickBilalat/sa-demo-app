@@ -12,6 +12,7 @@ import Container from '@material-ui/core/Container'
 import Grid from '@material-ui/core/Grid'
 import Paper from '@material-ui/core/Paper'
 import Link from '@material-ui/core/Link'
+
 import {
   EmrFundCard,
   FreeMoneyCard,
@@ -28,6 +29,7 @@ import {
   FreeMoneyFormDialog,
   FixedSpendingFormDialog,
   CreateGoalFormDialog,
+  CreateNextPeriodFormDialog,
 } from '../components/modal'
 function Copyright() {
   return (
@@ -123,9 +125,13 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-function Dashboard({data, dispatch}) {
+function Dashboard({
+  data,
+  dispatch,
+  toggleCreatePayPeriodModal,
+  doCloseCreatePayPeriodModal,
+}) {
   const classes = useStyles()
-
   const [toggleAddSpendingModal, setAddSpendingModal] = React.useState(false)
   const [toggleUseEmrFundModal, setUseEmrFundModal] = React.useState(false)
   const [toggleUseFreeMoneyModal, setUseFreeMoneyModal] = React.useState(false)
@@ -134,7 +140,6 @@ function Dashboard({data, dispatch}) {
     setAddFixedSpendingModal,
   ] = React.useState(false)
   const [toggleCreateGoalModal, setCreateGoalModal] = React.useState(false)
-
   const doOpenAddSpendingModal = () => {
     setAddSpendingModal(true)
   }
@@ -341,6 +346,16 @@ function Dashboard({data, dispatch}) {
         doCloseModal={doCloseCreateGoalModal}
         data={data}
         dispatch={dispatch}
+      />
+      <CreateNextPeriodFormDialog
+        modalToggle={toggleCreatePayPeriodModal}
+        doCloseModal={doCloseCreatePayPeriodModal}
+        data={data}
+        fixedSpendings={fixedSpendings}
+        goalSpendings={goalSpendings}
+        remainingBudget={actualRemainingBudget}
+        prevPayPeriodID={currentPayPeriod._id}
+        emrCurrentBalance={emrCurrentBalance}
       />
     </div>
   )
