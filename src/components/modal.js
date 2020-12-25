@@ -151,7 +151,33 @@ function EmrFundFormDialog({modalToggle, doCloseModal, data, dispatch}) {
   )
 }
 
-function FreeMoneyFormDialog({modalToggle, doCloseModal}) {
+function FreeMoneyFormDialog({modalToggle, doCloseModal, data, dispatch}) {
+  const [spending, setSpending] = React.useState({
+    description: '',
+    amount: '0',
+    type: 'free',
+    payPeriodId: data.payPeriods[data.payPeriods.length - 1]._id,
+  })
+
+  const onChange = e => {
+    const target = e.target
+    setSpending({...spending, [target.name]: target.value})
+  }
+  const onSubmit = e => {
+    e.preventDefault()
+    const body = {...spending}
+
+    client('spending/create-spending', {
+      data: body,
+      token: data.token,
+    })
+      .then(res => {
+        dispatch({type: 'add-spending', payload: res})
+        return doCloseModal()
+      })
+      .catch(console.log) // TODO: handle error to render error message
+  }
+
   return (
     <Dialog
       open={modalToggle}
@@ -160,22 +186,38 @@ function FreeMoneyFormDialog({modalToggle, doCloseModal}) {
     >
       <DialogTitle id="form-dialog-title">Spludge!</DialogTitle>
       <DialogContent>
-        <DialogContentText>Treat yourself like royalty</DialogContentText>
+        <DialogContentText>
+          Where Guilt Free spending happens.
+        </DialogContentText>
         <TextField
           autoFocus
           margin="dense"
-          id="name"
-          label="Email Address"
-          type="email"
-          fullWidth
+          id="description"
+          label="Description"
+          name="description"
+          type="text"
+          value={spending.description}
+          onChange={e => onChange(e)}
+        />
+        <TextField
+          margin="dense"
+          id="amount"
+          name="amount"
+          label="Cost"
+          type="text"
+          value={spending.amount}
+          onChange={e => onChange(e)}
+          InputProps={{
+            inputComponent: NumberFormatCustom,
+          }}
         />
       </DialogContent>
       <DialogActions>
         <Button onClick={doCloseModal} color="primary">
           Cancel
         </Button>
-        <Button onClick={doCloseModal} color="primary">
-          Subscribe
+        <Button onClick={onSubmit} color="primary">
+          Spludge!
         </Button>
       </DialogActions>
     </Dialog>

@@ -327,6 +327,8 @@ function Dashboard({data, dispatch}) {
       <FreeMoneyFormDialog
         modalToggle={toggleUseFreeMoneyModal}
         doCloseModal={doCloseFreeMoneyModal}
+        data={data}
+        dispatch={dispatch}
       />
       <FixedSpendingFormDialog
         modalToggle={toggleAddFixedSpendingModal}
