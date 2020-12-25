@@ -6,8 +6,13 @@ import DialogActions from '@material-ui/core/DialogActions'
 import DialogContent from '@material-ui/core/DialogContent'
 import DialogContentText from '@material-ui/core/DialogContentText'
 import DialogTitle from '@material-ui/core/DialogTitle'
+import Checkbox from '@material-ui/core/Checkbox'
+import FormGroup from '@material-ui/core/FormGroup'
+import FormControlLabel from '@material-ui/core/FormControlLabel'
 
 import {clientFacade as client} from '../utils/api-client'
+
+import {formatWithCurrency} from './utils'
 
 import {NumberFormatCustom} from './lib'
 
@@ -405,6 +410,13 @@ function CreateNextPeriodFormDialog({
     setForm({...form, [target.name]: target.value})
   }
 
+  const onCheckboxChange = (collection, spending, set) => {
+    if (collection.includes(spending._id)) {
+      return set([...collection.filter(id => id !== spending._id)])
+    }
+    return set([...collection, spending._id])
+  }
+
   const onSubmit = event => {
     event.preventDefault()
     client('pay-period/create-pay-period', {
@@ -453,11 +465,57 @@ function CreateNextPeriodFormDialog({
             Unchecked fixed spendings that does not apply to this period:
           </DialogContentText>
         ) : null}
+        <FormGroup>
+          {fixedSpendings.map(spending => (
+            <FormControlLabel
+              key={spending._id}
+              control={
+                <Checkbox
+                  checked={carryOverFixed.includes(spending._id)}
+                  onChange={() =>
+                    onCheckboxChange(
+                      carryOverFixed,
+                      spending,
+                      setCarryOverFixed,
+                    )
+                  }
+                  name={spending.description}
+                />
+              }
+              label={`${spending.description} ${formatWithCurrency(
+                spending.amount,
+              )}`}
+            />
+          ))}
+        </FormGroup>
         {goalSpendings.length > 0 ? (
           <DialogContentText>
             Unchecked goals that does not apply to this period:
           </DialogContentText>
         ) : null}
+        <FormGroup>
+          {goalSpendings.map(spending => (
+            <FormControlLabel
+              key={spending._id}
+              control={
+                <Checkbox
+                  checked={carryOverGoals.includes(spending._id)}
+                  onChange={() =>
+                    onCheckboxChange(
+                      carryOverGoals,
+                      spending,
+                      setCarryOverGoals,
+                    )
+                  }
+                  name={spending.description}
+                />
+              }
+              label={`${spending.description} commiting ${formatWithCurrency(
+                spending.amount,
+              )} per period`}
+            />
+          ))}
+        </FormGroup>
       </DialogContent>
       <DialogActions>
         <Button onClick={doCloseModal} color="primary">
