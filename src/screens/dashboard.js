@@ -333,10 +333,14 @@ function Dashboard({data, dispatch}) {
       <FixedSpendingFormDialog
         modalToggle={toggleAddFixedSpendingModal}
         doCloseModal={doCloseAddFixedSpendingModal}
+        data={data}
+        dispatch={dispatch}
       />
       <CreateGoalFormDialog
         modalToggle={toggleCreateGoalModal}
         doCloseModal={doCloseCreateGoalModal}
+        data={data}
+        dispatch={dispatch}
       />
     </div>
   )
