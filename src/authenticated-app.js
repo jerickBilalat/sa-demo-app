@@ -99,17 +99,6 @@ const AuthenticatedApp = ({user, logout}) => {
             </Link>
           )
         })}
-        <Link>
-          <Button
-            onClick={doOpenCreatePayPeriodModal}
-            variant="contained"
-            color="default"
-            className={classes.button}
-            size="small"
-          >
-            Next Period
-          </Button>
-        </Link>
       </Toolbar>
       <Routes>
         <Route

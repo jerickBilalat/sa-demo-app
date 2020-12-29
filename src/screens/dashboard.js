@@ -12,6 +12,9 @@ import Container from '@material-ui/core/Container'
 import Grid from '@material-ui/core/Grid'
 import Paper from '@material-ui/core/Paper'
 import Link from '@material-ui/core/Link'
+import Button from '@material-ui/core/Button'
+import EditIcon from '@material-ui/icons/Edit'
+import NavigateNextIcon from '@material-ui/icons/NavigateNext'
 
 import {
   EmrFundCard,
@@ -253,6 +256,24 @@ function Dashboard({
       <main className={classes.content}>
         <Container maxWidth="lg" className={classes.container}>
           <Grid container spacing={3}>
+            <Grid container item justify="space-between">
+              <Button
+                color="default"
+                variant="outlined"
+                size="small"
+                startIcon={<EditIcon />}
+              >
+                Edit Period
+              </Button>
+              <Button
+                color="default"
+                variant="outlined"
+                size="small"
+                endIcon={<NavigateNextIcon />}
+              >
+                Next Period
+              </Button>
+            </Grid>
             {/* Budget Card */}
             <Grid item xs={12} md={4}>
               <Paper className={fixedHeightPaper}>
