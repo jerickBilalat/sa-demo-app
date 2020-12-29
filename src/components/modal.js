@@ -17,12 +17,13 @@ import {formatWithCurrency} from './utils'
 import {NumberFormatCustom} from './lib'
 
 function AddSpendingFormDialog({modalToggle, doCloseModal, data, dispatch}) {
-  const [spending, setSpending] = React.useState({
+  const defaultState = {
     description: '',
     amount: '0',
     type: 'normal',
     payPeriodId: data.payPeriods[data.payPeriods.length - 1]._id,
-  })
+  }
+  const [spending, setSpending] = React.useState(defaultState)
   const onChange = e => {
     const target = e.target
     setSpending({...spending, [target.name]: target.value})
@@ -37,6 +38,7 @@ function AddSpendingFormDialog({modalToggle, doCloseModal, data, dispatch}) {
     })
       .then(res => {
         dispatch({type: 'add-spending', payload: res})
+        setSpending(defaultState)
         return doCloseModal()
       })
       .catch(console.log) // TODO: handle error to render error message
@@ -86,12 +88,13 @@ function AddSpendingFormDialog({modalToggle, doCloseModal, data, dispatch}) {
 }
 
 function EmrFundFormDialog({modalToggle, doCloseModal, data, dispatch}) {
-  const [spending, setSpending] = React.useState({
+  const defaultState = {
     description: '',
     amount: '0',
     type: 'emr',
     payPeriodId: data.payPeriods[data.payPeriods.length - 1]._id,
-  })
+  }
+  const [spending, setSpending] = React.useState(defaultState)
 
   const onChange = e => {
     const target = e.target
@@ -107,6 +110,7 @@ function EmrFundFormDialog({modalToggle, doCloseModal, data, dispatch}) {
     })
       .then(res => {
         dispatch({type: 'add-spending', payload: res})
+        setSpending(defaultState)
         return doCloseModal()
       })
       .catch(console.log) // TODO: handle error to render error message
@@ -157,13 +161,13 @@ function EmrFundFormDialog({modalToggle, doCloseModal, data, dispatch}) {
 }
 
 function FreeMoneyFormDialog({modalToggle, doCloseModal, data, dispatch}) {
-  const [spending, setSpending] = React.useState({
+  const defaultState = {
     description: '',
     amount: '0',
     type: 'free',
     payPeriodId: data.payPeriods[data.payPeriods.length - 1]._id,
-  })
-
+  }
+  const [spending, setSpending] = React.useState(defaultState)
   const onChange = e => {
     const target = e.target
     setSpending({...spending, [target.name]: target.value})
@@ -178,6 +182,7 @@ function FreeMoneyFormDialog({modalToggle, doCloseModal, data, dispatch}) {
     })
       .then(res => {
         dispatch({type: 'add-spending', payload: res})
+        setSpending(defaultState)
         return doCloseModal()
       })
       .catch(console.log) // TODO: handle error to render error message
@@ -230,12 +235,13 @@ function FreeMoneyFormDialog({modalToggle, doCloseModal, data, dispatch}) {
 }
 
 function FixedSpendingFormDialog({modalToggle, doCloseModal, data, dispatch}) {
-  const [spending, setSpending] = React.useState({
+  const defaultState = {
     description: '',
     amount: '0',
     type: 'fixed',
     payPeriodId: data.payPeriods[data.payPeriods.length - 1]._id,
-  })
+  }
+  const [spending, setSpending] = React.useState(defaultState)
 
   const onChange = e => {
     const target = e.target
@@ -251,6 +257,7 @@ function FixedSpendingFormDialog({modalToggle, doCloseModal, data, dispatch}) {
     })
       .then(res => {
         dispatch({type: 'add-spending', payload: res})
+        setSpending(defaultState)
         return doCloseModal()
       })
       .catch(console.log) // TODO: handle error to render error message
@@ -300,13 +307,14 @@ function FixedSpendingFormDialog({modalToggle, doCloseModal, data, dispatch}) {
 }
 
 function CreateGoalFormDialog({modalToggle, doCloseModal, data, dispatch}) {
-  const [spending, setSpending] = React.useState({
+  const defaultState = {
     description: '',
     amount: '0',
     type: 'goal',
     payPeriodId: data.payPeriods[data.payPeriods.length - 1]._id,
     goalAmount: '0',
-  })
+  }
+  const [spending, setSpending] = React.useState(defaultState)
 
   const onChange = e => {
     const target = e.target
@@ -326,6 +334,7 @@ function CreateGoalFormDialog({modalToggle, doCloseModal, data, dispatch}) {
     })
       .then(res => {
         dispatch({type: 'add-spending', payload: res})
+        setSpending(defaultState)
         return doCloseModal()
       })
       .catch(console.log) // TODO: handle error to render error message
