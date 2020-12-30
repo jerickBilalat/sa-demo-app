@@ -11,6 +11,9 @@ import Button from '@material-ui/core/Button'
 import Link from '@material-ui/core/Link'
 import Toolbar from '@material-ui/core/Toolbar'
 import {makeStyles} from '@material-ui/core/styles'
+import Grid from '@material-ui/core/Grid'
+import EditIcon from '@material-ui/icons/Edit'
+import NavigateNextIcon from '@material-ui/icons/NavigateNext'
 
 function userDataReducer(state, action) {
   switch (action.type) {
@@ -51,6 +54,8 @@ const AuthenticatedApp = ({user, logout}) => {
   const [toggleCreatePayPeriodModal, setCreatePayPeriodModal] = React.useState(
     false,
   )
+  const [toggleEditPPModal, setEditPPModal] = React.useState(false)
+
   const classes = useStyles()
   const sections = [
     {title: 'Dashboard', url: '/'},
@@ -63,27 +68,15 @@ const AuthenticatedApp = ({user, logout}) => {
   const doCloseCreatePayPeriodModal = () => {
     setCreatePayPeriodModal(false)
   }
+  const doOpenEditPPModal = () => {
+    setEditPPModal(true)
+  }
+  const doCloseEditPPModal = () => {
+    setEditPPModal(false)
+  }
   return (
     <>
-      <Toolbar className={classes.toolbar}>
-        <Typography
-          component="h2"
-          variant="h5"
-          color="inherit"
-          noWrap
-          className={classes.toolbarTitle}
-        >
-          Spending Awareness
-        </Typography>
-        <Button variant="outlined" onClick={logout} size="small">
-          Log out
-        </Button>
-      </Toolbar>
-      <Toolbar
-        component="nav"
-        variant="dense"
-        className={classes.toolbarSecondary}
-      >
+      <Toolbar component="nav" className={classes.toolbar}>
         {sections.map(section => {
           return (
             <Link
@@ -99,6 +92,34 @@ const AuthenticatedApp = ({user, logout}) => {
             </Link>
           )
         })}
+
+        <Link>
+          <Button variant="outlined" onClick={logout} size="small">
+            Log out
+          </Button>
+        </Link>
+      </Toolbar>
+      <Toolbar variant="dense" className={classes.toolbarSecondary}>
+        <Grid container item justify="space-between">
+          <Button
+            color="default"
+            variant="outlined"
+            size="small"
+            startIcon={<EditIcon />}
+            onClick={doOpenEditPPModal}
+          >
+            Edit Period
+          </Button>
+          <Button
+            color="default"
+            variant="outlined"
+            size="small"
+            onClick={doOpenCreatePayPeriodModal}
+            endIcon={<NavigateNextIcon />}
+          >
+            Next Period
+          </Button>
+        </Grid>
       </Toolbar>
       <Routes>
         <Route
@@ -109,6 +130,8 @@ const AuthenticatedApp = ({user, logout}) => {
               dispatch={dispatch}
               toggleCreatePayPeriodModal={toggleCreatePayPeriodModal}
               doCloseCreatePayPeriodModal={doCloseCreatePayPeriodModal}
+              doCloseEditPPModal={doCloseEditPPModal}
+              toggleEditPPModal={toggleEditPPModal}
             />
           }
         />

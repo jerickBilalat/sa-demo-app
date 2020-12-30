@@ -538,6 +538,75 @@ function CreateNextPeriodFormDialog({
   )
 }
 
+function EditPayPeriodFormDialog({
+  modalToggle,
+  doCloseModal,
+  currentPayPeriod,
+  data,
+}) {
+  const defaultState = currentPayPeriod.pay
+  const [pay, setPay] = React.useState(defaultState)
+
+  const onChange = e => {
+    const target = e.target
+    setPay(target.value)
+  }
+  const onSubmit = e => {
+    e.preventDefault()
+    if (defaultState === pay) {
+      return doCloseModal()
+    }
+    const body = {
+      remainingBudget: undefined,
+      payPeriodID: currentPayPeriod._id,
+      pay,
+    }
+
+    client('pay-period/update-pay-period', {
+      data: body,
+      token: data.token,
+      method: 'PUT',
+    })
+      .then(() => {
+        window.location.assign(window.location.origin)
+      })
+      .catch(console.log) // TODO: handle error to render error message
+  }
+
+  return (
+    <Dialog
+      open={modalToggle}
+      onClose={doCloseModal}
+      aria-labelledby="form-dialog-title"
+    >
+      <DialogTitle id="form-dialog-title">Edit Period</DialogTitle>
+      <DialogContent>
+        <DialogContentText>Edit or add funds to Pay Period</DialogContentText>
+        <TextField
+          margin="dense"
+          id="pay"
+          name="pay"
+          label="Current Funds"
+          type="text"
+          value={pay}
+          onChange={e => onChange(e)}
+          InputProps={{
+            inputComponent: NumberFormatCustom,
+          }}
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={doCloseModal} color="primary">
+          Cancel
+        </Button>
+        <Button onClick={onSubmit} color="primary">
+          Done
+        </Button>
+      </DialogActions>
+    </Dialog>
+  )
+}
+
 export {
   AddSpendingFormDialog,
   EmrFundFormDialog,
@@ -545,4 +614,5 @@ export {
   CreateGoalFormDialog,
   FixedSpendingFormDialog,
   CreateNextPeriodFormDialog,
+  EditPayPeriodFormDialog,
 }
