@@ -303,6 +303,8 @@ function Dashboard({
                   setSpendingToEdit={setSpendingToEdit}
                   spendings={regularSpendings}
                   doOpenAddSpendingModal={doOpenAddSpendingModal}
+                  doOpenUseEmrFundModal={doOpenUseEmrFundModal}
+                  doOpenFreeMoneyModal={doOpenFreeMoneyModal}
                 />
               </Paper>
             </Grid>
@@ -342,12 +344,14 @@ function Dashboard({
         dispatch={dispatch}
       />
       <EmrFundFormDialog
+        spendingToEdit={spendingToEdit}
         modalToggle={toggleUseEmrFundModal}
         doCloseModal={doCloseUseEmrFundModal}
         data={data}
         dispatch={dispatch}
       />
       <FreeMoneyFormDialog
+        spendingToEdit={spendingToEdit}
         modalToggle={toggleUseFreeMoneyModal}
         doCloseModal={doCloseFreeMoneyModal}
         data={data}

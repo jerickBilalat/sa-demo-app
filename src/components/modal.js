@@ -97,8 +97,14 @@ function AddSpendingFormDialog({
   )
 }
 
-function EmrFundFormDialog({modalToggle, doCloseModal, data, dispatch}) {
-  const defaultState = {
+function EmrFundFormDialog({
+  spendingToEdit,
+  modalToggle,
+  doCloseModal,
+  data,
+  dispatch,
+}) {
+  const defaultState = spendingToEdit || {
     description: '',
     amount: '0',
     type: 'emr',
@@ -132,7 +138,9 @@ function EmrFundFormDialog({modalToggle, doCloseModal, data, dispatch}) {
       onClose={doCloseModal}
       aria-labelledby="form-dialog-title"
     >
-      <DialogTitle id="form-dialog-title">Use Emergency Fund</DialogTitle>
+      <DialogTitle id="form-dialog-title">
+        {spendingToEdit ? 'Edit Emergency Spending' : 'Use Emergency Fund'}
+      </DialogTitle>
       <DialogContent>
         <DialogContentText>I got you covered!</DialogContentText>
         <TextField
@@ -142,7 +150,9 @@ function EmrFundFormDialog({modalToggle, doCloseModal, data, dispatch}) {
           label="Description"
           name="description"
           type="text"
-          value={spending.description}
+          value={
+            spendingToEdit ? spendingToEdit.description : spending.description
+          }
           onChange={e => onChange(e)}
         />
         <TextField
@@ -151,7 +161,7 @@ function EmrFundFormDialog({modalToggle, doCloseModal, data, dispatch}) {
           name="amount"
           label="Cost"
           type="text"
-          value={spending.amount}
+          value={spendingToEdit ? spendingToEdit.amount : spending.amount}
           onChange={e => onChange(e)}
           InputProps={{
             inputComponent: NumberFormatCustom,
@@ -170,8 +180,14 @@ function EmrFundFormDialog({modalToggle, doCloseModal, data, dispatch}) {
   )
 }
 
-function FreeMoneyFormDialog({modalToggle, doCloseModal, data, dispatch}) {
-  const defaultState = {
+function FreeMoneyFormDialog({
+  spendingToEdit,
+  modalToggle,
+  doCloseModal,
+  data,
+  dispatch,
+}) {
+  const defaultState = spendingToEdit || {
     description: '',
     amount: '0',
     type: 'free',
@@ -204,7 +220,9 @@ function FreeMoneyFormDialog({modalToggle, doCloseModal, data, dispatch}) {
       onClose={doCloseModal}
       aria-labelledby="form-dialog-title"
     >
-      <DialogTitle id="form-dialog-title">Spludge!</DialogTitle>
+      <DialogTitle id="form-dialog-title">
+        {spendingToEdit ? 'Edit Spludgy Spending' : 'Spludge'}
+      </DialogTitle>
       <DialogContent>
         <DialogContentText>
           Where Guilt Free spending happens.
@@ -216,7 +234,9 @@ function FreeMoneyFormDialog({modalToggle, doCloseModal, data, dispatch}) {
           label="Description"
           name="description"
           type="text"
-          value={spending.description}
+          value={
+            spendingToEdit ? spendingToEdit.description : spending.description
+          }
           onChange={e => onChange(e)}
         />
         <TextField
@@ -225,7 +245,7 @@ function FreeMoneyFormDialog({modalToggle, doCloseModal, data, dispatch}) {
           name="amount"
           label="Cost"
           type="text"
-          value={spending.amount}
+          value={spendingToEdit ? spendingToEdit.amount : spending.amount}
           onChange={e => onChange(e)}
           InputProps={{
             inputComponent: NumberFormatCustom,

@@ -43,11 +43,22 @@ function NormalSpendingSheets({
   spendings,
   setSpendingToEdit,
   doOpenAddSpendingModal,
+  doOpenUseEmrFundModal,
+  doOpenFreeMoneyModal,
 }) {
   const classes = useStyles()
   const doEdit = async spending => {
     await setSpendingToEdit(spending)
-    doOpenAddSpendingModal()
+    switch (spending.type) {
+      case 'emr':
+        doOpenUseEmrFundModal()
+        break
+      case 'free':
+        doOpenFreeMoneyModal()
+      default:
+        doOpenAddSpendingModal()
+        break
+    }
   }
   return (
     <React.Fragment>
