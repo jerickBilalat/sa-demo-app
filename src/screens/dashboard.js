@@ -213,6 +213,8 @@ function Dashboard({
   const [carryOverFixed, setCarryOverFixed] = React.useState(
     fixedSpendings.map(x => x._id),
   )
+  const [spendingToEdit, setSpendingToEdit] = React.useState(null)
+
   if (data.payPeriods.length === 0)
     return <CreateIntialPayPeriod data={data} dispatch={dispatch} />
   const doOpenAddSpendingModal = () => {
@@ -297,13 +299,19 @@ function Dashboard({
             {/* Spendings */}
             <Grid item xs={12}>
               <Paper className={classes.paper}>
-                <NormalSpendingSheets spendings={regularSpendings} />
+                <NormalSpendingSheets
+                  setSpendingToEdit={setSpendingToEdit}
+                  spendings={regularSpendings}
+                  doOpenAddSpendingModal={doOpenAddSpendingModal}
+                />
               </Paper>
             </Grid>
             {/* Bills */}
             <Grid item xs={12} md={6}>
               <Paper className={classes.paper}>
                 <FixedSpendingSheet
+                  doOpenAddFixedSpendingModal={doOpenAddFixedSpendingModal}
+                  setSpendingToEdit={setSpendingToEdit}
                   spendings={fixedSpendings}
                   numberOfPayPeriodPerMonth={data.numberOfPayPeriodPerMonth}
                   doOpenModal={doOpenAddFixedSpendingModal}
@@ -314,6 +322,7 @@ function Dashboard({
             <Grid item xs={12} md={6}>
               <Paper className={classes.paper}>
                 <GoalSpendingSheet
+                  setSpendingToEdit={setSpendingToEdit}
                   spendings={goalSpendings}
                   doOpenModal={doOpenCreateGoalModal}
                 />
@@ -327,6 +336,7 @@ function Dashboard({
       </main>
       <AddSpendingFormDialog
         doCloseModal={doCloseAddSpendingModal}
+        spendingToEdit={spendingToEdit}
         modalToggle={toggleAddSpendingModal}
         data={data}
         dispatch={dispatch}
@@ -344,6 +354,7 @@ function Dashboard({
         dispatch={dispatch}
       />
       <FixedSpendingFormDialog
+        spendingToEdit={spendingToEdit}
         setCarryOverFixed={setCarryOverFixed}
         modalToggle={toggleAddFixedSpendingModal}
         doCloseModal={doCloseAddFixedSpendingModal}
@@ -351,6 +362,7 @@ function Dashboard({
         dispatch={dispatch}
       />
       <CreateGoalFormDialog
+        spendingToEdit={spendingToEdit}
         setCarryOverGoals={setCarryOverGoals}
         modalToggle={toggleCreateGoalModal}
         doCloseModal={doCloseCreateGoalModal}

@@ -16,8 +16,14 @@ import {formatWithCurrency} from './utils'
 
 import {NumberFormatCustom} from './lib'
 
-function AddSpendingFormDialog({modalToggle, doCloseModal, data, dispatch}) {
-  const defaultState = {
+function AddSpendingFormDialog({
+  spendingToEdit,
+  modalToggle,
+  doCloseModal,
+  data,
+  dispatch,
+}) {
+  const defaultState = spendingToEdit || {
     description: '',
     amount: '0',
     type: 'normal',
@@ -49,7 +55,9 @@ function AddSpendingFormDialog({modalToggle, doCloseModal, data, dispatch}) {
       onClose={doCloseModal}
       aria-labelledby="form-dialog-title"
     >
-      <DialogTitle id="form-dialog-title">Add Speding</DialogTitle>
+      <DialogTitle id="form-dialog-title">
+        {spendingToEdit ? 'Edit Spending' : 'Add Spending'}
+      </DialogTitle>
       <DialogContent>
         <DialogContentText>Spend wisely.</DialogContentText>
         <TextField
@@ -59,7 +67,9 @@ function AddSpendingFormDialog({modalToggle, doCloseModal, data, dispatch}) {
           label="Description"
           name="description"
           type="text"
-          value={spending.description}
+          value={
+            spendingToEdit ? spendingToEdit.description : spending.description
+          }
           onChange={e => onChange(e)}
         />
         <TextField
@@ -68,7 +78,7 @@ function AddSpendingFormDialog({modalToggle, doCloseModal, data, dispatch}) {
           name="amount"
           label="Cost"
           type="text"
-          value={spending.amount}
+          value={spendingToEdit ? spendingToEdit.amount : spending.amount}
           onChange={e => onChange(e)}
           InputProps={{
             inputComponent: NumberFormatCustom,
@@ -235,13 +245,14 @@ function FreeMoneyFormDialog({modalToggle, doCloseModal, data, dispatch}) {
 }
 
 function FixedSpendingFormDialog({
+  spendingToEdit,
   setCarryOverFixed,
   modalToggle,
   doCloseModal,
   data,
   dispatch,
 }) {
-  const defaultState = {
+  const defaultState = spendingToEdit || {
     description: '',
     amount: '0',
     type: 'fixed',
@@ -278,7 +289,9 @@ function FixedSpendingFormDialog({
       onClose={doCloseModal}
       aria-labelledby="form-dialog-title"
     >
-      <DialogTitle id="form-dialog-title">Add Fixed Spending</DialogTitle>
+      <DialogTitle id="form-dialog-title">
+        {spendingToEdit ? 'Edit Fixed Spending' : 'Add Fixed Spending'}
+      </DialogTitle>
       <DialogContent>
         <DialogContentText>Bills. Bills. Bills.</DialogContentText>
         <TextField
@@ -288,7 +301,9 @@ function FixedSpendingFormDialog({
           label="Description"
           name="description"
           type="text"
-          value={spending.description}
+          value={
+            spendingToEdit ? spendingToEdit.description : spending.description
+          }
           onChange={e => onChange(e)}
         />
         <TextField
@@ -297,7 +312,7 @@ function FixedSpendingFormDialog({
           name="amount"
           label="Cost"
           type="text"
-          value={spending.amount}
+          value={spendingToEdit ? spendingToEdit.amount : spending.amount}
           onChange={e => onChange(e)}
           InputProps={{
             inputComponent: NumberFormatCustom,
@@ -317,13 +332,14 @@ function FixedSpendingFormDialog({
 }
 
 function CreateGoalFormDialog({
+  spendingToEdit,
   setCarryOverGoals,
   modalToggle,
   doCloseModal,
   data,
   dispatch,
 }) {
-  const defaultState = {
+  const defaultState = spendingToEdit || {
     description: '',
     amount: '0',
     type: 'goal',
@@ -365,7 +381,9 @@ function CreateGoalFormDialog({
       onClose={doCloseModal}
       aria-labelledby="form-dialog-title"
     >
-      <DialogTitle id="form-dialog-title">Create Goal</DialogTitle>
+      <DialogTitle id="form-dialog-title">
+        {spendingToEdit ? 'Edit Goal' : 'Create Goal'}
+      </DialogTitle>
       <DialogContent>
         <DialogContentText>Set and execute.</DialogContentText>
         <TextField
@@ -375,7 +393,9 @@ function CreateGoalFormDialog({
           label="Description"
           name="description"
           type="text"
-          value={spending.description}
+          value={
+            spendingToEdit ? spendingToEdit.description : spending.description
+          }
           onChange={e => onChange(e)}
         />
         <TextField
@@ -384,7 +404,7 @@ function CreateGoalFormDialog({
           name="amount"
           label="Commitment"
           type="text"
-          value={spending.amount}
+          value={spendingToEdit ? spendingToEdit.amount : spending.amount}
           onChange={e => onChange(e)}
           InputProps={{
             inputComponent: NumberFormatCustom,
@@ -396,7 +416,9 @@ function CreateGoalFormDialog({
           name="goalAmount"
           label="Goal Amount"
           type="text"
-          value={spending.goalAmount}
+          value={
+            spendingToEdit ? spendingToEdit.goalAmount : spending.goalAmount
+          }
           onChange={e => onChange(e)}
           InputProps={{
             inputComponent: NumberFormatCustom,

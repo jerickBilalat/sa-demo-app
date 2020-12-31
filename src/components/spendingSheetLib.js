@@ -39,8 +39,16 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-function NormalSpendingSheets({spendings}) {
+function NormalSpendingSheets({
+  spendings,
+  setSpendingToEdit,
+  doOpenAddSpendingModal,
+}) {
   const classes = useStyles()
+  const doEdit = async spending => {
+    await setSpendingToEdit(spending)
+    doOpenAddSpendingModal()
+  }
   return (
     <React.Fragment>
       <Title>Spendings</Title>
@@ -54,19 +62,23 @@ function NormalSpendingSheets({spendings}) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {spendings.map(row => (
-            <TableRow key={row._id}>
-              <TableCell>{formatIsoDateString(row.createdAt)}</TableCell>
-              <TableCell>{row.description}</TableCell>
+          {spendings.map(spending => (
+            <TableRow
+              key={spending._id}
+              hover={true}
+              onClick={() => doEdit(spending)}
+            >
+              <TableCell>{formatIsoDateString(spending.createdAt)}</TableCell>
+              <TableCell>{spending.description}</TableCell>
               <TableCell>
-                {row.type === 'emr'
+                {spending.type === 'emr'
                   ? 'Emergency'
-                  : row.type === 'free'
+                  : spending.type === 'free'
                   ? 'Spludge'
                   : null}
               </TableCell>
               <TableCell align="right">
-                {formatWithCurrency(row.amount)}
+                {formatWithCurrency(spending.amount)}
               </TableCell>
             </TableRow>
           ))}
@@ -83,10 +95,16 @@ function NormalSpendingSheets({spendings}) {
 
 function FixedSpendingSheet({
   spendings,
+  setSpendingToEdit,
   numberOfPayPeriodPerMonth,
+  doOpenAddFixedSpendingModal,
   doOpenModal,
 }) {
   const classes = useStyles()
+  const doEdit = async spending => {
+    await setSpendingToEdit(spending)
+    doOpenAddFixedSpendingModal()
+  }
   return (
     <React.Fragment>
       <Title>
@@ -111,17 +129,17 @@ function FixedSpendingSheet({
           </TableRow>
         </TableHead>
         <TableBody>
-          {spendings.map(row => (
-            <TableRow key={row._id}>
-              <TableCell>{formatIsoDateString(row.createdAt)}</TableCell>
-              <TableCell>{row.description}</TableCell>
+          {spendings.map(spending => (
+            <TableRow key={spending._id} hover onClick={() => doEdit(spending)}>
+              <TableCell>{formatIsoDateString(spending.createdAt)}</TableCell>
+              <TableCell>{spending.description}</TableCell>
               <TableCell align="right">
-                {formatWithCurrency(row.amount)}
+                {formatWithCurrency(spending.amount)}
               </TableCell>
               <TableCell align="right">
                 {formatWithCurrency(
                   convertMontlyValueToPerPeriod(
-                    row.amount,
+                    spending.amount,
                     numberOfPayPeriodPerMonth,
                   ),
                 )}
@@ -139,8 +157,13 @@ function FixedSpendingSheet({
   )
 }
 
-function GoalSpendingSheet({spendings, doOpenModal}) {
+function GoalSpendingSheet({spendings, setSpendingToEdit, doOpenModal}) {
   const classes = useStyles()
+  const doEdit = async spending => {
+    console.log(spending)
+    await setSpendingToEdit(spending)
+    doOpenModal()
+  }
   return (
     <React.Fragment>
       <Title>
@@ -165,19 +188,22 @@ function GoalSpendingSheet({spendings, doOpenModal}) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {spendings.map(row => (
-            <TableRow key={row._id}>
-              <TableCell>{row.description}</TableCell>
+          {spendings.map(spending => (
+            <TableRow key={spending._id} hover onClick={() => doEdit(spending)}>
+              <TableCell>{spending.description}</TableCell>
               <TableCell>
                 <LinearProgressWithLabel
-                  value={calculateStatus(row.goalBalance, row.goalAmount)}
+                  value={calculateStatus(
+                    spending.goalBalance,
+                    spending.goalAmount,
+                  )}
                 />
               </TableCell>
               <TableCell align="right">
-                {formatWithCurrency(row.amount)}
+                {formatWithCurrency(spending.amount)}
               </TableCell>
               <TableCell align="right">
-                {formatWithCurrency(row.goalAmount)}
+                {formatWithCurrency(spending.goalAmount)}
               </TableCell>
             </TableRow>
           ))}
