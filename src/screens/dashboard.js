@@ -134,60 +134,6 @@ function Dashboard({
   toggleEditPPModal,
   doCloseEditPPModal,
 }) {
-  const classes = useStyles()
-  const [toggleAddSpendingModal, setAddSpendingModal] = React.useState(false)
-  const [toggleUseEmrFundModal, setUseEmrFundModal] = React.useState(false)
-  const [toggleUseFreeMoneyModal, setUseFreeMoneyModal] = React.useState(false)
-  const [
-    toggleAddFixedSpendingModal,
-    setAddFixedSpendingModal,
-  ] = React.useState(false)
-  const [toggleCreateGoalModal, setCreateGoalModal] = React.useState(false)
-  const doOpenAddSpendingModal = () => {
-    setAddSpendingModal(true)
-  }
-
-  const doOpenUseEmrFundModal = () => {
-    setUseEmrFundModal(true)
-  }
-
-  const doOpenFreeMoneyModal = () => {
-    setUseFreeMoneyModal(true)
-  }
-
-  const doOpenAddFixedSpendingModal = () => {
-    setAddFixedSpendingModal(true)
-  }
-
-  const doOpenCreateGoalModal = () => {
-    setCreateGoalModal(true)
-  }
-
-  const doCloseAddSpendingModal = () => {
-    setAddSpendingModal(false)
-  }
-
-  const doCloseUseEmrFundModal = () => {
-    setUseEmrFundModal(false)
-  }
-
-  const doCloseFreeMoneyModal = () => {
-    setUseFreeMoneyModal(false)
-  }
-
-  const doCloseAddFixedSpendingModal = () => {
-    setAddFixedSpendingModal(false)
-  }
-
-  const doCloseCreateGoalModal = () => {
-    setCreateGoalModal(false)
-  }
-
-  if (data.payPeriods.length === 0)
-    return <CreateIntialPayPeriod data={data} dispatch={dispatch} />
-
-  const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight)
-
   const {username, currentSpendings, token} = data
 
   const currentPayPeriod = data.payPeriods[data.payPeriods.length - 1]
@@ -249,6 +195,65 @@ function Dashboard({
     ...freeSpendings,
     ...emrSpendings,
   ].sort(sortDatesLatestFirst)
+
+  const classes = useStyles()
+  const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight)
+
+  const [toggleAddSpendingModal, setAddSpendingModal] = React.useState(false)
+  const [toggleUseEmrFundModal, setUseEmrFundModal] = React.useState(false)
+  const [toggleUseFreeMoneyModal, setUseFreeMoneyModal] = React.useState(false)
+  const [
+    toggleAddFixedSpendingModal,
+    setAddFixedSpendingModal,
+  ] = React.useState(false)
+  const [toggleCreateGoalModal, setCreateGoalModal] = React.useState(false)
+  const [carryOverGoals, setCarryOverGoals] = React.useState(
+    goalSpendings.map(x => x._id),
+  )
+  const [carryOverFixed, setCarryOverFixed] = React.useState(
+    fixedSpendings.map(x => x._id),
+  )
+  if (data.payPeriods.length === 0)
+    return <CreateIntialPayPeriod data={data} dispatch={dispatch} />
+  const doOpenAddSpendingModal = () => {
+    setAddSpendingModal(true)
+  }
+
+  const doOpenUseEmrFundModal = () => {
+    setUseEmrFundModal(true)
+  }
+
+  const doOpenFreeMoneyModal = () => {
+    setUseFreeMoneyModal(true)
+  }
+
+  const doOpenAddFixedSpendingModal = () => {
+    setAddFixedSpendingModal(true)
+  }
+
+  const doOpenCreateGoalModal = () => {
+    setCreateGoalModal(true)
+  }
+
+  const doCloseAddSpendingModal = () => {
+    setAddSpendingModal(false)
+  }
+
+  const doCloseUseEmrFundModal = () => {
+    setUseEmrFundModal(false)
+  }
+
+  const doCloseFreeMoneyModal = () => {
+    setUseFreeMoneyModal(false)
+  }
+
+  const doCloseAddFixedSpendingModal = () => {
+    setAddFixedSpendingModal(false)
+  }
+
+  const doCloseCreateGoalModal = () => {
+    setCreateGoalModal(false)
+  }
 
   return (
     <div className={classes.root}>
@@ -339,18 +344,24 @@ function Dashboard({
         dispatch={dispatch}
       />
       <FixedSpendingFormDialog
+        setCarryOverFixed={setCarryOverFixed}
         modalToggle={toggleAddFixedSpendingModal}
         doCloseModal={doCloseAddFixedSpendingModal}
         data={data}
         dispatch={dispatch}
       />
       <CreateGoalFormDialog
+        setCarryOverGoals={setCarryOverGoals}
         modalToggle={toggleCreateGoalModal}
         doCloseModal={doCloseCreateGoalModal}
         data={data}
         dispatch={dispatch}
       />
       <CreateNextPeriodFormDialog
+        setCarryOverFixed={setCarryOverFixed}
+        setCarryOverGoals={setCarryOverGoals}
+        carryOverGoals={carryOverGoals}
+        carryOverFixed={carryOverFixed}
         modalToggle={toggleCreatePayPeriodModal}
         doCloseModal={doCloseCreatePayPeriodModal}
         data={data}

@@ -234,7 +234,13 @@ function FreeMoneyFormDialog({modalToggle, doCloseModal, data, dispatch}) {
   )
 }
 
-function FixedSpendingFormDialog({modalToggle, doCloseModal, data, dispatch}) {
+function FixedSpendingFormDialog({
+  setCarryOverFixed,
+  modalToggle,
+  doCloseModal,
+  data,
+  dispatch,
+}) {
   const defaultState = {
     description: '',
     amount: '0',
@@ -257,6 +263,10 @@ function FixedSpendingFormDialog({modalToggle, doCloseModal, data, dispatch}) {
     })
       .then(res => {
         dispatch({type: 'add-spending', payload: res})
+        return res
+      })
+      .then(res => {
+        setCarryOverFixed(prevState => [...prevState, res._id])
         setSpending(defaultState)
         return doCloseModal()
       })
@@ -306,7 +316,13 @@ function FixedSpendingFormDialog({modalToggle, doCloseModal, data, dispatch}) {
   )
 }
 
-function CreateGoalFormDialog({modalToggle, doCloseModal, data, dispatch}) {
+function CreateGoalFormDialog({
+  setCarryOverGoals,
+  modalToggle,
+  doCloseModal,
+  data,
+  dispatch,
+}) {
   const defaultState = {
     description: '',
     amount: '0',
@@ -334,8 +350,12 @@ function CreateGoalFormDialog({modalToggle, doCloseModal, data, dispatch}) {
     })
       .then(res => {
         dispatch({type: 'add-spending', payload: res})
+        return res
+      })
+      .then(res => {
+        setCarryOverGoals(prevState => [...prevState, res._id])
         setSpending(defaultState)
-        return doCloseModal()
+        doCloseModal()
       })
       .catch(console.log) // TODO: handle error to render error message
   }
@@ -397,6 +417,10 @@ function CreateGoalFormDialog({modalToggle, doCloseModal, data, dispatch}) {
 
 function CreateNextPeriodFormDialog({
   fixedSpendings,
+  carryOverFixed,
+  setCarryOverFixed,
+  carryOverGoals,
+  setCarryOverGoals,
   goalSpendings,
   remainingBudget,
   prevPayPeriodID,
@@ -407,12 +431,6 @@ function CreateNextPeriodFormDialog({
 }) {
   // TODO: normalize the input into the right format of type string
   const [form, setForm] = React.useState({pay: ''})
-  const [carryOverGoals, setCarryOverGoals] = React.useState(
-    goalSpendings.map(x => x._id),
-  )
-  const [carryOverFixed, setCarryOverFixed] = React.useState(
-    fixedSpendings.map(x => x._id),
-  )
 
   const onChange = e => {
     const target = e.target
@@ -453,7 +471,7 @@ function CreateNextPeriodFormDialog({
       onClose={doCloseModal}
       aria-labelledby="form-dialog-title"
     >
-      <DialogTitle id="form-dialog-title">Create Goal</DialogTitle>
+      <DialogTitle id="form-dialog-title">Create Period</DialogTitle>
       <DialogContent>
         <DialogContentText>How much is your starting income?</DialogContentText>
         <TextField
