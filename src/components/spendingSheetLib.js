@@ -107,16 +107,15 @@ function NormalSpendingSheets({
 }
 
 function FixedSpendingSheet({
+  doToggleModal,
   spendings,
   setSpendingToEdit,
   numberOfPayPeriodPerMonth,
-  doOpenAddFixedSpendingModal,
-  doOpenModal,
 }) {
   const classes = useStyles()
   const doEdit = async spending => {
     await setSpendingToEdit(spending)
-    doOpenAddFixedSpendingModal()
+    doToggleModal()
   }
   return (
     <React.Fragment>
@@ -127,7 +126,7 @@ function FixedSpendingSheet({
           color="default"
           className={classes.button}
           startIcon={<AddIcon />}
-          onClick={doOpenModal}
+          onClick={doToggleModal}
         >
           Add
         </Button>
@@ -170,12 +169,11 @@ function FixedSpendingSheet({
   )
 }
 
-function GoalSpendingSheet({spendings, setSpendingToEdit, doOpenModal}) {
+function GoalSpendingSheet({doToggleModal, spendings, setSpendingToEdit}) {
   const classes = useStyles()
   const doEdit = async spending => {
-    console.log(spending)
     await setSpendingToEdit(spending)
-    doOpenModal()
+    doToggleModal()
   }
   return (
     <React.Fragment>
@@ -186,7 +184,7 @@ function GoalSpendingSheet({spendings, setSpendingToEdit, doOpenModal}) {
           color="default"
           className={classes.button}
           startIcon={<AddIcon />}
-          onClick={doOpenModal}
+          onClick={doToggleModal}
         >
           Create
         </Button>

@@ -218,14 +218,6 @@ function Dashboard({
     ...emrSpendings,
   ].sort(sortDatesLatestFirst)
 
-  const doOpenAddFixedSpendingModal = () => {
-    setAddFixedSpendingModal(true)
-  }
-
-  const doOpenCreateGoalModal = () => {
-    setCreateGoalModal(true)
-  }
-
   const doToggleModal = setToggle => {
     const toggleHanlder = prevState => {
       const isClosing = prevState ? true : false
@@ -293,11 +285,10 @@ function Dashboard({
             <Grid item xs={12} md={6}>
               <Paper className={classes.paper}>
                 <FixedSpendingSheet
-                  doOpenAddFixedSpendingModal={doOpenAddFixedSpendingModal}
                   setSpendingToEdit={setSpendingToEdit}
                   spendings={fixedSpendings}
                   numberOfPayPeriodPerMonth={data.numberOfPayPeriodPerMonth}
-                  doOpenModal={doOpenAddFixedSpendingModal}
+                  doToggleModal={() => doToggleModal(setAddFixedSpendingModal)}
                 />
               </Paper>
             </Grid>
@@ -307,7 +298,7 @@ function Dashboard({
                 <GoalSpendingSheet
                   setSpendingToEdit={setSpendingToEdit}
                   spendings={goalSpendings}
-                  doOpenModal={doOpenCreateGoalModal}
+                  doToggleModal={() => doToggleModal(setCreateGoalModal)}
                 />
               </Paper>
             </Grid>
