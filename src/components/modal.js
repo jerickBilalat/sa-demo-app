@@ -407,7 +407,6 @@ function CreateGoalFormDialog({
   doToggleModal,
   setCarryOverGoals,
   modalToggle,
-  doCloseModal,
   data,
   dispatch,
 }) {

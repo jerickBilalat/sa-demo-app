@@ -218,32 +218,12 @@ function Dashboard({
     ...emrSpendings,
   ].sort(sortDatesLatestFirst)
 
-  const doOpenUseEmrFundModal = () => {
-    setUseEmrFundModal(true)
-  }
-
-  const doOpenFreeMoneyModal = () => {
-    setUseFreeMoneyModal(true)
-  }
-
   const doOpenAddFixedSpendingModal = () => {
     setAddFixedSpendingModal(true)
   }
 
   const doOpenCreateGoalModal = () => {
     setCreateGoalModal(true)
-  }
-
-  const doCloseFreeMoneyModal = () => {
-    setUseFreeMoneyModal(false)
-  }
-
-  const doCloseAddFixedSpendingModal = () => {
-    setAddFixedSpendingModal(false)
-  }
-
-  const doCloseCreateGoalModal = () => {
-    setCreateGoalModal(false)
   }
 
   const doToggleModal = setToggle => {
@@ -364,7 +344,6 @@ function Dashboard({
           spendingToEdit={spendingToEdit}
           setSpendingToEdit={setSpendingToEdit}
           modalToggle={toggleUseFreeMoneyModal}
-          doCloseModal={doCloseFreeMoneyModal}
           data={data}
           dispatch={dispatch}
         />
@@ -376,7 +355,6 @@ function Dashboard({
           doToggleModal={() => doToggleModal(setAddFixedSpendingModal)}
           setCarryOverFixed={setCarryOverFixed}
           modalToggle={toggleAddFixedSpendingModal}
-          doCloseModal={doCloseAddFixedSpendingModal}
           data={data}
           dispatch={dispatch}
         />
@@ -388,7 +366,6 @@ function Dashboard({
           doToggleModal={() => doToggleModal(setCreateGoalModal)}
           setCarryOverGoals={setCarryOverGoals}
           modalToggle={toggleCreateGoalModal}
-          doCloseModal={doCloseCreateGoalModal}
           data={data}
           dispatch={dispatch}
         />
