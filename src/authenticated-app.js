@@ -20,9 +20,16 @@ function userDataReducer(state, action) {
     case 'add-payPeriod':
       return {...state, payPeriods: [...state.payPeriods, action.payload]}
     case 'add-spending':
+      const newSpendingId = action.payload._id
+      let currentSpendings = state.currentSpendings
+      if (currentSpendings.map(x => x._id).includes(newSpendingId)) {
+        currentSpendings = state.currentSpendings.filter(
+          x => x._id !== newSpendingId,
+        )
+      }
       return {
         ...state,
-        currentSpendings: [...state.currentSpendings, action.payload],
+        currentSpendings: [...currentSpendings, action.payload],
       }
     default:
       return state

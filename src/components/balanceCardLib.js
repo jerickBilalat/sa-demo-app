@@ -31,7 +31,7 @@ function EmrFundCard({
   emrGoal,
   emrCurrentBalance,
   status,
-  doOpenModal,
+  doToggleModal,
 }) {
   const classes = useStyles()
   return (
@@ -39,7 +39,7 @@ function EmrFundCard({
       <Title>
         Emergency Fund{' '}
         <Button
-          onClick={doOpenModal}
+          onClick={doToggleModal}
           variant="contained"
           color="default"
           className={classes.button}
@@ -64,14 +64,21 @@ function EmrFundCard({
   )
 }
 
-function BudgetCard({remainingBudget, budget, spent, status, doOpenModal}) {
+function BudgetCard({
+  remainingBudget,
+  budget,
+  spent,
+  status,
+  doToggleModal,
+  setAddSpendingModal,
+}) {
   const classes = useStyles()
   return (
     <React.Fragment>
       <Title>
         Remaining Budget{' '}
         <Button
-          onClick={doOpenModal}
+          onClick={doToggleModal}
           variant="contained"
           color="default"
           className={classes.button}
@@ -96,14 +103,14 @@ function BudgetCard({remainingBudget, budget, spent, status, doOpenModal}) {
   )
 }
 
-function FreeMoneyCard({freeMoney, doOpenModal}) {
+function FreeMoneyCard({freeMoney, doToggleModal}) {
   const classes = useStyles()
   return (
     <React.Fragment>
       <Title>
         Spludge Money{' '}
         <Button
-          onClick={doOpenModal}
+          onClick={doToggleModal}
           variant="contained"
           color="default"
           className={classes.button}

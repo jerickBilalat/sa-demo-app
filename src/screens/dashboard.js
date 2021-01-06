@@ -145,6 +145,28 @@ function Dashboard({
   const freeSpendings = filterSpendingsByType('free')
   const goalSpendings = filterSpendingsByType('goal')
 
+  const classes = useStyles()
+  const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight)
+
+  const [toggleAddSpendingModal, setAddSpendingModal] = React.useState(false)
+  const [toggleUseEmrFundModal, setUseEmrFundModal] = React.useState(false)
+  const [toggleUseFreeMoneyModal, setUseFreeMoneyModal] = React.useState(false)
+  const [
+    toggleAddFixedSpendingModal,
+    setAddFixedSpendingModal,
+  ] = React.useState(false)
+  const [toggleCreateGoalModal, setCreateGoalModal] = React.useState(false)
+  const [carryOverGoals, setCarryOverGoals] = React.useState(
+    goalSpendings.map(x => x._id),
+  )
+  const [carryOverFixed, setCarryOverFixed] = React.useState(
+    fixedSpendings.map(x => x._id),
+  )
+  const [spendingToEdit, setSpendingToEdit] = React.useState(null)
+
+  if (data.payPeriods.length === 0)
+    return <CreateIntialPayPeriod data={data} dispatch={dispatch} />
+
   const avgPay = data.payPeriods
     .map(x => currency(x.pay).value)
     .reduce((a, b) => currency(a).add(b), 0)
@@ -196,31 +218,6 @@ function Dashboard({
     ...emrSpendings,
   ].sort(sortDatesLatestFirst)
 
-  const classes = useStyles()
-  const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight)
-
-  const [toggleAddSpendingModal, setAddSpendingModal] = React.useState(false)
-  const [toggleUseEmrFundModal, setUseEmrFundModal] = React.useState(false)
-  const [toggleUseFreeMoneyModal, setUseFreeMoneyModal] = React.useState(false)
-  const [
-    toggleAddFixedSpendingModal,
-    setAddFixedSpendingModal,
-  ] = React.useState(false)
-  const [toggleCreateGoalModal, setCreateGoalModal] = React.useState(false)
-  const [carryOverGoals, setCarryOverGoals] = React.useState(
-    goalSpendings.map(x => x._id),
-  )
-  const [carryOverFixed, setCarryOverFixed] = React.useState(
-    fixedSpendings.map(x => x._id),
-  )
-  const [spendingToEdit, setSpendingToEdit] = React.useState(null)
-
-  if (data.payPeriods.length === 0)
-    return <CreateIntialPayPeriod data={data} dispatch={dispatch} />
-  const doOpenAddSpendingModal = () => {
-    setAddSpendingModal(true)
-  }
-
   const doOpenUseEmrFundModal = () => {
     setUseEmrFundModal(true)
   }
@@ -237,14 +234,6 @@ function Dashboard({
     setCreateGoalModal(true)
   }
 
-  const doCloseAddSpendingModal = () => {
-    setAddSpendingModal(false)
-  }
-
-  const doCloseUseEmrFundModal = () => {
-    setUseEmrFundModal(false)
-  }
-
   const doCloseFreeMoneyModal = () => {
     setUseFreeMoneyModal(false)
   }
@@ -255,6 +244,15 @@ function Dashboard({
 
   const doCloseCreateGoalModal = () => {
     setCreateGoalModal(false)
+  }
+
+  const doToggleModal = setToggle => {
+    const toggleHanlder = prevState => {
+      const isClosing = prevState ? true : false
+      if (isClosing && spendingToEdit !== null) setSpendingToEdit(null)
+      return !prevState
+    }
+    setToggle(toggleHanlder)
   }
 
   return (
@@ -270,7 +268,8 @@ function Dashboard({
                   spent={formatWithCurrency(sumOf(normalSpendings))}
                   remainingBudget={formatWithCurrency(remainingBudget)}
                   budget={formatWithCurrency(budget)}
-                  doOpenModal={doOpenAddSpendingModal}
+                  doToggleModal={() => doToggleModal(setAddSpendingModal)}
+                  setAddSpendingModal={setAddSpendingModal}
                   status={calculateStatus(sumOf(normalSpendings), budget)}
                 />
               </Paper>
@@ -281,7 +280,8 @@ function Dashboard({
                 <EmrFundCard
                   emrCommitment={formatWithCurrency(emrCommitment)}
                   emrGoal={formatWithCurrency(emrGoal)}
-                  doOpenModal={doOpenUseEmrFundModal}
+                  doToggleModal={() => doToggleModal(setUseEmrFundModal)}
+                  setUseEmrFundModal={setUseEmrFundModal}
                   emrCurrentBalance={formatWithCurrency(emrCurrentBalance)}
                   status={calculateStatus(emrCurrentBalance, emrGoal)}
                 />
@@ -291,7 +291,7 @@ function Dashboard({
             <Grid item xs={12} md={4}>
               <Paper className={fixedHeightPaper}>
                 <FreeMoneyCard
-                  doOpenModal={doOpenFreeMoneyModal}
+                  doToggleModal={() => doToggleModal(setUseFreeMoneyModal)}
                   freeMoney={formatWithCurrency(freeMoney)}
                 />
               </Paper>
@@ -302,9 +302,10 @@ function Dashboard({
                 <NormalSpendingSheets
                   setSpendingToEdit={setSpendingToEdit}
                   spendings={regularSpendings}
-                  doOpenAddSpendingModal={doOpenAddSpendingModal}
-                  doOpenUseEmrFundModal={doOpenUseEmrFundModal}
-                  doOpenFreeMoneyModal={doOpenFreeMoneyModal}
+                  doToggleModal={doToggleModal}
+                  setAddSpendingModal={setAddSpendingModal}
+                  setUseEmrFundModal={setUseEmrFundModal}
+                  setUseFreeMoneyModal={setUseFreeMoneyModal}
                 />
               </Paper>
             </Grid>
@@ -336,43 +337,62 @@ function Dashboard({
           </Box>
         </Container>
       </main>
-      <AddSpendingFormDialog
-        doCloseModal={doCloseAddSpendingModal}
-        spendingToEdit={spendingToEdit}
-        modalToggle={toggleAddSpendingModal}
-        data={data}
-        dispatch={dispatch}
-      />
-      <EmrFundFormDialog
-        spendingToEdit={spendingToEdit}
-        modalToggle={toggleUseEmrFundModal}
-        doCloseModal={doCloseUseEmrFundModal}
-        data={data}
-        dispatch={dispatch}
-      />
-      <FreeMoneyFormDialog
-        spendingToEdit={spendingToEdit}
-        modalToggle={toggleUseFreeMoneyModal}
-        doCloseModal={doCloseFreeMoneyModal}
-        data={data}
-        dispatch={dispatch}
-      />
-      <FixedSpendingFormDialog
-        spendingToEdit={spendingToEdit}
-        setCarryOverFixed={setCarryOverFixed}
-        modalToggle={toggleAddFixedSpendingModal}
-        doCloseModal={doCloseAddFixedSpendingModal}
-        data={data}
-        dispatch={dispatch}
-      />
-      <CreateGoalFormDialog
-        spendingToEdit={spendingToEdit}
-        setCarryOverGoals={setCarryOverGoals}
-        modalToggle={toggleCreateGoalModal}
-        doCloseModal={doCloseCreateGoalModal}
-        data={data}
-        dispatch={dispatch}
-      />
+      {toggleAddSpendingModal && (
+        <AddSpendingFormDialog
+          doToggleModal={() => doToggleModal(setAddSpendingModal)}
+          spendingToEdit={spendingToEdit}
+          modalToggle={toggleAddSpendingModal}
+          setSpendingToEdit={setSpendingToEdit}
+          data={data}
+          dispatch={dispatch}
+        />
+      )}
+      {toggleUseEmrFundModal && (
+        <EmrFundFormDialog
+          doToggleModal={() => doToggleModal(setUseEmrFundModal)}
+          spendingToEdit={spendingToEdit}
+          modalToggle={toggleUseEmrFundModal}
+          setSpendingToEdit={setSpendingToEdit}
+          setUseEmrFundModal={setUseEmrFundModal}
+          data={data}
+          dispatch={dispatch}
+        />
+      )}
+      {toggleUseFreeMoneyModal && (
+        <FreeMoneyFormDialog
+          doToggleModal={() => doToggleModal(setUseFreeMoneyModal)}
+          spendingToEdit={spendingToEdit}
+          setSpendingToEdit={setSpendingToEdit}
+          modalToggle={toggleUseFreeMoneyModal}
+          doCloseModal={doCloseFreeMoneyModal}
+          data={data}
+          dispatch={dispatch}
+        />
+      )}
+      {toggleAddFixedSpendingModal && (
+        <FixedSpendingFormDialog
+          spendingToEdit={spendingToEdit}
+          setSpendingToEdit={setSpendingToEdit}
+          doToggleModal={() => doToggleModal(setAddFixedSpendingModal)}
+          setCarryOverFixed={setCarryOverFixed}
+          modalToggle={toggleAddFixedSpendingModal}
+          doCloseModal={doCloseAddFixedSpendingModal}
+          data={data}
+          dispatch={dispatch}
+        />
+      )}
+      {toggleCreateGoalModal && (
+        <CreateGoalFormDialog
+          spendingToEdit={spendingToEdit}
+          setSpendingToEdit={setSpendingToEdit}
+          doToggleModal={() => doToggleModal(setCreateGoalModal)}
+          setCarryOverGoals={setCarryOverGoals}
+          modalToggle={toggleCreateGoalModal}
+          doCloseModal={doCloseCreateGoalModal}
+          data={data}
+          dispatch={dispatch}
+        />
+      )}
       <CreateNextPeriodFormDialog
         setCarryOverFixed={setCarryOverFixed}
         setCarryOverGoals={setCarryOverGoals}

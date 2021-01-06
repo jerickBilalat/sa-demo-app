@@ -17,11 +17,12 @@ import {formatWithCurrency} from './utils'
 import {NumberFormatCustom} from './lib'
 
 function AddSpendingFormDialog({
+  doToggleModal,
   spendingToEdit,
   modalToggle,
-  doCloseModal,
   data,
   dispatch,
+  setSpendingToEdit,
 }) {
   const defaultState = spendingToEdit || {
     description: '',
@@ -30,29 +31,42 @@ function AddSpendingFormDialog({
     payPeriodId: data.payPeriods[data.payPeriods.length - 1]._id,
   }
   const [spending, setSpending] = React.useState(defaultState)
-  const onChange = e => {
+
+  const onChange = async e => {
     const target = e.target
+    spendingToEdit &&
+      (await setSpendingToEdit({...spending, [target.name]: target.value}))
     setSpending({...spending, [target.name]: target.value})
   }
+
   const onSubmit = e => {
     e.preventDefault()
     const body = {...spending}
+    const customConfig = {}
+    let url = spendingToEdit
+      ? 'spending/update-spending'
+      : 'spending/create-spending'
 
-    client('spending/create-spending', {
+    if (spendingToEdit) {
+      customConfig.method = 'PUT'
+    }
+    client(url, {
       data: body,
       token: data.token,
+      ...customConfig,
     })
       .then(res => {
         dispatch({type: 'add-spending', payload: res})
         setSpending(defaultState)
-        return doCloseModal()
+        return doToggleModal()
       })
       .catch(console.log) // TODO: handle error to render error message
   }
+
   return (
     <Dialog
       open={modalToggle}
-      onClose={doCloseModal}
+      onClose={doToggleModal}
       aria-labelledby="form-dialog-title"
     >
       <DialogTitle id="form-dialog-title">
@@ -86,11 +100,11 @@ function AddSpendingFormDialog({
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={doCloseModal} color="primary">
+        <Button onClick={doToggleModal} color="primary">
           Cancel
         </Button>
         <Button onClick={onSubmit} color="primary">
-          Spend
+          {spendingToEdit ? 'Done' : 'Spend'}
         </Button>
       </DialogActions>
     </Dialog>
@@ -98,9 +112,10 @@ function AddSpendingFormDialog({
 }
 
 function EmrFundFormDialog({
+  doToggleModal,
   spendingToEdit,
   modalToggle,
-  doCloseModal,
+  setSpendingToEdit,
   data,
   dispatch,
 }) {
@@ -112,22 +127,33 @@ function EmrFundFormDialog({
   }
   const [spending, setSpending] = React.useState(defaultState)
 
-  const onChange = e => {
+  const onChange = async e => {
     const target = e.target
+    spendingToEdit &&
+      (await setSpendingToEdit({...spending, [target.name]: target.value}))
     setSpending({...spending, [target.name]: target.value})
   }
+
   const onSubmit = e => {
     e.preventDefault()
     const body = {...spending}
+    const customConfig = {}
+    let url = spendingToEdit
+      ? 'spending/update-spending'
+      : 'spending/create-spending'
 
-    client('spending/create-spending', {
+    if (spendingToEdit) {
+      customConfig.method = 'PUT'
+    }
+    client(url, {
       data: body,
       token: data.token,
+      ...customConfig,
     })
       .then(res => {
         dispatch({type: 'add-spending', payload: res})
         setSpending(defaultState)
-        return doCloseModal()
+        return doToggleModal()
       })
       .catch(console.log) // TODO: handle error to render error message
   }
@@ -135,7 +161,7 @@ function EmrFundFormDialog({
   return (
     <Dialog
       open={modalToggle}
-      onClose={doCloseModal}
+      onClose={() => doToggleModal()}
       aria-labelledby="form-dialog-title"
     >
       <DialogTitle id="form-dialog-title">
@@ -169,11 +195,11 @@ function EmrFundFormDialog({
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={doCloseModal} color="primary">
+        <Button onClick={() => doToggleModal()} color="primary">
           Cancel
         </Button>
         <Button onClick={onSubmit} color="primary">
-          Use Fund
+          {spendingToEdit ? 'Done' : 'Use'}
         </Button>
       </DialogActions>
     </Dialog>
@@ -181,9 +207,10 @@ function EmrFundFormDialog({
 }
 
 function FreeMoneyFormDialog({
+  doToggleModal,
   spendingToEdit,
+  setSpendingToEdit,
   modalToggle,
-  doCloseModal,
   data,
   dispatch,
 }) {
@@ -194,22 +221,35 @@ function FreeMoneyFormDialog({
     payPeriodId: data.payPeriods[data.payPeriods.length - 1]._id,
   }
   const [spending, setSpending] = React.useState(defaultState)
-  const onChange = e => {
+
+  const onChange = async e => {
     const target = e.target
+    spendingToEdit &&
+      (await setSpendingToEdit({...spending, [target.name]: target.value}))
     setSpending({...spending, [target.name]: target.value})
   }
+
   const onSubmit = e => {
     e.preventDefault()
     const body = {...spending}
+    const customConfig = {}
+    let url = spendingToEdit
+      ? 'spending/update-spending'
+      : 'spending/create-spending'
 
-    client('spending/create-spending', {
+    if (spendingToEdit) {
+      customConfig.method = 'PUT'
+    }
+
+    client(url, {
       data: body,
       token: data.token,
+      ...customConfig,
     })
       .then(res => {
         dispatch({type: 'add-spending', payload: res})
         setSpending(defaultState)
-        return doCloseModal()
+        return doToggleModal()
       })
       .catch(console.log) // TODO: handle error to render error message
   }
@@ -217,7 +257,7 @@ function FreeMoneyFormDialog({
   return (
     <Dialog
       open={modalToggle}
-      onClose={doCloseModal}
+      onClose={doToggleModal}
       aria-labelledby="form-dialog-title"
     >
       <DialogTitle id="form-dialog-title">
@@ -253,11 +293,11 @@ function FreeMoneyFormDialog({
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={doCloseModal} color="primary">
+        <Button onClick={doToggleModal} color="primary">
           Cancel
         </Button>
         <Button onClick={onSubmit} color="primary">
-          Spludge!
+          {spendingToEdit ? 'Done' : 'Spludge'}
         </Button>
       </DialogActions>
     </Dialog>
@@ -266,9 +306,10 @@ function FreeMoneyFormDialog({
 
 function FixedSpendingFormDialog({
   spendingToEdit,
+  setSpendingToEdit,
+  doToggleModal,
   setCarryOverFixed,
   modalToggle,
-  doCloseModal,
   data,
   dispatch,
 }) {
@@ -280,33 +321,42 @@ function FixedSpendingFormDialog({
   }
   const [spending, setSpending] = React.useState(defaultState)
 
-  const onChange = e => {
+  const onChange = async e => {
     const target = e.target
+    spendingToEdit &&
+      (await setSpendingToEdit({...spending, [target.name]: target.value}))
     setSpending({...spending, [target.name]: target.value})
   }
+
   const onSubmit = e => {
     e.preventDefault()
     const body = {...spending}
+    const customConfig = {}
+    let url = spendingToEdit
+      ? 'spending/update-spending'
+      : 'spending/create-spending'
 
-    client('spending/create-spending', {
+    if (spendingToEdit) {
+      customConfig.method = 'PUT'
+    }
+
+    client(url, {
       data: body,
       token: data.token,
+      ...customConfig,
     })
       .then(res => {
         dispatch({type: 'add-spending', payload: res})
-        return res
-      })
-      .then(res => {
         setCarryOverFixed(prevState => [...prevState, res._id])
         setSpending(defaultState)
-        return doCloseModal()
+        return doToggleModal()
       })
       .catch(console.log) // TODO: handle error to render error message
   }
   return (
     <Dialog
       open={modalToggle}
-      onClose={doCloseModal}
+      onClose={doToggleModal}
       aria-labelledby="form-dialog-title"
     >
       <DialogTitle id="form-dialog-title">
@@ -340,11 +390,11 @@ function FixedSpendingFormDialog({
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={doCloseModal} color="primary">
+        <Button onClick={doToggleModal} color="primary">
           Cancel
         </Button>
         <Button onClick={onSubmit} color="primary">
-          Add
+          {spendingToEdit ? 'Done' : 'Add'}
         </Button>
       </DialogActions>
     </Dialog>
@@ -353,6 +403,8 @@ function FixedSpendingFormDialog({
 
 function CreateGoalFormDialog({
   spendingToEdit,
+  setSpendingToEdit,
+  doToggleModal,
   setCarryOverGoals,
   modalToggle,
   doCloseModal,
@@ -368,8 +420,10 @@ function CreateGoalFormDialog({
   }
   const [spending, setSpending] = React.useState(defaultState)
 
-  const onChange = e => {
+  const onChange = async e => {
     const target = e.target
+    spendingToEdit &&
+      (await setSpendingToEdit({...spending, [target.name]: target.value}))
     setSpending({...spending, [target.name]: target.value})
   }
   const onSubmit = e => {
@@ -379,26 +433,32 @@ function CreateGoalFormDialog({
       goalBalance: spending.amount,
       goalAmount: spending.goalAmount,
     }
+    const customConfig = {}
+    let url = spendingToEdit
+      ? 'spending/update-spending'
+      : 'spending/create-spending'
 
-    client('spending/create-spending', {
+    if (spendingToEdit) {
+      customConfig.method = 'PUT'
+    }
+
+    client(url, {
       data: body,
       token: data.token,
+      ...customConfig,
     })
       .then(res => {
         dispatch({type: 'add-spending', payload: res})
-        return res
-      })
-      .then(res => {
         setCarryOverGoals(prevState => [...prevState, res._id])
         setSpending(defaultState)
-        doCloseModal()
+        return doToggleModal()
       })
       .catch(console.log) // TODO: handle error to render error message
   }
   return (
     <Dialog
       open={modalToggle}
-      onClose={doCloseModal}
+      onClose={doToggleModal}
       aria-labelledby="form-dialog-title"
     >
       <DialogTitle id="form-dialog-title">
@@ -446,11 +506,11 @@ function CreateGoalFormDialog({
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={doCloseModal} color="primary">
+        <Button onClick={doToggleModal} color="primary">
           Cancel
         </Button>
         <Button onClick={onSubmit} color="primary">
-          Create
+          {spendingToEdit ? 'Edit' : 'Create'}
         </Button>
       </DialogActions>
     </Dialog>

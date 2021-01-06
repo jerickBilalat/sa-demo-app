@@ -42,21 +42,23 @@ const useStyles = makeStyles(theme => ({
 function NormalSpendingSheets({
   spendings,
   setSpendingToEdit,
-  doOpenAddSpendingModal,
-  doOpenUseEmrFundModal,
-  doOpenFreeMoneyModal,
+  setAddSpendingModal,
+  setUseEmrFundModal,
+  setUseFreeMoneyModal,
+  doToggleModal,
 }) {
   const classes = useStyles()
   const doEdit = async spending => {
     await setSpendingToEdit(spending)
     switch (spending.type) {
       case 'emr':
-        doOpenUseEmrFundModal()
+        doToggleModal(setUseEmrFundModal)
         break
       case 'free':
-        doOpenFreeMoneyModal()
+        doToggleModal(setUseFreeMoneyModal)
+        break
       default:
-        doOpenAddSpendingModal()
+        doToggleModal(setAddSpendingModal)
         break
     }
   }
