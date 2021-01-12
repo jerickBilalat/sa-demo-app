@@ -1,7 +1,6 @@
 import * as React from 'react'
 import {clientFacade as client} from '../utils/api-client'
 import currency from 'currency.js'
-import {CreateNextPayPeriod} from '../components/createNextPeriod'
 
 import clsx from 'clsx'
 import {makeStyles} from '@material-ui/core/styles'
@@ -134,7 +133,7 @@ function Dashboard({
   toggleEditPPModal,
   doCloseEditPPModal,
 }) {
-  const {username, currentSpendings, token} = data
+  const {currentSpendings} = data
 
   const currentPayPeriod = data.payPeriods[data.payPeriods.length - 1]
 
@@ -413,207 +412,6 @@ function CreateIntialPayPeriod({data, dispatch}) {
   )
 }
 
-function List({list}) {
-  const renderListByType = list.map(x => {
-    if (x.type === 'goal')
-      return (
-        <li key={x._id}>
-          {x.description} commitment: {x.amount} balance: {x.goalBalance}{' '}
-          TotalGoal: {x.goalAmount}
-        </li>
-      )
-
-    return (
-      <li key={x._id}>
-        {x.description} amount: {x.amount}
-      </li>
-    )
-  })
-
-  return <ol>{renderListByType}</ol>
-}
-function AddSpending({data, dispatch}) {
-  const [spending, setSpending] = React.useState({
-    description: '',
-    amount: 0,
-    type: 'normal',
-    payPeriodId: data.payPeriods[data.payPeriods.length - 1]._id,
-    goalAmount: '',
-  })
-
-  const onChange = e => {
-    const target = e.target
-    setSpending({...spending, [target.name]: target.value})
-  }
-
-  const onSelectTypeHandler = e => {
-    setSpending({...spending, type: e.target.value})
-  }
-
-  const onSubmit = e => {
-    e.preventDefault()
-    let body = {...spending}
-    if (spending.type === 'goal') {
-      body = {
-        ...body,
-        goalBalance: spending.amount,
-        goalAmount: spending.goalAmount,
-      }
-    }
-
-    client('spending/create-spending', {
-      data: body,
-      token: data.token,
-    })
-      .then(res => dispatch({type: 'add-spending', payload: res}))
-      .catch(console.log) // TODO: handle error to render error message
-  }
-
-  const renderFeildsForGoals = () => (
-    <input
-      type="text"
-      name="goalAmount"
-      onChange={onChange}
-      value={spending.goalAmount}
-    />
-  )
-  return (
-    <form onSubmit={onSubmit}>
-      <input
-        type="text"
-        name="description"
-        onChange={onChange}
-        value={spending.description}
-      />
-      <input
-        type="number"
-        name="amount"
-        onChange={onChange}
-        value={spending.amount}
-      />
-      <select value={spending.type} onChange={onSelectTypeHandler}>
-        <option value="normal">normal</option>
-        <option value="free">free</option>
-        <option value="emr">emr</option>
-        <option value="goal">goal</option>
-        <option value="fixed">fixed</option>
-      </select>
-      {spending.type === 'goal' && renderFeildsForGoals()}
-      <button type="sumibt">Add</button>
-    </form>
-  )
-}
-
-const Dashboard2 = ({data, dispatch}) => {
-  if (data.payPeriods.length === 0)
-    return <CreateIntialPayPeriod data={data} dispatch={dispatch} />
-
-  const {username, currentSpendings, token} = data
-
-  const currentPayPeriod = data.payPeriods[data.payPeriods.length - 1]
-
-  const filterSpendingsByType = filter(currentSpendings)
-  const normalSpendings = filterSpendingsByType('normal')
-  const fixedSpendings = filterSpendingsByType('fixed')
-  const emrSpendings = filterSpendingsByType('emr')
-  const freeSpendings = filterSpendingsByType('free')
-  const goalSpendings = filterSpendingsByType('goal')
-
-  const avgPay = data.payPeriods
-    .map(x => currency(x.pay).value)
-    .reduce((a, b) => currency(a).add(b), 0)
-    .divide(data.payPeriods.length).value
-  const emrGoal = currency(avgPay)
-    .multiply(data.numberOfPayPeriodPerMonth)
-    .multiply(data.emrtype).value
-
-  const sumOf = spendings => {
-    if (spendings.length === 0) return 0
-    return spendings
-      .map(x => {
-        if (
-          x.type === 'goal' &&
-          parseInt(x.goalBalance) >= parseInt(x.goalAmount)
-        )
-          return 0
-        return currency(x.amount).value
-      })
-      .reduce((a, b) => currency(a).add(b).value, 0)
-  }
-
-  const emrCurrentBalance = currency(data.emrRemainingBalance)
-    .add(data.emrCommitmentAmount)
-    .subtract(sumOf(emrSpendings)).value
-
-  const emrCommitment =
-    emrCurrentBalance >= emrGoal ? '0.00' : data.emrCommitmentAmount
-  const budget = currency(currentPayPeriod.pay)
-    .subtract(emrCommitment)
-    .subtract(
-      currency(sumOf(fixedSpendings)).divide(data.numberOfPayPeriodPerMonth)
-        .value,
-    )
-    .subtract(sumOf(goalSpendings)).value
-  const remainingBudget = currency(budget).subtract(sumOf(normalSpendings))
-    .value
-  const previousPayPeriods = data.payPeriods.slice(
-    0,
-    data.payPeriods.length - 1,
-  )
-
-  const surplus =
-    previousPayPeriods.length !== 0
-      ? previousPayPeriods
-          .map(x => x.remainingBudget)
-          .reduce((a, b) => currency(a).add(b).value, 0)
-      : 0
-
-  const freeMoney = currency(surplus).subtract(sumOf(freeSpendings)).format()
-  const actualRemainingBudget = currency(remainingBudget)
-    .subtract(sumOf(freeSpendings))
-    .format()
-  return (
-    <>
-      <button>Create Next Period</button>
-      <CreateNextPayPeriod
-        data={data}
-        fixedSpendings={fixedSpendings}
-        goalSpendings={goalSpendings}
-        remainingBudget={actualRemainingBudget}
-        prevPayPeriodID={currentPayPeriod._id}
-        emrCurrentBalance={emrCurrentBalance}
-      />
-      <h1>Dashboard</h1>
-      <p>Username: {username}</p>
-      <p>Add Spending by type: </p>
-      <AddSpending data={data} dispatch={dispatch} />
-      <h1>EMR Fund Status: </h1>
-      <p>
-        {emrCurrentBalance}/{emrGoal}
-      </p>
-      <List list={emrSpendings} />
-      <span>Use EMR Fund</span> | <span>View Usage</span>
-      <hr />
-      <h1>Free Money: {freeMoney}</h1>
-      <List list={freeSpendings} />
-      <span>Use EMR Fund</span> | <span>View Usage</span>
-      <hr />
-      <h1>Current Budget: </h1>
-      <p>
-        {remainingBudget} / {budget}
-      </p>
-      <List list={normalSpendings} />
-      <h1>Fixed Spendings: </h1>
-      <span>(Convered to Monthly)</span>
-      <List list={fixedSpendings} />
-      <hr />
-      <h1>Goals: </h1>
-      <List list={goalSpendings} />
-      <hr />
-    </>
-  )
-}
-
 // util functions
 function filter(spendings) {
   return type => spendings.filter(x => x.type === type)
@@ -641,4 +439,4 @@ function calculateStatus(x, y) {
   return currency(x).divide(y).multiply(100).value
 }
 
-export {Dashboard, Dashboard2}
+export {Dashboard}

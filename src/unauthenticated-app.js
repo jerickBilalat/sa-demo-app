@@ -3,8 +3,6 @@ import Avatar from '@material-ui/core/Avatar'
 import Button from '@material-ui/core/Button'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import TextField from '@material-ui/core/TextField'
-import FormControlLabel from '@material-ui/core/FormControlLabel'
-import Checkbox from '@material-ui/core/Checkbox'
 import Link from '@material-ui/core/Link'
 import Grid from '@material-ui/core/Grid'
 import Box from '@material-ui/core/Box'
@@ -300,32 +298,5 @@ const UnAuthenticatedApp = ({login, register}) => {
     <SignIn login={login} setToggleRegister={setToggleRegister} />
   )
 }
-
-// const UnAuthenticatedApp = ({login, register}) => {
-//   return (
-//     <>
-//       <button
-//         onClick={() =>
-//           register({
-//             username: 'mel-jrk',
-//             password: 'jrkmel123',
-//             emrtype: 3,
-//             emrRemainingBalance: '0.00',
-//             averagePayPerPeriod: '1600.00',
-//             numberOfPayPeriodPerMonth: 2,
-//             emrCommitmentAmount: '100.00',
-//           })
-//         }
-//       >
-//         Register
-//       </button>
-//       <button
-//         onClick={() => login({username: 'mel-jrk', password: 'jrkmel123'})}
-//       >
-//         Login
-//       </button>
-//     </>
-//   )
-// }
 
 export {UnAuthenticatedApp}

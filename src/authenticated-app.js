@@ -1,12 +1,11 @@
 import * as React from 'react'
-import {Link as RouterLink, Routes, Route, useMatch} from 'react-router-dom'
+import {Link as RouterLink, Routes, Route} from 'react-router-dom'
 
 import {About} from './screens/about'
-import {Dashboard, Dashboard2} from './screens/dashboard'
+import {Dashboard} from './screens/dashboard'
 import {NotFound} from './screens/notFound'
 import {UserSettings} from './screens/userSettings'
 
-import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
 import Link from '@material-ui/core/Link'
 import Toolbar from '@material-ui/core/Toolbar'
