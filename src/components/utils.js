@@ -1,4 +1,3 @@
-import * as React from 'react'
 import currency from 'currency.js'
 
 function filter(spendings) {
