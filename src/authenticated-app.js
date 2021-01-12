@@ -114,28 +114,30 @@ const AuthenticatedApp = ({user, logout}) => {
           </Button>
         </Link>
       </Toolbar>
-      <Toolbar variant="dense" className={classes.toolbarSecondary}>
-        <Grid container item justify="space-between">
-          <Button
-            color="default"
-            variant="outlined"
-            size="small"
-            startIcon={<EditIcon />}
-            onClick={doOpenEditPPModal}
-          >
-            Edit Period
-          </Button>
-          <Button
-            color="default"
-            variant="outlined"
-            size="small"
-            onClick={doOpenCreatePayPeriodModal}
-            endIcon={<NavigateNextIcon />}
-          >
-            Next Period
-          </Button>
-        </Grid>
-      </Toolbar>
+      {userData.payPeriods.length > 0 && (
+        <Toolbar variant="dense" className={classes.toolbarSecondary}>
+          <Grid container item justify="space-between">
+            <Button
+              color="default"
+              variant="outlined"
+              size="small"
+              startIcon={<EditIcon />}
+              onClick={doOpenEditPPModal}
+            >
+              Edit Period
+            </Button>
+            <Button
+              color="default"
+              variant="outlined"
+              size="small"
+              onClick={doOpenCreatePayPeriodModal}
+              endIcon={<NavigateNextIcon />}
+            >
+              Next Period
+            </Button>
+          </Grid>
+        </Toolbar>
+      )}
       <Routes>
         <Route
           path="/"
