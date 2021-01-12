@@ -31,6 +31,14 @@ function userDataReducer(state, action) {
         ...state,
         currentSpendings: [...currentSpendings, action.payload],
       }
+    case 'delete-spending':
+      const deletedSpendingId = action.payload._id
+      return {
+        ...state,
+        currentSpendings: [
+          ...state.currentSpendings.filter(x => x._id !== deletedSpendingId),
+        ],
+      }
     default:
       return state
   }

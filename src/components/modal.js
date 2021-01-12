@@ -63,6 +63,23 @@ function AddSpendingFormDialog({
       .catch(console.log) // TODO: handle error to render error message
   }
 
+  const doDelete = () => {
+    const body = {...spending}
+    let url = 'spending/delete-spending'
+
+    client(url, {
+      method: 'DELETE',
+      data: body,
+      token: data.token,
+    })
+      .then(res => {
+        dispatch({type: 'delete-spending', payload: res})
+        setSpending(defaultState)
+        return doToggleModal()
+      })
+      .catch(console.log) // TODO: handle error to render error message
+  }
+
   return (
     <Dialog
       open={modalToggle}
@@ -100,6 +117,11 @@ function AddSpendingFormDialog({
         />
       </DialogContent>
       <DialogActions>
+        {spendingToEdit && (
+          <Button onClick={doDelete} color="primary">
+            Delete
+          </Button>
+        )}
         <Button onClick={doToggleModal} color="primary">
           Cancel
         </Button>
@@ -158,6 +180,23 @@ function EmrFundFormDialog({
       .catch(console.log) // TODO: handle error to render error message
   }
 
+  const doDelete = () => {
+    const body = {...spending}
+    let url = 'spending/delete-spending'
+
+    client(url, {
+      method: 'DELETE',
+      data: body,
+      token: data.token,
+    })
+      .then(res => {
+        dispatch({type: 'delete-spending', payload: res})
+        setSpending(defaultState)
+        return doToggleModal()
+      })
+      .catch(console.log) // TODO: handle error to render error message
+  }
+
   return (
     <Dialog
       open={modalToggle}
@@ -195,6 +234,11 @@ function EmrFundFormDialog({
         />
       </DialogContent>
       <DialogActions>
+        {spendingToEdit && (
+          <Button onClick={doDelete} color="primary">
+            Delete
+          </Button>
+        )}
         <Button onClick={() => doToggleModal()} color="primary">
           Cancel
         </Button>
@@ -254,6 +298,23 @@ function FreeMoneyFormDialog({
       .catch(console.log) // TODO: handle error to render error message
   }
 
+  const doDelete = () => {
+    const body = {...spending}
+    let url = 'spending/delete-spending'
+
+    client(url, {
+      method: 'DELETE',
+      data: body,
+      token: data.token,
+    })
+      .then(res => {
+        dispatch({type: 'delete-spending', payload: res})
+        setSpending(defaultState)
+        return doToggleModal()
+      })
+      .catch(console.log) // TODO: handle error to render error message
+  }
+
   return (
     <Dialog
       open={modalToggle}
@@ -293,6 +354,11 @@ function FreeMoneyFormDialog({
         />
       </DialogContent>
       <DialogActions>
+        {spendingToEdit && (
+          <Button onClick={doDelete} color="primary">
+            Delete
+          </Button>
+        )}
         <Button onClick={doToggleModal} color="primary">
           Cancel
         </Button>
@@ -353,6 +419,24 @@ function FixedSpendingFormDialog({
       })
       .catch(console.log) // TODO: handle error to render error message
   }
+
+  const doDelete = () => {
+    const body = {...spending}
+    let url = 'spending/delete-spending'
+
+    client(url, {
+      method: 'DELETE',
+      data: body,
+      token: data.token,
+    })
+      .then(res => {
+        dispatch({type: 'delete-spending', payload: res})
+        setSpending(defaultState)
+        return doToggleModal()
+      })
+      .catch(console.log) // TODO: handle error to render error message
+  }
+
   return (
     <Dialog
       open={modalToggle}
@@ -390,6 +474,11 @@ function FixedSpendingFormDialog({
         />
       </DialogContent>
       <DialogActions>
+        {spendingToEdit && (
+          <Button onClick={doDelete} color="primary">
+            Delete
+          </Button>
+        )}
         <Button onClick={doToggleModal} color="primary">
           Cancel
         </Button>
@@ -454,6 +543,24 @@ function CreateGoalFormDialog({
       })
       .catch(console.log) // TODO: handle error to render error message
   }
+
+  const doDelete = () => {
+    const body = {...spending}
+    let url = 'spending/delete-spending'
+
+    client(url, {
+      method: 'DELETE',
+      data: body,
+      token: data.token,
+    })
+      .then(res => {
+        dispatch({type: 'delete-spending', payload: res})
+        setSpending(defaultState)
+        return doToggleModal()
+      })
+      .catch(console.log) // TODO: handle error to render error message
+  }
+
   return (
     <Dialog
       open={modalToggle}
@@ -505,6 +612,11 @@ function CreateGoalFormDialog({
         />
       </DialogContent>
       <DialogActions>
+        {spendingToEdit && (
+          <Button onClick={doDelete} color="primary">
+            Delete
+          </Button>
+        )}
         <Button onClick={doToggleModal} color="primary">
           Cancel
         </Button>
