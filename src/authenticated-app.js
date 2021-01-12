@@ -1,50 +1,156 @@
 import * as React from 'react'
-import {Link, Routes, Route, useMatch} from 'react-router-dom'
+import {Link as RouterLink, Routes, Route, useMatch} from 'react-router-dom'
+
 import {About} from './screens/about'
-import {Dashboard} from './screens/dashboard'
+import {Dashboard, Dashboard2} from './screens/dashboard'
 import {NotFound} from './screens/notFound'
 import {UserSettings} from './screens/userSettings'
 
-function NavLink(props) {
-  const match = useMatch(props.to)
-  return (
-    <Link
-      style={{textDecoration: match ? 'underline' : 'none'}}
-      to={props.to}
-      {...props}
-    />
-  )
-}
+import Typography from '@material-ui/core/Typography'
+import Button from '@material-ui/core/Button'
+import Link from '@material-ui/core/Link'
+import Toolbar from '@material-ui/core/Toolbar'
+import {makeStyles} from '@material-ui/core/styles'
+import Grid from '@material-ui/core/Grid'
+import EditIcon from '@material-ui/icons/Edit'
+import NavigateNextIcon from '@material-ui/icons/NavigateNext'
 
 function userDataReducer(state, action) {
   switch (action.type) {
     case 'add-payPeriod':
       return {...state, payPeriods: [...state.payPeriods, action.payload]}
     case 'add-spending':
+      const newSpendingId = action.payload._id
+      let currentSpendings = state.currentSpendings
+      if (currentSpendings.map(x => x._id).includes(newSpendingId)) {
+        currentSpendings = state.currentSpendings.filter(
+          x => x._id !== newSpendingId,
+        )
+      }
       return {
         ...state,
-        currentSpendings: [...state.currentSpendings, action.payload],
+        currentSpendings: [...currentSpendings, action.payload],
+      }
+    case 'delete-spending':
+      const deletedSpendingId = action.payload._id
+      return {
+        ...state,
+        currentSpendings: [
+          ...state.currentSpendings.filter(x => x._id !== deletedSpendingId),
+        ],
       }
     default:
       return state
   }
 }
 
+const useStyles = makeStyles(theme => ({
+  toolbar: {
+    borderBottom: `1px solid ${theme.palette.divider}`,
+  },
+  toolbarTitle: {
+    flex: 1,
+  },
+  toolbarSecondary: {
+    justifyContent: 'space-between',
+    overflowX: 'auto',
+  },
+  toolbarLink: {
+    padding: theme.spacing(1),
+    flexShrink: 0,
+  },
+  button: {
+    margin: theme.spacing(0.5),
+  },
+}))
+
 const AuthenticatedApp = ({user, logout}) => {
   const [userData, dispatch] = React.useReducer(userDataReducer, user)
+  const [toggleCreatePayPeriodModal, setCreatePayPeriodModal] = React.useState(
+    false,
+  )
+  const [toggleEditPPModal, setEditPPModal] = React.useState(false)
 
+  const classes = useStyles()
+  const sections = [
+    {title: 'Dashboard', url: '/'},
+    {title: 'About', url: '/about'},
+    {title: 'Settings', url: '/user-settigs'},
+  ]
+  const doOpenCreatePayPeriodModal = () => {
+    setCreatePayPeriodModal(true)
+  }
+  const doCloseCreatePayPeriodModal = () => {
+    setCreatePayPeriodModal(false)
+  }
+  const doOpenEditPPModal = () => {
+    setEditPPModal(true)
+  }
+  const doCloseEditPPModal = () => {
+    setEditPPModal(false)
+  }
   return (
     <>
-      <nav>
-        <NavLink to="/">Dashboard</NavLink> |{' '}
-        <NavLink to="/about">About</NavLink> |
-        <NavLink to="/user-settings">Settings</NavLink>
-      </nav>
-      <button onClick={logout}>Logout</button>
+      <Toolbar component="nav" className={classes.toolbar}>
+        {sections.map(section => {
+          return (
+            <Link
+              color="inherit"
+              component={RouterLink}
+              noWrap
+              key={section.title}
+              variant="body2"
+              to={section.url}
+              className={classes.toolbarLink}
+            >
+              {section.title}
+            </Link>
+          )
+        })}
+
+        <Link>
+          <Button variant="outlined" onClick={logout} size="small">
+            Log out
+          </Button>
+        </Link>
+      </Toolbar>
+      {userData.payPeriods.length > 0 && (
+        <Toolbar variant="dense" className={classes.toolbarSecondary}>
+          <Grid container item justify="space-between">
+            <Button
+              color="default"
+              variant="outlined"
+              size="small"
+              startIcon={<EditIcon />}
+              onClick={doOpenEditPPModal}
+            >
+              Edit Period
+            </Button>
+            <Button
+              color="default"
+              variant="outlined"
+              size="small"
+              onClick={doOpenCreatePayPeriodModal}
+              endIcon={<NavigateNextIcon />}
+            >
+              Next Period
+            </Button>
+          </Grid>
+        </Toolbar>
+      )}
       <Routes>
         <Route
           path="/"
-          element={<Dashboard data={userData} dispatch={dispatch} />}
+          element={
+            <Dashboard
+              data={userData}
+              dispatch={dispatch}
+              toggleCreatePayPeriodModal={toggleCreatePayPeriodModal}
+              doCloseCreatePayPeriodModal={doCloseCreatePayPeriodModal}
+              doCloseEditPPModal={doCloseEditPPModal}
+              toggleEditPPModal={toggleEditPPModal}
+            />
+          }
         />
         <Route path="/about" element={<About />} />
         <Route path="/user-settings" element={<UserSettings />} />
