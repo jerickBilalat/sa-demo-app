@@ -142,6 +142,7 @@ function Register({register, setToggleRegister}) {
     numberOfPayPeriodPerMonth: 2,
     emrtype: 6,
     averagePayPerPeriod: '0.00',
+    accessCode: '',
   })
 
   const onChange = event => {
@@ -259,6 +260,18 @@ function Register({register, setToggleRegister}) {
               shrink: true,
             }}
             value={user.emrtype}
+            onChange={onChange}
+          />
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            id="accessCode"
+            label="Access Code"
+            name="accessCode"
+            autoComplete="accessCode"
+            value={user.accessCode}
             onChange={onChange}
           />
           <Button

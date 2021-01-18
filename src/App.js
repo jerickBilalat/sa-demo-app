@@ -49,7 +49,10 @@ function App() {
   }
 
   const register = form => {
-    auth.register(form).then(userData => setData(userData))
+    auth
+      .register(form)
+      .then(userData => setData(userData))
+      .catch(err => setError(err.error.message))
   }
 
   function handleAuthError(errorData) {
@@ -65,7 +68,7 @@ function App() {
   const props = {user: data, login, logout, register}
 
   if (isError) {
-    return <h1>Please try again - {error}</h1>
+    return <h1>Error - {error}. Please refreah the page.</h1>
   }
 
   if (isLoading) {
