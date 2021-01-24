@@ -38,22 +38,17 @@ function App() {
   }, [setData])
 
   const login = credentials =>
-    auth
-      .login({...credentials})
-      .then(userData => setData(userData))
-      .catch(handleAuthError)
+    auth.login({...credentials}).then(userData => setData(userData))
 
   const logout = () => {
     auth.logout()
     setData(null)
   }
 
-  const register = form => {
-    auth
-      .register(form)
-      .then(userData => setData(userData))
-      .catch(err => setError(err.error.message))
-  }
+  const register = form =>
+    auth.register(form).then(userData => {
+      return setData(userData)
+    })
 
   function handleAuthError(errorData) {
     // TODO: make error message consistent on the server for this could cause consistency issue

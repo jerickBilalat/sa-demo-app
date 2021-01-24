@@ -51,6 +51,8 @@ function SignIn({login, setToggleRegister}) {
     username: '',
     password: '',
   })
+  const [isLoading, setIsLoading] = React.useState(false)
+  const [serverErrorMessage, setErrorMessage] = React.useState('')
 
   const onChange = event => {
     setCrendentials({...credentials, [event.target.name]: event.target.value})
@@ -58,7 +60,13 @@ function SignIn({login, setToggleRegister}) {
 
   const onSubmit = event => {
     event.preventDefault()
-    login(credentials) // TODO: add handler for login error, might have to reffer to bookshelf app
+    setIsLoading(true)
+    login(credentials)
+      .then(() => setIsLoading(false))
+      .catch(err => {
+        setErrorMessage(err.error.message)
+        setIsLoading(false)
+      }) // TODO: add handler for login error, might have to reffer to bookshelf app
   }
   return (
     <Container component="main" maxWidth="xs">
@@ -70,6 +78,7 @@ function SignIn({login, setToggleRegister}) {
         <Typography component="h1" variant="h5">
           Sign in
         </Typography>
+        <p style={{color: 'red'}}>{serverErrorMessage}</p>
         <form className={classes.form} onSubmit={onSubmit} noValidate>
           <TextField
             variant="outlined"
@@ -103,14 +112,13 @@ function SignIn({login, setToggleRegister}) {
             variant="contained"
             color="primary"
             className={classes.submit}
+            disabled={isLoading}
           >
-            Sign In
+            {isLoading ? 'Sining in...' : 'Sign In'}
           </Button>
           <Grid container>
             <Grid item xs>
-              <Link href="#" variant="body2">
-                Forgot password? Contact Admin
-              </Link>
+              Forgot password? <br /> Contact Admin
             </Grid>
             <Grid item>
               <Link
@@ -133,6 +141,9 @@ function SignIn({login, setToggleRegister}) {
 
 function Register({register, setToggleRegister}) {
   const classes = useStyles()
+  const [isLoading, setIsLoading] = React.useState(false)
+  const [errors, setErrors] = React.useState({serverError: ''})
+
   // TODO: remove averagePayPeriod but first make sure to remove it in the server
   const [user, setUser] = React.useState({
     username: '',
@@ -151,7 +162,13 @@ function Register({register, setToggleRegister}) {
 
   const onSubmit = event => {
     event.preventDefault()
-    register(user) // TODO: add handler for register error, might have to reffer to bookshelf app
+    setIsLoading(true)
+    register(user)
+      .then(() => setIsLoading(false))
+      .catch(err => {
+        setErrors({...errors, serverError: err.error.message})
+        setIsLoading(false)
+      }) // TODO: add handler for register error, might have to reffer to bookshelf app
   }
 
   return (
@@ -280,9 +297,13 @@ function Register({register, setToggleRegister}) {
             variant="contained"
             color="primary"
             className={classes.submit}
+            disabled={isLoading}
           >
-            Register
+            {isLoading ? 'Registering...' : 'Register'}
           </Button>
+          {errors.serverError && (
+            <p style={{color: 'red'}}>Server error - {errors.serverError}</p>
+          )}
           <Grid container>
             <Grid item>
               <Link
