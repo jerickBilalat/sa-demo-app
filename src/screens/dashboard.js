@@ -1,6 +1,6 @@
 import * as React from 'react'
-import {clientFacade as client} from '../utils/api-client'
 import currency from 'currency.js'
+import {CreateIntialPayPeriod} from '../components/cards'
 
 import clsx from 'clsx'
 import {makeStyles} from '@material-ui/core/styles'
@@ -164,7 +164,26 @@ function Dashboard({
   const [spendingToEdit, setSpendingToEdit] = React.useState(null)
 
   if (data.payPeriods.length === 0)
-    return <CreateIntialPayPeriod data={data} dispatch={dispatch} />
+    return (
+      <div className={classes.root}>
+        <CssBaseline />
+        <main className={classes.content}>
+          <Container maxWidth="lg" className={classes.container}>
+            <Grid container spacing={3}>
+              {/* Create initila payPeriod card */}
+              <Grid item xs={12}>
+                <Paper className={classes.paper}>
+                  <CreateIntialPayPeriod data={data} dispatch={dispatch} />
+                </Paper>
+              </Grid>
+            </Grid>
+            <Box pt={4}>
+              <Copyright />
+            </Box>
+          </Container>
+        </main>
+      </div>
+    )
 
   const avgPay = data.payPeriods
     .map(x => currency(x.pay).value)
@@ -381,34 +400,6 @@ function Dashboard({
         currentPayPeriod={currentPayPeriod}
       />
     </div>
-  )
-}
-
-function CreateIntialPayPeriod({data, dispatch}) {
-  // TODO: normalize the input into the right format of type string
-  const [form, setForm] = React.useState({pay: '0.00'})
-
-  const onChange = e => {
-    const target = e.target
-    setForm({...form, [target.name]: target.value})
-  }
-  const onSubmit = event => {
-    event.preventDefault()
-    client('pay-period/create-initial-pay-period', {
-      data: {pay: form.pay},
-      token: data.token,
-    }).then(res => {
-      return dispatch({type: 'add-payPeriod', payload: res})
-    })
-  }
-  return (
-    <>
-      <h1>Create First Pay Period</h1>
-      <form onSubmit={onSubmit}>
-        <input type="text" value={form.pay} name="pay" onChange={onChange} />
-        <input type="submit" value="Submit" />
-      </form>
-    </>
   )
 }
 

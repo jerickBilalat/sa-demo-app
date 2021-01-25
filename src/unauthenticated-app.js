@@ -163,12 +163,10 @@ function Register({register, setToggleRegister}) {
   const onSubmit = event => {
     event.preventDefault()
     setIsLoading(true)
-    register(user)
-      .then(() => setIsLoading(false))
-      .catch(err => {
-        setErrors({...errors, serverError: err.error.message})
-        setIsLoading(false)
-      }) // TODO: add handler for register error, might have to reffer to bookshelf app
+    register(user).catch(err => {
+      setErrors({...errors, serverError: err.error.message})
+      setIsLoading(false)
+    }) // TODO: add handler for register error, might have to reffer to bookshelf app
   }
 
   return (
