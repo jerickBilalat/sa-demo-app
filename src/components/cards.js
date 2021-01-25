@@ -23,12 +23,20 @@ function CreateIntialPayPeriod({data, dispatch}) {
   const classes = useStyles()
   const [isLoading, setIsLoading] = React.useState(false)
   const [serverErrorMessage, setServerErrorMessage] = React.useState('')
+  const [clientValidationErrors, setClientValidationErrors] = React.useState({})
   const onChange = e => {
     const target = e.target
     setForm({...form, [target.name]: target.value})
   }
   const onSubmit = event => {
     event.preventDefault()
+    if (!isFormValid()) {
+      setClientValidationErrors({
+        ...clientValidationErrors,
+        pay: 'Pay must not be empty or an amount greater than 0',
+      })
+      return
+    }
     setIsLoading(true)
     client('pay-period/create-initial-pay-period', {
       data: {pay: form.pay},
@@ -39,11 +47,21 @@ function CreateIntialPayPeriod({data, dispatch}) {
       })
       .catch(err => setServerErrorMessage(err.error.message))
   }
+
+  const isFormValid = () => {
+    const formValid = true
+    if (form.pay === '' || parseInt(form.pay) < 0) return false
+    return formValid
+  }
+
   return (
     <form onSubmit={onSubmit}>
       <p>Start by entering your first pay for your first budgeting period</p>
       {serverErrorMessage ? (
         <p className={classes.errorMessage}>{serverErrorMessage}</p>
+      ) : null}
+      {clientValidationErrors.pay ? (
+        <p className={classes.errorMessage}>{clientValidationErrors.pay}</p>
       ) : null}
       <TextField
         autoFocus
