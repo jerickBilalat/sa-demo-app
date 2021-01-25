@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Link as RouterLink, Routes, Route} from 'react-router-dom'
+import {Link as RouterLink, Routes, Route, useMatch} from 'react-router-dom'
 
 import {About} from './screens/about'
 import {Dashboard} from './screens/dashboard'
@@ -71,6 +71,7 @@ const AuthenticatedApp = ({user, logout}) => {
   const [toggleEditPPModal, setEditPPModal] = React.useState(false)
 
   const classes = useStyles()
+  const isOnDashboard = useMatch('/')
   const sections = [
     {title: 'Dashboard', url: '/'},
     {title: 'About', url: '/about'},
@@ -113,7 +114,7 @@ const AuthenticatedApp = ({user, logout}) => {
           </Button>
         </Link>
       </Toolbar>
-      {userData.payPeriods.length > 0 && (
+      {isOnDashboard && userData.payPeriods.length > 0 && (
         <Toolbar variant="dense" className={classes.toolbarSecondary}>
           <Grid container item justify="space-between">
             <Button
