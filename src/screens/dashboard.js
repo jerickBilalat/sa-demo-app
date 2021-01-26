@@ -1,6 +1,7 @@
 import * as React from 'react'
 import currency from 'currency.js'
 import {CreateIntialPayPeriod} from '../components/cards'
+import {derivedUserData} from '../utils/lib'
 
 import clsx from 'clsx'
 import {makeStyles} from '@material-ui/core/styles'
@@ -133,20 +134,30 @@ function Dashboard({
   toggleEditPPModal,
   doCloseEditPPModal,
 }) {
-  const {currentSpendings} = data
-
-  const currentPayPeriod = data.payPeriods[data.payPeriods.length - 1]
-
-  const filterSpendingsByType = filter(currentSpendings)
-  const normalSpendings = filterSpendingsByType('normal')
-  const fixedSpendings = filterSpendingsByType('fixed')
-  const emrSpendings = filterSpendingsByType('emr')
-  const freeSpendings = filterSpendingsByType('free')
-  const goalSpendings = filterSpendingsByType('goal')
+  const {
+    fixedSpendings,
+    goalSpendings,
+    currentPayPeriod,
+    emrGoal,
+    emrStatus,
+    emrCurrentBalance,
+    emrCommitment,
+    remainingBudget,
+    budget,
+    budgetStatus,
+    budgetSpent,
+    freeMoney,
+    actualRemainingBudget,
+    regularSpendings,
+    formatWithCurrency,
+  } = derivedUserData(data)
 
   const classes = useStyles()
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight)
 
+  /**
+   * COMPONENT STATE
+   */
   const [toggleAddSpendingModal, setAddSpendingModal] = React.useState(false)
   const [toggleUseEmrFundModal, setUseEmrFundModal] = React.useState(false)
   const [toggleUseFreeMoneyModal, setUseFreeMoneyModal] = React.useState(false)
@@ -163,6 +174,9 @@ function Dashboard({
   )
   const [spendingToEdit, setSpendingToEdit] = React.useState(null)
 
+  /**
+   * Render Create Initial Period Form
+   */
   if (data.payPeriods.length === 0)
     return (
       <div className={classes.root}>
@@ -185,57 +199,6 @@ function Dashboard({
       </div>
     )
 
-  const avgPay = data.payPeriods
-    .map(x => currency(x.pay).value)
-    .reduce((a, b) => currency(a).add(b), 0)
-    .divide(data.payPeriods.length).value
-  const emrGoal = currency(avgPay)
-    .multiply(data.numberOfPayPeriodPerMonth)
-    .multiply(data.emrtype).value
-
-  const emrCurrentBalance = currency(data.emrRemainingBalance)
-    .add(data.emrCommitmentAmount)
-    .subtract(sumOf(emrSpendings)).value
-
-  const emrCommitment =
-    emrCurrentBalance >= emrGoal ? '0.00' : data.emrCommitmentAmount
-  const budget = currency(currentPayPeriod.pay)
-    .subtract(emrCommitment)
-    .subtract(
-      currency(sumOf(fixedSpendings)).divide(data.numberOfPayPeriodPerMonth)
-        .value,
-    )
-    .subtract(sumOf(goalSpendings)).value
-  const remainingBudget = currency(budget).subtract(sumOf(normalSpendings))
-    .value
-  const previousPayPeriods = data.payPeriods.slice(
-    0,
-    data.payPeriods.length - 1,
-  )
-
-  const surplus =
-    previousPayPeriods.length !== 0
-      ? previousPayPeriods
-          .map(x => x.remainingBudget)
-          .reduce((a, b) => currency(a).add(b).value, 0)
-      : 0
-
-  const freeMoney = currency(surplus).subtract(sumOf(freeSpendings)).format()
-  const actualRemainingBudget = currency(remainingBudget)
-    .subtract(sumOf(freeSpendings))
-    .format()
-
-  function sortDatesLatestFirst(a, b) {
-    const prev = new Date(a.createdAt)
-    const next = new Date(b.createdAt)
-    return next - prev
-  }
-  const regularSpendings = [
-    ...normalSpendings,
-    ...freeSpendings,
-    ...emrSpendings,
-  ].sort(sortDatesLatestFirst)
-
   const doToggleModal = setToggle => {
     const toggleHanlder = prevState => {
       const isClosing = prevState ? true : false
@@ -255,12 +218,12 @@ function Dashboard({
             <Grid item xs={12} md={4}>
               <Paper className={fixedHeightPaper}>
                 <BudgetCard
-                  spent={formatWithCurrency(sumOf(normalSpendings))}
+                  spent={formatWithCurrency(budgetSpent)}
                   remainingBudget={formatWithCurrency(remainingBudget)}
                   budget={formatWithCurrency(budget)}
                   doToggleModal={() => doToggleModal(setAddSpendingModal)}
                   setAddSpendingModal={setAddSpendingModal}
-                  status={calculateStatus(sumOf(normalSpendings), budget)}
+                  status={budgetStatus}
                 />
               </Paper>
             </Grid>
@@ -273,7 +236,7 @@ function Dashboard({
                   doToggleModal={() => doToggleModal(setUseEmrFundModal)}
                   setUseEmrFundModal={setUseEmrFundModal}
                   emrCurrentBalance={formatWithCurrency(emrCurrentBalance)}
-                  status={calculateStatus(emrCurrentBalance, emrGoal)}
+                  status={emrStatus}
                 />
               </Paper>
             </Grid>
@@ -401,33 +364,6 @@ function Dashboard({
       />
     </div>
   )
-}
-
-// util functions
-function filter(spendings) {
-  return type => spendings.filter(x => x.type === type)
-}
-
-function sumOf(spendings) {
-  if (spendings.length === 0) return 0
-  return spendings
-    .map(x => {
-      if (
-        x.type === 'goal' &&
-        parseInt(x.goalBalance) >= parseInt(x.goalAmount)
-      )
-        return 0
-      return currency(x.amount).value
-    })
-    .reduce((a, b) => currency(a).add(b).value, 0)
-}
-
-function formatWithCurrency(value) {
-  return currency(value).format()
-}
-
-function calculateStatus(x, y) {
-  return currency(x).divide(y).multiply(100).value
 }
 
 export {Dashboard}
