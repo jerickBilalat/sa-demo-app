@@ -75,7 +75,7 @@ const AuthenticatedApp = ({user, logout}) => {
   const sections = [
     {title: 'Dashboard', url: '/'},
     {title: 'About', url: '/about'},
-    {title: 'Settings', url: '/user-settigs'},
+    {title: 'Settings', url: '/user-settings'},
   ]
   const doOpenCreatePayPeriodModal = () => {
     setCreatePayPeriodModal(true)
@@ -153,7 +153,10 @@ const AuthenticatedApp = ({user, logout}) => {
           }
         />
         <Route path="/about" element={<About />} />
-        <Route path="/user-settings" element={<UserSettings />} />
+        <Route
+          path="/user-settings"
+          element={<UserSettings currentUserData={user} />}
+        />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </>
