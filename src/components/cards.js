@@ -4,10 +4,6 @@ import TextField from '@material-ui/core/TextField'
 import {NumberFormatCustom} from './lib'
 import Button from '@material-ui/core/Button'
 import {makeStyles} from '@material-ui/core/styles'
-import Card from '@material-ui/core/Card'
-import CardActions from '@material-ui/core/CardActions'
-import CardContent from '@material-ui/core/CardContent'
-import Typography from '@material-ui/core/Typography'
 
 const useStyles = makeStyles({
   button: {
@@ -43,14 +39,18 @@ function CreateIntialPayPeriod({data, dispatch}) {
       token: data.token,
     })
       .then(res => {
-        return dispatch({type: 'add-payPeriod', payload: res})
+        setIsLoading(false)
+        dispatch({type: 'add-payPeriod', payload: res})
       })
-      .catch(err => setServerErrorMessage(err.error.message))
+      .catch(err => {
+        setIsLoading(false)
+        setServerErrorMessage(err.error.message)
+      })
   }
 
   const isFormValid = () => {
     const formValid = true
-    if (form.pay === '' || parseInt(form.pay) < 0) return false
+    if (form.pay === '' || parseInt(form.pay) < 1) return false
     return formValid
   }
 

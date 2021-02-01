@@ -644,6 +644,11 @@ function CreateNextPeriodFormDialog({
 }) {
   // TODO: normalize the input into the right format of type string
   const [form, setForm] = React.useState({pay: ''})
+  const [isLoading, setIsLoading] = React.useState(false)
+  const [serverErrorMessage, setServerErrorMessage] = React.useState('')
+  const [clientValidationErrors, setClientValidationErrors] = React.useState({
+    pay: '',
+  })
 
   const onChange = e => {
     const target = e.target
@@ -659,6 +664,14 @@ function CreateNextPeriodFormDialog({
 
   const onSubmit = event => {
     event.preventDefault()
+    if (!isFormValid()) {
+      setClientValidationErrors({
+        ...clientValidationErrors,
+        pay: 'Pay must not be empty or an amount greater than 0',
+      })
+      return
+    }
+    setIsLoading(true)
     client('pay-period/create-pay-period', {
       data: {
         pay: form.pay,
@@ -671,13 +684,21 @@ function CreateNextPeriodFormDialog({
       token: data.token,
     })
       .then(() => {
+        setIsLoading(false)
         window.location.assign(window.location.origin)
       })
-      .catch(error => {
-        // TODO: come up with a better centralized error
-        throw new Error(error)
+      .catch(err => {
+        setIsLoading(false)
+        setServerErrorMessage(err.error.message)
       })
   }
+
+  const isFormValid = () => {
+    const formValid = true
+    if (form.pay === '' || parseInt(form.pay) < 1) return false
+    return formValid
+  }
+
   return (
     <Dialog
       open={modalToggle}
@@ -692,6 +713,14 @@ function CreateNextPeriodFormDialog({
           margin="dense"
           id="pay"
           name="pay"
+          helperText={
+            clientValidationErrors.pay !== ''
+              ? clientValidationErrors.pay
+              : serverErrorMessage !== ''
+              ? serverErrorMessage
+              : ''
+          }
+          error={clientValidationErrors.pay !== '' || serverErrorMessage !== ''}
           label="Income"
           type="text"
           value={form.pay}
@@ -762,7 +791,7 @@ function CreateNextPeriodFormDialog({
           Cancel
         </Button>
         <Button onClick={onSubmit} color="primary">
-          Create
+          {isLoading ? 'Creating...' : 'Create'}
         </Button>
       </DialogActions>
     </Dialog>

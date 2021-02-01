@@ -28,10 +28,8 @@ function derivedUserData(data) {
   const emrCurrentBalance = currency(emrRemainingBalance)
     .add(emrCommitmentAmount)
     .subtract(sumOf(emrSpendings)).value
-  const emrCommitment =
-    emrCurrentBalance >= emrGoal ? '0.00' : emrCommitmentAmount
-  const emrStatus = currency(emrCurrentBalance).divide(emrGoal).multiply(100)
-    .value
+  const emrCommitment = emrCurrentBalance >= emrGoal ? 0 : emrCommitmentAmount
+  const emrStatus = calculateStatus(emrCurrentBalance, emrGoal)
 
   // calculate budget
   const currentPayPeriod = payPeriods[payPeriods.length - 1]
@@ -93,9 +91,9 @@ function derivedUserData(data) {
   }
 
   function calculateStatus(x, y) {
+    if (y === 0) return 0
     return currency(x).divide(y).multiply(100).value
   }
-
   return {
     emrGoal,
     emrCurrentBalance,

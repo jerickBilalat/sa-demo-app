@@ -1,5 +1,4 @@
 import * as React from 'react'
-import currency from 'currency.js'
 import {CreateIntialPayPeriod} from '../components/cards'
 import {derivedUserData} from '../utils/lib'
 
@@ -175,9 +174,10 @@ function Dashboard({
   const [spendingToEdit, setSpendingToEdit] = React.useState(null)
 
   /**
-   * Render Create Initial Period Form
+   * if pay < 0
+   * then Render Create Initial Period Form
    */
-  if (data.payPeriods.length === 0)
+  if (parseInt(data.payPeriods[data.payPeriods.length - 1].pay) < 1)
     return (
       <div className={classes.root}>
         <CssBaseline />

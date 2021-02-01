@@ -28,7 +28,6 @@ function App() {
     isSuccess,
     isError,
     setData,
-    setError,
   } = useAsync()
 
   React.useEffect(() => {
@@ -46,19 +45,13 @@ function App() {
   }
 
   const register = form =>
-    auth.register(form).then(userData => {
-      return setData(userData)
-    })
-
-  function handleAuthError(errorData) {
-    // TODO: make error message consistent on the server for this could cause consistency issue
-    if (errorData && errorData.error.message) {
-      const errorMessage = errorData.error.message
-      return setError(errorMessage)
-    }
-    // FIXME: warning potential exposure of server internals
-    throw new Error(errorData)
-  }
+    auth.register(form).then(() =>
+      getUser()
+        .then(userData => setData(userData))
+        .catch(err => {
+          throw new Error(err)
+        }),
+    )
 
   const props = {user: data, login, logout, register}
 

@@ -11,6 +11,7 @@ import EmojiEmotions from '@material-ui/icons/EmojiEmotions'
 import Typography from '@material-ui/core/Typography'
 import {makeStyles} from '@material-ui/core/styles'
 import Container from '@material-ui/core/Container'
+import {NumberFormatCustom} from './components/lib'
 
 function Copyright() {
   return (
@@ -61,12 +62,11 @@ function SignIn({login, setToggleRegister}) {
   const onSubmit = event => {
     event.preventDefault()
     setIsLoading(true)
-    login(credentials)
-      .then(() => setIsLoading(false))
-      .catch(err => {
-        setErrorMessage(err.error.message)
-        setIsLoading(false)
-      }) // TODO: add handler for login error, might have to reffer to bookshelf app
+    login(credentials).catch(err => {
+      console.error(err)
+      setErrorMessage(err.error.message)
+      setIsLoading(false)
+    }) // TODO: add handler for login error, might have to reffer to bookshelf app
   }
   return (
     <Container component="main" maxWidth="xs">
@@ -148,11 +148,12 @@ function Register({register, setToggleRegister}) {
   const [user, setUser] = React.useState({
     username: '',
     password: '',
-    emrRemainingBalance: '0.00',
-    emrCommitmentAmount: '0.00',
+    emrRemainingBalance: '0',
+    initialFreeMoney: '0',
+    emrCommitmentAmount: '0',
     numberOfPayPeriodPerMonth: 2,
     emrtype: 6,
-    averagePayPerPeriod: '0.00',
+    averagePayPerPeriod: '0',
     accessCode: '',
   })
 
@@ -164,7 +165,7 @@ function Register({register, setToggleRegister}) {
     event.preventDefault()
     setIsLoading(true)
     register(user).catch(err => {
-      setErrors({...errors, serverError: err.error.message})
+      setErrors({...errors, serverError: err.message})
       setIsLoading(false)
     }) // TODO: add handler for register error, might have to reffer to bookshelf app
   }
@@ -244,6 +245,9 @@ function Register({register, setToggleRegister}) {
             InputLabelProps={{
               shrink: true,
             }}
+            InputProps={{
+              inputComponent: NumberFormatCustom,
+            }}
             value={user.emrRemainingBalance}
             onChange={onChange}
           />
@@ -254,10 +258,14 @@ function Register({register, setToggleRegister}) {
             fullWidth
             id="emrCommitmentAmount"
             label="How much do you want to transfer to Emergency Fund every pay period?"
+            helperText="5%-10% of your incoming pay for the period is recommended"
             name="emrCommitmentAmount"
             autoComplete="emrCommitmentAmount"
             InputLabelProps={{
               shrink: true,
+            }}
+            InputProps={{
+              inputComponent: NumberFormatCustom,
             }}
             value={user.emrCommitmentAmount}
             onChange={onChange}
@@ -275,6 +283,24 @@ function Register({register, setToggleRegister}) {
               shrink: true,
             }}
             value={user.emrtype}
+            onChange={onChange}
+          />
+          <TextField
+            variant="outlined"
+            margin="normal"
+            fullWidth
+            id="initialFreeMoney"
+            label="How much can you spludge on the first budget period"
+            helperText="Usually it's 10%-30% of your incoming pay for the period"
+            name="initialFreeMoney"
+            autoComplete="initialFreeMoney"
+            InputLabelProps={{
+              shrink: true,
+            }}
+            InputProps={{
+              inputComponent: NumberFormatCustom,
+            }}
+            value={user.initialFreeMoney}
             onChange={onChange}
           />
           <TextField
