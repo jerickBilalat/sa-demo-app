@@ -505,6 +505,7 @@ function CreateGoalFormDialog({
     type: 'goal',
     payPeriodId: data.payPeriods[data.payPeriods.length - 1]._id,
     goalAmount: '0',
+    goalBalance: '0',
   }
   const [spending, setSpending] = React.useState(defaultState)
 
@@ -518,8 +519,6 @@ function CreateGoalFormDialog({
     e.preventDefault()
     const body = {
       ...spending,
-      goalBalance: spending.amount,
-      goalAmount: spending.goalAmount,
     }
     const customConfig = {}
     let url = spendingToEdit
@@ -591,6 +590,20 @@ function CreateGoalFormDialog({
           label="Commitment"
           type="text"
           value={spendingToEdit ? spendingToEdit.amount : spending.amount}
+          onChange={e => onChange(e)}
+          InputProps={{
+            inputComponent: NumberFormatCustom,
+          }}
+        />
+        <TextField
+          margin="dense"
+          id="goalBalance"
+          name="goalBalance"
+          label="Current Balance"
+          type="text"
+          value={
+            spendingToEdit ? spendingToEdit.goalBalance : spending.goalBalance
+          }
           onChange={e => onChange(e)}
           InputProps={{
             inputComponent: NumberFormatCustom,

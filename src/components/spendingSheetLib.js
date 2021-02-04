@@ -171,8 +171,8 @@ function FixedSpendingSheet({
 
 function GoalSpendingSheet({doToggleModal, spendings, setSpendingToEdit}) {
   const classes = useStyles()
-  const doEdit = async spending => {
-    await setSpendingToEdit(spending)
+  const doEdit = spending => {
+    setSpendingToEdit(spending)
     doToggleModal()
   }
   return (
@@ -195,6 +195,7 @@ function GoalSpendingSheet({doToggleModal, spendings, setSpendingToEdit}) {
             <TableCell>Description</TableCell>
             <TableCell>Progress(%)</TableCell>
             <TableCell align="right">Commitment per period</TableCell>
+            <TableCell align="right">Current Balance</TableCell>
             <TableCell align="right">Goal</TableCell>
           </TableRow>
         </TableHead>
@@ -212,6 +213,9 @@ function GoalSpendingSheet({doToggleModal, spendings, setSpendingToEdit}) {
               </TableCell>
               <TableCell align="right">
                 {formatWithCurrency(spending.amount)}
+              </TableCell>
+              <TableCell align="right">
+                {formatWithCurrency(spending.goalBalance)}
               </TableCell>
               <TableCell align="right">
                 {formatWithCurrency(spending.goalAmount)}

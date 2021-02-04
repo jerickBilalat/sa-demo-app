@@ -34,13 +34,14 @@ function CreateIntialPayPeriod({data, dispatch}) {
       return
     }
     setIsLoading(true)
-    client('pay-period/create-initial-pay-period', {
-      data: {pay: form.pay},
+    client('pay-period/update-initial-pay-period', {
+      data: {pay: form.pay, payPeriodID: data.payPeriods[0]._id},
       token: data.token,
+      method: 'PUT',
     })
       .then(res => {
         setIsLoading(false)
-        dispatch({type: 'add-payPeriod', payload: res})
+        dispatch({type: 'update-payPeriod', payload: res})
       })
       .catch(err => {
         setIsLoading(false)

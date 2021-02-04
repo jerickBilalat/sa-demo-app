@@ -46,13 +46,10 @@ function derivedUserData(data) {
   const budgetStatus = calculateStatus(budgetSpent, budget)
 
   // caculate free money
-  const previousPayPeriods = payPeriods.slice(0, data.payPeriods.length - 1)
-  const surplus =
-    previousPayPeriods.length !== 0
-      ? previousPayPeriods
-          .map(x => x.remainingBudget)
-          .reduce((a, b) => currency(a).add(b).value, 0)
-      : 0
+  const surplus = payPeriods
+    .map(x => x.remainingBudget)
+    .reduce((a, b) => currency(a).add(b).value, 0)
+
   const freeMoney = currency(surplus).subtract(sumOf(freeSpendings)).format()
 
   const actualRemainingBudget = currency(remainingBudget)

@@ -18,6 +18,11 @@ function userDataReducer(state, action) {
   switch (action.type) {
     case 'add-payPeriod':
       return {...state, payPeriods: [...state.payPeriods, action.payload]}
+    case 'update-payPeriod':
+      const payPeriods = state.payPeriods.filter(
+        x => x._id !== action.payload._id,
+      )
+      return {...state, payPeriods: [...payPeriods, action.payload]}
     case 'add-spending':
       const newSpendingId = action.payload._id
       let currentSpendings = state.currentSpendings
