@@ -30,6 +30,7 @@ import {
   CreateGoalFormDialog,
   CreateNextPeriodFormDialog,
   EditPayPeriodFormDialog,
+  EditUserPreferenceDialog,
 } from '../components/modal'
 function Copyright() {
   return (
@@ -132,6 +133,8 @@ function Dashboard({
   doCloseCreatePayPeriodModal,
   toggleEditPPModal,
   doCloseEditPPModal,
+  toggleEditUPModal,
+  doCloseEditUPModal,
 }) {
   const {
     fixedSpendings,
@@ -360,8 +363,14 @@ function Dashboard({
         modalToggle={toggleEditPPModal}
         dispatch={dispatch}
         doCloseModal={doCloseEditPPModal}
-        userData={data}
+        data={data}
         currentPayPeriod={currentPayPeriod}
+      />
+      <EditUserPreferenceDialog
+        modalToggle={toggleEditUPModal}
+        dispatch={dispatch}
+        doCloseModal={doCloseEditUPModal}
+        userData={data}
       />
     </div>
   )

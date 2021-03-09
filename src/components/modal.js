@@ -811,12 +811,11 @@ function CreateNextPeriodFormDialog({
   )
 }
 
-function EditPayPeriodFormDialog({
+function EditUserPreferenceDialog({
   userData,
   dispatch,
   modalToggle,
   doCloseModal,
-  currentPayPeriod,
 }) {
   const {
     numberOfPayPeriodPerMonth,
@@ -829,9 +828,7 @@ function EditPayPeriodFormDialog({
     emrCommitmentAmount,
     emrRemainingBalance,
     emrtype,
-    pay: currentPayPeriod.pay,
   }
-  const [pay, setPay] = React.useState(defaultState)
   const [form, setForm] = React.useState(defaultState)
 
   const onChange = e => {
@@ -846,12 +843,10 @@ function EditPayPeriodFormDialog({
       return doCloseModal()
     }
     const body = {
-      payPeriodID: currentPayPeriod._id,
       numberOfPayPeriodPerMonth: form.numberOfPayPeriodPerMonth,
       emrCommitmentAmount: form.emrCommitmentAmount,
       emrRemainingBalance: form.emrRemainingBalance,
       emrtype: form.emrtype,
-      pay: form.pay,
     }
     dispatch({type: 'update-user-settings', payload: body})
     doCloseModal()
@@ -863,27 +858,9 @@ function EditPayPeriodFormDialog({
       onClose={doCloseModal}
       aria-labelledby="form-dialog-title"
     >
-      <DialogTitle id="form-dialog-title">Edit Budget Period</DialogTitle>
+      <DialogTitle id="form-dialog-title">Settings</DialogTitle>
       <DialogContent>
         <DialogContentText>All fields are required</DialogContentText>
-        <TextField
-          margin="normal"
-          variant="outlined"
-          required
-          fullWidth
-          id="pay"
-          name="pay"
-          label="Current budget period fund"
-          type="text"
-          value={form.pay}
-          onChange={e => onChange(e)}
-          InputLabelProps={{
-            shrink: true,
-          }}
-          InputProps={{
-            inputComponent: NumberFormatCustom,
-          }}
-        />
         <TextField
           variant="outlined"
           type="number"
@@ -964,6 +941,68 @@ function EditPayPeriodFormDialog({
   )
 }
 
+function EditPayPeriodFormDialog({
+  modalToggle,
+  doCloseModal,
+  currentPayPeriod,
+  data,
+  dispatch,
+}) {
+  const defaultState = {pay: currentPayPeriod.pay}
+  const [form, setForm] = React.useState(defaultState)
+
+  const onChange = e => {
+    const target = e.target
+    setForm({[target.name]: target.value})
+  }
+  const onSubmit = e => {
+    e.preventDefault()
+    if (defaultState === form) {
+      return doCloseModal()
+    }
+    const body = {
+      payPeriodID: currentPayPeriod._id,
+      pay: form.pay,
+    }
+
+    dispatch({type: 'edit-period', payload: body})
+    doCloseModal()
+  }
+
+  return (
+    <Dialog
+      open={modalToggle}
+      onClose={doCloseModal}
+      aria-labelledby="form-dialog-title"
+    >
+      <DialogTitle id="form-dialog-title">Edit Period</DialogTitle>
+      <DialogContent>
+        <DialogContentText>Edit or add funds to Pay Period</DialogContentText>
+        <TextField
+          margin="dense"
+          id="pay"
+          name="pay"
+          label="Current Funds"
+          type="text"
+          value={form.pay}
+          onChange={e => onChange(e)}
+          InputProps={{
+            inputComponent: NumberFormatCustom,
+          }}
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={doCloseModal} color="primary">
+          Cancel
+        </Button>
+        <Button onClick={onSubmit} color="primary">
+          Done
+        </Button>
+      </DialogActions>
+    </Dialog>
+  )
+}
+
 export {
   AddSpendingFormDialog,
   EmrFundFormDialog,
@@ -972,4 +1011,5 @@ export {
   FixedSpendingFormDialog,
   CreateNextPeriodFormDialog,
   EditPayPeriodFormDialog,
+  EditUserPreferenceDialog,
 }

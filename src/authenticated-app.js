@@ -18,6 +18,7 @@ import Toolbar from '@material-ui/core/Toolbar'
 import {makeStyles} from '@material-ui/core/styles'
 import Grid from '@material-ui/core/Grid'
 import EditIcon from '@material-ui/icons/Edit'
+import SettinsIcon from '@material-ui/icons/Settings'
 import NavigateNextIcon from '@material-ui/icons/NavigateNext'
 
 function userDataReducer(state, action) {
@@ -28,33 +29,15 @@ function userDataReducer(state, action) {
         emrRemainingBalance,
         numberOfPayPeriodPerMonth,
         emrCommitmentAmount,
-        pay,
-        payPeriodID,
       } = action.payload
-      const payload = {
-        emrtype,
-        emrRemainingBalance,
-        numberOfPayPeriodPerMonth,
-        emrCommitmentAmount,
-        pay,
-        payPeriodID,
-      }
-      const editedPayPeriod = {
-        ...state.payPeriods.filter(x => x._id === payPeriodID)[0],
-        pay,
-      }
+
       const newState = {
         ...state,
         emrtype,
         emrCommitmentAmount,
         emrRemainingBalance,
         numberOfPayPeriodPerMonth,
-        payPeriods: [
-          ...state.payPeriods.filter(x => x._id !== payPeriodID),
-          editedPayPeriod,
-        ],
       }
-      console.log(newState)
       return newState
     case 'add-payPeriod':
       return {...state, payPeriods: [...state.payPeriods, action.payload]}
@@ -63,6 +46,18 @@ function userDataReducer(state, action) {
         x => x._id !== action.payload._id,
       )
       return {...state, payPeriods: [...payPeriods, action.payload]}
+    case 'edit-period':
+      const periods = state.payPeriods.filter(
+        x => x._id !== action.payload.payPeriodID,
+      )
+      const modifiedPeriod = {
+        ...state.payPeriods.filter(
+          x => x._id === action.payload.payPeriodID,
+        )[0],
+        pay: action.payload.pay,
+      }
+      return {...state, payPeriods: [...periods, modifiedPeriod]}
+
     case 'add-spending':
       const newSpendingId = action.payload._id
       let currentSpendings = state.currentSpendings
@@ -91,14 +86,15 @@ function userDataReducer(state, action) {
 const useStyles = makeStyles(theme => ({
   toolbar: {
     borderBottom: `1px solid ${theme.palette.divider}`,
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
     overflowX: 'auto',
   },
   toolbarTitle: {
     flex: 1,
   },
   toolbarSecondary: {
-    borderBottom: `1px solid ${theme.palette.divider}`,
+    justifyContent: 'center',
+    overflowX: 'auto',
   },
   toolbarLink: {
     padding: theme.spacing(1),
@@ -165,6 +161,8 @@ const AuthenticatedApp = () => {
   )
   const [toggleEditPPModal, setEditPPModal] = React.useState(false)
 
+  const [toggleEditUPModal, setEditUPModal] = React.useState(true)
+
   const classes = useStyles()
   const isOnDashboard = useMatch('/')
   const sections = [
@@ -183,6 +181,12 @@ const AuthenticatedApp = () => {
   }
   const doCloseEditPPModal = () => {
     setEditPPModal(false)
+  }
+  const doOpenEditUPModal = () => {
+    setEditUPModal(true)
+  }
+  const doCloseEditUPModal = () => {
+    setEditUPModal(false)
   }
   return (
     <>
@@ -211,7 +215,18 @@ const AuthenticatedApp = () => {
         </Link>
       </Toolbar>
       {isOnDashboard && (
-        <Toolbar component="nav" className={classes.toolbar}>
+        <Toolbar component="nav" className={classes.toolbarSecondary}>
+          <Link>
+            <Button
+              color="default"
+              variant="outlined"
+              size="small"
+              startIcon={<SettinsIcon />}
+              onClick={doOpenEditUPModal}
+            >
+              Settings
+            </Button>
+          </Link>
           <Link>
             <Button
               color="default"
@@ -247,6 +262,8 @@ const AuthenticatedApp = () => {
               doCloseCreatePayPeriodModal={doCloseCreatePayPeriodModal}
               doCloseEditPPModal={doCloseEditPPModal}
               toggleEditPPModal={toggleEditPPModal}
+              toggleEditUPModal={toggleEditUPModal}
+              doCloseEditUPModal={doCloseEditUPModal}
             />
           }
         />
