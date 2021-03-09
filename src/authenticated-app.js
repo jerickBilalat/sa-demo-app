@@ -133,10 +133,10 @@ const mockUserState = {
 
 const defaultUserState = {
   emrtype: 6,
-  emrRemainingBalance: '0.00',
+  emrRemainingBalance: '0',
   averagePayPerPeriod: '0',
   numberOfPayPeriodPerMonth: 2,
-  emrCommitmentAmount: '50.00',
+  emrCommitmentAmount: '50',
   userID: '603276bb4f02f09a95d3486d',
   username: 'johndoe',
   currentSpendings: [
@@ -177,7 +177,7 @@ const defaultUserState = {
     },
   ],
 }
-const AuthenticatedApp = ({user = {}, logout = () => {}}) => {
+const AuthenticatedApp = () => {
   const [userData, dispatch] = React.useReducer(
     userDataReducer,
     defaultUserState,
@@ -273,10 +273,6 @@ const AuthenticatedApp = ({user = {}, logout = () => {}}) => {
           }
         />
         <Route path="/about" element={<About />} />
-        <Route
-          path="/user-settings"
-          element={<UserSettings currentUserData={userData} />}
-        />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </>

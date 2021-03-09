@@ -812,38 +812,48 @@ function CreateNextPeriodFormDialog({
 }
 
 function EditPayPeriodFormDialog({
+  userData,
+  dispatch,
   modalToggle,
   doCloseModal,
   currentPayPeriod,
-  data,
 }) {
-  const defaultState = currentPayPeriod.pay
+  const {
+    numberOfPayPeriodPerMonth,
+    emrCommitmentAmount,
+    emrRemainingBalance,
+    emrtype,
+  } = userData
+  const defaultState = {
+    numberOfPayPeriodPerMonth,
+    emrCommitmentAmount,
+    emrRemainingBalance,
+    emrtype,
+    pay: currentPayPeriod.pay,
+  }
   const [pay, setPay] = React.useState(defaultState)
+  const [form, setForm] = React.useState(defaultState)
 
   const onChange = e => {
     const target = e.target
-    setPay(target.value)
+    setForm(target.value)
   }
   const onSubmit = e => {
     e.preventDefault()
-    if (defaultState === pay) {
+    if (defaultState === form) {
+      // just close modal
       return doCloseModal()
     }
     const body = {
       remainingBudget: undefined,
       payPeriodID: currentPayPeriod._id,
-      pay,
+      numberOfPayPeriodPerMonth: form.numberOfPayPeriodPerMonth,
+      emrCommitmentAmount: form.emrCommitmentAmount,
+      emrRemainingBalance: form.emrRemainingBalance,
+      emrtype: form.emrtype,
+      pay: form.pay,
     }
-
-    client('pay-period/update-pay-period', {
-      data: body,
-      token: data.token,
-      method: 'PUT',
-    })
-      .then(() => {
-        window.location.assign(window.location.origin)
-      })
-      .catch(console.log) // TODO: handle error to render error message
+    dispatch({type: 'update-user-settings', payload: body})
   }
 
   return (
@@ -852,20 +862,90 @@ function EditPayPeriodFormDialog({
       onClose={doCloseModal}
       aria-labelledby="form-dialog-title"
     >
-      <DialogTitle id="form-dialog-title">Edit Period</DialogTitle>
+      <DialogTitle id="form-dialog-title">Edit Budget Period</DialogTitle>
       <DialogContent>
-        <DialogContentText>Edit or add funds to Pay Period</DialogContentText>
+        <DialogContentText>All fields are required</DialogContentText>
         <TextField
-          margin="dense"
+          margin="normal"
+          variant="outlined"
+          required
+          fullWidth
           id="pay"
           name="pay"
-          label="Current Funds"
+          label="Current budget period fund"
           type="text"
-          value={pay}
+          value={form.pay}
           onChange={e => onChange(e)}
           InputProps={{
             inputComponent: NumberFormatCustom,
           }}
+        />
+        <TextField
+          variant="outlined"
+          type="number"
+          margin="normal"
+          fullWidth
+          required
+          id="numberOfPayPeriodPerMonth"
+          label="Number of budget period per month"
+          name="numberOfPayPeriodPerMonth"
+          InputLabelProps={{
+            shrink: true,
+          }}
+          value={form.numberOfPayPeriodPerMonth}
+          onChange={onChange}
+        />
+        <TextField
+          variant="outlined"
+          margin="normal"
+          required
+          fullWidth
+          id="emrRemainingBalance"
+          label="How much is your current Emergency Fund?"
+          name="emrRemainingBalance"
+          autoComplete="emrRemainingBalance"
+          InputLabelProps={{
+            shrink: true,
+          }}
+          InputProps={{
+            inputComponent: NumberFormatCustom,
+          }}
+          value={form.emrRemainingBalance}
+          onChange={onChange}
+        />
+        <TextField
+          variant="outlined"
+          margin="normal"
+          required
+          fullWidth
+          id="emrCommitmentAmount"
+          label="How much do you want to transfer to Emergency Fund every budget period?"
+          helperText="5%-10% of your current budget period fund is recommended"
+          name="emrCommitmentAmount"
+          autoComplete="emrCommitmentAmount"
+          InputLabelProps={{
+            shrink: true,
+          }}
+          InputProps={{
+            inputComponent: NumberFormatCustom,
+          }}
+          value={form.emrCommitmentAmount}
+          onChange={onChange}
+        />
+        <TextField
+          variant="outlined"
+          type="number"
+          margin="normal"
+          required
+          fullWidth
+          id="emrtype"
+          label="If you lost your job, you might be unemployed for how many months?"
+          name="emrtype"
+          InputLabelProps={{
+            shrink: true,
+          }}
+          value={form.emrtype}
+          onChange={onChange}
         />
       </DialogContent>
       <DialogActions>

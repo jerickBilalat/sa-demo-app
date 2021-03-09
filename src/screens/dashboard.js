@@ -358,8 +358,9 @@ function Dashboard({
       />
       <EditPayPeriodFormDialog
         modalToggle={toggleEditPPModal}
+        dispatch={dispatch}
         doCloseModal={doCloseEditPPModal}
-        data={data}
+        userData={data}
         currentPayPeriod={currentPayPeriod}
       />
     </div>
