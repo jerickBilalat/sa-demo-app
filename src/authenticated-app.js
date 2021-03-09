@@ -22,6 +22,40 @@ import NavigateNextIcon from '@material-ui/icons/NavigateNext'
 
 function userDataReducer(state, action) {
   switch (action.type) {
+    case 'update-user-settings':
+      const {
+        emrtype,
+        emrRemainingBalance,
+        numberOfPayPeriodPerMonth,
+        emrCommitmentAmount,
+        pay,
+        payPeriodID,
+      } = action.payload
+      const payload = {
+        emrtype,
+        emrRemainingBalance,
+        numberOfPayPeriodPerMonth,
+        emrCommitmentAmount,
+        pay,
+        payPeriodID,
+      }
+      const editedPayPeriod = {
+        ...state.payPeriods.filter(x => x._id === payPeriodID)[0],
+        pay,
+      }
+      const newState = {
+        ...state,
+        emrtype,
+        emrCommitmentAmount,
+        emrRemainingBalance,
+        numberOfPayPeriodPerMonth,
+        payPeriods: [
+          ...state.payPeriods.filter(x => x._id !== payPeriodID),
+          editedPayPeriod,
+        ],
+      }
+      console.log(newState)
+      return newState
     case 'add-payPeriod':
       return {...state, payPeriods: [...state.payPeriods, action.payload]}
     case 'update-payPeriod':
@@ -74,62 +108,6 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(0.5),
   },
 }))
-
-const mockUserState = {
-  emrtype: 6,
-  emrRemainingBalance: '$50.00',
-  averagePayPerPeriod: '0',
-  numberOfPayPeriodPerMonth: 2,
-  emrCommitmentAmount: '50',
-  userID: '603276bb4f02f09a95d3486d',
-  username: 'johndoe',
-  currentSpendings: [
-    {
-      refPayPeriods: ['603276bb4f02f09a95d3486e', '6032806a4f02f09a95d34876'],
-      _id: '6032801c4f02f09a95d34874',
-      description: 'phone',
-      amount: '45',
-      type: 'fixed',
-      refUser: '603276bb4f02f09a95d3486d',
-      createdAt: '2021-02-21T15:45:32.885Z',
-      updatedAt: '2021-02-21T15:46:50.979Z',
-      __v: 0,
-    },
-    {
-      refPayPeriods: ['603276bb4f02f09a95d3486e', '6032806a4f02f09a95d34876'],
-      _id: '603280324f02f09a95d34875',
-      description: '2nd car',
-      amount: '50',
-      type: 'goal',
-      goalBalance: '$5,100.00',
-      goalAmount: '10000',
-      refUser: '603276bb4f02f09a95d3486d',
-      createdAt: '2021-02-21T15:45:54.869Z',
-      updatedAt: '2021-02-21T15:46:50.992Z',
-      __v: 0,
-    },
-  ],
-  payPeriods: [
-    {
-      pay: '1600',
-      remainingBudget: '$477.50',
-      _id: '603276bb4f02f09a95d3486e',
-      refUser: '603276bb4f02f09a95d3486d',
-      createdAt: '2021-02-21T15:05:31.357Z',
-      updatedAt: '2021-02-21T15:46:50.975Z',
-      __v: 0,
-    },
-    {
-      pay: '1500',
-      remainingBudget: '0',
-      _id: '6032806a4f02f09a95d34876',
-      refUser: '603276bb4f02f09a95d3486d',
-      createdAt: '2021-02-21T15:46:50.972Z',
-      updatedAt: '2021-02-21T15:46:50.972Z',
-      __v: 0,
-    },
-  ],
-}
 
 const defaultUserState = {
   emrtype: 6,

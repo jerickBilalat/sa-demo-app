@@ -836,16 +836,16 @@ function EditPayPeriodFormDialog({
 
   const onChange = e => {
     const target = e.target
-    setForm(target.value)
+    setForm({...form, [target.name]: target.value})
   }
   const onSubmit = e => {
+    console.log('form', form)
     e.preventDefault()
     if (defaultState === form) {
       // just close modal
       return doCloseModal()
     }
     const body = {
-      remainingBudget: undefined,
       payPeriodID: currentPayPeriod._id,
       numberOfPayPeriodPerMonth: form.numberOfPayPeriodPerMonth,
       emrCommitmentAmount: form.emrCommitmentAmount,
@@ -854,6 +854,7 @@ function EditPayPeriodFormDialog({
       pay: form.pay,
     }
     dispatch({type: 'update-user-settings', payload: body})
+    doCloseModal()
   }
 
   return (
@@ -876,6 +877,9 @@ function EditPayPeriodFormDialog({
           type="text"
           value={form.pay}
           onChange={e => onChange(e)}
+          InputLabelProps={{
+            shrink: true,
+          }}
           InputProps={{
             inputComponent: NumberFormatCustom,
           }}
