@@ -659,7 +659,7 @@ function CreateNextPeriodFormDialog({
   // TODO: normalize the input into the right format of type string
   const [form, setForm] = React.useState({pay: ''})
   const [isLoading, setIsLoading] = React.useState(false)
-  const [serverErrorMessage, setServerErrorMessage] = React.useState('')
+  const [serverErrorMessage] = React.useState('')
   const [clientValidationErrors, setClientValidationErrors] = React.useState({
     pay: '',
   })

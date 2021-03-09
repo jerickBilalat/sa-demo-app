@@ -1,5 +1,4 @@
 import React from 'react'
-import Link from '@material-ui/core/Link'
 import {makeStyles} from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 import {LinearProgressWithLabel} from './lib'
@@ -11,10 +10,6 @@ function Title(props) {
       {props.children}
     </Typography>
   )
-}
-
-function preventDefault(event) {
-  event.preventDefault()
 }
 
 const useStyles = makeStyles(theme => ({
@@ -55,11 +50,6 @@ function EmrFundCard({
         {emrCommitment} is transfered to this fund every period (change this
         amount in settings). Goal is {emrGoal}.
       </Typography>
-      <div>
-        <Link color="primary" href="#" onClick={preventDefault}>
-          View Transactions
-        </Link>
-      </div>
     </React.Fragment>
   )
 }
@@ -94,11 +84,6 @@ function BudgetCard({
         Spent {spent} out of your {budget} budget for this period. Please spend
         wisely.
       </Typography>
-      <div>
-        <Link color="primary" href="#" onClick={preventDefault}>
-          View Transactions
-        </Link>
-      </div>
     </React.Fragment>
   )
 }
@@ -124,11 +109,6 @@ function FreeMoneyCard({freeMoney, doToggleModal}) {
       <Typography color="textSecondary" className={classes.cardContext}>
         Spludge! You deserve it. Spend it freely. Make mermories out it.
       </Typography>
-      <div>
-        <Link color="primary" href="#" onClick={preventDefault}>
-          View Spludges
-        </Link>
-      </div>
     </React.Fragment>
   )
 }

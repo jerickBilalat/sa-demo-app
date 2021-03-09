@@ -1,5 +1,4 @@
 import React from 'react'
-import Link from '@material-ui/core/Link'
 import {makeStyles} from '@material-ui/core/styles'
 import Table from '@material-ui/core/Table'
 import TableBody from '@material-ui/core/TableBody'
@@ -26,10 +25,6 @@ function Title(props) {
   )
 }
 
-function preventDefault(event) {
-  event.preventDefault()
-}
-
 const useStyles = makeStyles(theme => ({
   seeMore: {
     marginTop: theme.spacing(3),
@@ -47,7 +42,6 @@ function NormalSpendingSheets({
   setUseFreeMoneyModal,
   doToggleModal,
 }) {
-  const classes = useStyles()
   const doEdit = async spending => {
     await setSpendingToEdit(spending)
     switch (spending.type) {
@@ -97,11 +91,6 @@ function NormalSpendingSheets({
           ))}
         </TableBody>
       </Table>
-      <div className={classes.seeMore}>
-        <Link color="primary" href="#" onClick={preventDefault}>
-          See more orders
-        </Link>
-      </div>
     </React.Fragment>
   )
 }
@@ -160,11 +149,6 @@ function FixedSpendingSheet({
           ))}
         </TableBody>
       </Table>
-      <div className={classes.seeMore}>
-        <Link color="primary" href="#" onClick={preventDefault}>
-          See more orders
-        </Link>
-      </div>
     </React.Fragment>
   )
 }
@@ -224,11 +208,6 @@ function GoalSpendingSheet({doToggleModal, spendings, setSpendingToEdit}) {
           ))}
         </TableBody>
       </Table>
-      <div className={classes.seeMore}>
-        <Link color="primary" href="#" onClick={preventDefault}>
-          See more orders
-        </Link>
-      </div>
     </React.Fragment>
   )
 }

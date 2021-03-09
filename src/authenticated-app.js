@@ -1,24 +1,16 @@
 import * as React from 'react'
 import {v4 as uuidv4} from 'uuid'
 import currency from 'currency.js'
-import {
-  Link as RouterLink,
-  Routes,
-  Route,
-  useMatch,
-  BrowserRouter,
-} from 'react-router-dom'
+import {Link as RouterLink, Routes, Route, useMatch} from 'react-router-dom'
 
 import {About} from './screens/about'
 import {Dashboard} from './screens/dashboard'
 import {NotFound} from './screens/notFound'
-import {UserSettings} from './screens/userSettings'
 
 import Button from '@material-ui/core/Button'
 import Link from '@material-ui/core/Link'
 import Toolbar from '@material-ui/core/Toolbar'
 import {makeStyles} from '@material-ui/core/styles'
-import Grid from '@material-ui/core/Grid'
 import EditIcon from '@material-ui/icons/Edit'
 import SettinsIcon from '@material-ui/icons/Settings'
 import NavigateNextIcon from '@material-ui/icons/NavigateNext'
@@ -82,6 +74,8 @@ function userDataReducer(state, action) {
             const spendingId = spending._id
             if (continuedFixedSpendings.includes(spendingId)) {
               return true
+            } else {
+              return false
             }
           })
           .map(spending => {
@@ -97,6 +91,8 @@ function userDataReducer(state, action) {
             const spendingId = spending._id
             if (continuedGoals.includes(spendingId)) {
               return true
+            } else {
+              return false
             }
           })
           .map(spending => {
@@ -225,11 +221,7 @@ const AuthenticatedApp = () => {
 
   const classes = useStyles()
   const isOnDashboard = useMatch('/')
-  const sections = [
-    {title: 'Dashboard', url: '/'},
-    {title: 'About', url: '/about'},
-    {title: 'Settings', url: '/user-settings'},
-  ]
+
   const doOpenCreatePayPeriodModal = () => {
     setCreatePayPeriodModal(true)
   }
