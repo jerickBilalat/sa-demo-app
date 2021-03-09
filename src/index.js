@@ -2,11 +2,15 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import 'fontsource-roboto'
 import App from './App'
+import {AuthenticatedApp} from './authenticated-app'
 import * as serviceWorker from './serviceWorker'
+import {BrowserRouter} from 'react-router-dom'
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <BrowserRouter>
+      <AuthenticatedApp />
+    </BrowserRouter>
   </React.StrictMode>,
   document.getElementById('root'),
 )

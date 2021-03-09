@@ -1,5 +1,11 @@
 import * as React from 'react'
-import {Link as RouterLink, Routes, Route, useMatch} from 'react-router-dom'
+import {
+  Link as RouterLink,
+  Routes,
+  Route,
+  useMatch,
+  BrowserRouter,
+} from 'react-router-dom'
 
 import {About} from './screens/about'
 import {Dashboard} from './screens/dashboard'
@@ -51,13 +57,14 @@ function userDataReducer(state, action) {
 const useStyles = makeStyles(theme => ({
   toolbar: {
     borderBottom: `1px solid ${theme.palette.divider}`,
+    justifyContent: 'space-between',
+    overflowX: 'auto',
   },
   toolbarTitle: {
     flex: 1,
   },
   toolbarSecondary: {
-    justifyContent: 'space-between',
-    overflowX: 'auto',
+    borderBottom: `1px solid ${theme.palette.divider}`,
   },
   toolbarLink: {
     padding: theme.spacing(1),
@@ -68,8 +75,113 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const AuthenticatedApp = ({user, logout}) => {
-  const [userData, dispatch] = React.useReducer(userDataReducer, user)
+const mockUserState = {
+  emrtype: 6,
+  emrRemainingBalance: '$50.00',
+  averagePayPerPeriod: '0',
+  numberOfPayPeriodPerMonth: 2,
+  emrCommitmentAmount: '50',
+  userID: '603276bb4f02f09a95d3486d',
+  username: 'johndoe',
+  currentSpendings: [
+    {
+      refPayPeriods: ['603276bb4f02f09a95d3486e', '6032806a4f02f09a95d34876'],
+      _id: '6032801c4f02f09a95d34874',
+      description: 'phone',
+      amount: '45',
+      type: 'fixed',
+      refUser: '603276bb4f02f09a95d3486d',
+      createdAt: '2021-02-21T15:45:32.885Z',
+      updatedAt: '2021-02-21T15:46:50.979Z',
+      __v: 0,
+    },
+    {
+      refPayPeriods: ['603276bb4f02f09a95d3486e', '6032806a4f02f09a95d34876'],
+      _id: '603280324f02f09a95d34875',
+      description: '2nd car',
+      amount: '50',
+      type: 'goal',
+      goalBalance: '$5,100.00',
+      goalAmount: '10000',
+      refUser: '603276bb4f02f09a95d3486d',
+      createdAt: '2021-02-21T15:45:54.869Z',
+      updatedAt: '2021-02-21T15:46:50.992Z',
+      __v: 0,
+    },
+  ],
+  payPeriods: [
+    {
+      pay: '1600',
+      remainingBudget: '$477.50',
+      _id: '603276bb4f02f09a95d3486e',
+      refUser: '603276bb4f02f09a95d3486d',
+      createdAt: '2021-02-21T15:05:31.357Z',
+      updatedAt: '2021-02-21T15:46:50.975Z',
+      __v: 0,
+    },
+    {
+      pay: '1500',
+      remainingBudget: '0',
+      _id: '6032806a4f02f09a95d34876',
+      refUser: '603276bb4f02f09a95d3486d',
+      createdAt: '2021-02-21T15:46:50.972Z',
+      updatedAt: '2021-02-21T15:46:50.972Z',
+      __v: 0,
+    },
+  ],
+}
+
+const defaultUserState = {
+  emrtype: 6,
+  emrRemainingBalance: '0.00',
+  averagePayPerPeriod: '0',
+  numberOfPayPeriodPerMonth: 2,
+  emrCommitmentAmount: '50.00',
+  userID: '603276bb4f02f09a95d3486d',
+  username: 'johndoe',
+  currentSpendings: [
+    {
+      refPayPeriods: ['603276bb4f02f09a95d3486e'],
+      _id: '6032801c4f02f09a95d34874',
+      description: 'phone',
+      amount: '45',
+      type: 'fixed',
+      refUser: '603276bb4f02f09a95d3486d',
+      createdAt: '2021-02-21T15:45:32.885Z',
+      updatedAt: '2021-02-21T15:46:50.979Z',
+      __v: 0,
+    },
+    {
+      refPayPeriods: ['603276bb4f02f09a95d3486e'],
+      _id: '603280324f02f09a95d34875',
+      description: '2nd car',
+      amount: '50',
+      type: 'goal',
+      goalBalance: '$5,100.00',
+      goalAmount: '10000',
+      refUser: '603276bb4f02f09a95d3486d',
+      createdAt: '2021-02-21T15:45:54.869Z',
+      updatedAt: '2021-02-21T15:46:50.992Z',
+      __v: 0,
+    },
+  ],
+  payPeriods: [
+    {
+      pay: '1600',
+      remainingBudget: '0.00',
+      _id: '603276bb4f02f09a95d3486e',
+      refUser: '603276bb4f02f09a95d3486d',
+      createdAt: '2021-02-21T15:05:31.357Z',
+      updatedAt: '2021-02-21T15:46:50.975Z',
+      __v: 0,
+    },
+  ],
+}
+const AuthenticatedApp = ({user = {}, logout = () => {}}) => {
+  const [userData, dispatch] = React.useReducer(
+    userDataReducer,
+    defaultUserState,
+  )
   const [toggleCreatePayPeriodModal, setCreatePayPeriodModal] = React.useState(
     false,
   )
@@ -97,31 +209,32 @@ const AuthenticatedApp = ({user, logout}) => {
   return (
     <>
       <Toolbar component="nav" className={classes.toolbar}>
-        {sections.map(section => {
-          return (
-            <Link
-              color="inherit"
-              component={RouterLink}
-              noWrap
-              key={section.title}
-              variant="body2"
-              to={section.url}
-              className={classes.toolbarLink}
-            >
-              {section.title}
-            </Link>
-          )
-        })}
-
-        <Link>
-          <Button variant="outlined" onClick={logout} size="small">
-            Log out
-          </Button>
+        <Link
+          color="inherit"
+          component={RouterLink}
+          noWrap
+          variant="body2"
+          to={'/'}
+          className={classes.toolbarLink}
+          style={useMatch('/') && {textDecoration: 'underline'}}
+        >
+          Dashboard
+        </Link>
+        <Link
+          color="inherit"
+          component={RouterLink}
+          noWrap
+          variant="body2"
+          to={'/about'}
+          className={classes.toolbarLink}
+          style={useMatch('/about') && {textDecoration: 'underline'}}
+        >
+          How it Works
         </Link>
       </Toolbar>
-      {isOnDashboard && userData.payPeriods.length > 0 && (
-        <Toolbar variant="dense" className={classes.toolbarSecondary}>
-          <Grid container item justify="space-between">
+      {isOnDashboard && (
+        <Toolbar component="nav" className={classes.toolbar}>
+          <Link>
             <Button
               color="default"
               variant="outlined"
@@ -131,6 +244,8 @@ const AuthenticatedApp = ({user, logout}) => {
             >
               Edit Period
             </Button>
+          </Link>
+          <Link>
             <Button
               color="default"
               variant="outlined"
@@ -140,7 +255,7 @@ const AuthenticatedApp = ({user, logout}) => {
             >
               Next Period
             </Button>
-          </Grid>
+          </Link>
         </Toolbar>
       )}
       <Routes>
@@ -160,7 +275,7 @@ const AuthenticatedApp = ({user, logout}) => {
         <Route path="/about" element={<About />} />
         <Route
           path="/user-settings"
-          element={<UserSettings currentUserData={user} />}
+          element={<UserSettings currentUserData={userData} />}
         />
         <Route path="*" element={<NotFound />} />
       </Routes>
