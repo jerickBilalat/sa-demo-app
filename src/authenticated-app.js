@@ -1,4 +1,6 @@
 import * as React from 'react'
+import {v4 as uuidv4} from 'uuid'
+import currency from 'currency.js'
 import {
   Link as RouterLink,
   Routes,
@@ -57,7 +59,65 @@ function userDataReducer(state, action) {
         pay: action.payload.pay,
       }
       return {...state, payPeriods: [...periods, modifiedPeriod]}
-
+    case 'create-next-period':
+      console.log(action.payload)
+      console.log(state)
+      const {
+        pay,
+        remainingBudget,
+        continuedFixedSpendings,
+        continuedGoals,
+      } = action.payload
+      const nextPayPeriod = {
+        _id: uuidv4(),
+        pay,
+        remainingBudget,
+        refUser: state.userID,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      }
+      const carryOverFixedSpendings = [
+        ...state.currentSpendings
+          .filter(spending => {
+            const spendingId = spending._id
+            if (continuedFixedSpendings.includes(spendingId)) {
+              return true
+            }
+          })
+          .map(spending => {
+            return {
+              ...spending,
+              refPayPeriods: [...spending.refPayPeriods, nextPayPeriod._id],
+            }
+          }),
+      ]
+      const carryOverGoalSpendings = [
+        ...state.currentSpendings
+          .filter(spending => {
+            const spendingId = spending._id
+            if (continuedGoals.includes(spendingId)) {
+              return true
+            }
+          })
+          .map(spending => {
+            return {
+              ...spending,
+              refPayPeriods: [...spending.refPayPeriods, nextPayPeriod._id],
+              goalBalance: currency(spending.amount).add(spending.goalBalance),
+            }
+          }),
+      ]
+      return {
+        ...state,
+        emrRemainingBalance: currency(state.emrRemainingBalance)
+          .add(state.emrCommitmentAmount)
+          .format(),
+        payPeriods: [...state.payPeriods, nextPayPeriod],
+        currentSpendings: [
+          ...carryOverFixedSpendings,
+          ...carryOverGoalSpendings,
+        ],
+      }
     case 'add-spending':
       const newSpendingId = action.payload._id
       let currentSpendings = state.currentSpendings
@@ -118,7 +178,7 @@ const defaultUserState = {
       refPayPeriods: ['603276bb4f02f09a95d3486e'],
       _id: '6032801c4f02f09a95d34874',
       description: 'phone',
-      amount: '45',
+      amount: '50',
       type: 'fixed',
       refUser: '603276bb4f02f09a95d3486d',
       createdAt: '2021-02-21T15:45:32.885Z',

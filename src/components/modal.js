@@ -654,6 +654,7 @@ function CreateNextPeriodFormDialog({
   modalToggle,
   doCloseModal,
   data,
+  dispatch,
 }) {
   // TODO: normalize the input into the right format of type string
   const [form, setForm] = React.useState({pay: ''})
@@ -685,25 +686,16 @@ function CreateNextPeriodFormDialog({
       return
     }
     setIsLoading(true)
-    client('pay-period/create-pay-period', {
-      data: {
-        pay: form.pay,
-        remainingBudget,
-        continuedFixedSpendings: carryOverFixed,
-        continuedGoals: carryOverGoals,
-        prevPayPeriodID,
-        emrCurrentBalance,
-      },
-      token: data.token,
-    })
-      .then(() => {
-        setIsLoading(false)
-        window.location.assign(window.location.origin)
-      })
-      .catch(err => {
-        setIsLoading(false)
-        setServerErrorMessage(err.error.message)
-      })
+    const payload = {
+      pay: form.pay,
+      remainingBudget,
+      continuedFixedSpendings: carryOverFixed,
+      continuedGoals: carryOverGoals,
+      emrCurrentBalance,
+    }
+    dispatch({type: 'create-next-period', payload})
+    setIsLoading(false)
+    doCloseModal()
   }
 
   const isFormValid = () => {

@@ -358,6 +358,7 @@ function Dashboard({
         remainingBudget={actualRemainingBudget}
         prevPayPeriodID={currentPayPeriod._id}
         emrCurrentBalance={emrCurrentBalance}
+        dispatch={dispatch}
       />
       <EditPayPeriodFormDialog
         modalToggle={toggleEditPPModal}
