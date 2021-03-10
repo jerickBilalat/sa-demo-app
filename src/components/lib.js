@@ -4,6 +4,7 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 import Typography from '@material-ui/core/Typography'
 import Box from '@material-ui/core/Box'
 import LinearProgress from '@material-ui/core/LinearProgress'
+import Link from '@material-ui/core/Link'
 
 import NumberFormat from 'react-number-format'
 
@@ -90,4 +91,22 @@ NumberFormatCustom.propTypes = {
   onChange: PropTypes.func.isRequired,
 }
 
-export {CircularProgressWithLabel, LinearProgressWithLabel, NumberFormatCustom}
+function Copyright() {
+  return (
+    <Typography variant="body2" color="textSecondary" align="center">
+      {'Copyright © '}
+      <Link color="inherit" href="https://material-ui.com/">
+        Agile Spending
+      </Link>{' '}
+      {new Date().getFullYear()}
+      {'.'}
+    </Typography>
+  )
+}
+
+export {
+  CircularProgressWithLabel,
+  LinearProgressWithLabel,
+  NumberFormatCustom,
+  Copyright,
+}
