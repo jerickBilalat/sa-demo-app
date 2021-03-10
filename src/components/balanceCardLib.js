@@ -66,7 +66,7 @@ function BudgetCard({
   return (
     <React.Fragment>
       <Title>
-        Remaining Budget{' '}
+        Budget Fund{' '}
         <Button
           onClick={doToggleModal}
           variant="contained"
@@ -93,7 +93,7 @@ function FreeMoneyCard({freeMoney, doToggleModal}) {
   return (
     <React.Fragment>
       <Title>
-        Spludge Money{' '}
+        Spludge Fund{' '}
         <Button
           onClick={doToggleModal}
           variant="contained"

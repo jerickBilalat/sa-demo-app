@@ -162,7 +162,7 @@ function GoalSpendingSheet({doToggleModal, spendings, setSpendingToEdit}) {
   return (
     <React.Fragment>
       <Title>
-        Goals
+        Goal Spendings
         <Button
           variant="contained"
           color="default"
