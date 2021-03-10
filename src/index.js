@@ -1,16 +1,14 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import 'fontsource-roboto'
-import {AuthenticatedApp} from './authenticated-app'
+import {AuthenticatedApp} from './App'
 import * as serviceWorker from './serviceWorker'
 import {BrowserRouter} from 'react-router-dom'
 
 ReactDOM.render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <AuthenticatedApp />
-    </BrowserRouter>
-  </React.StrictMode>,
+  <BrowserRouter>
+    <AuthenticatedApp />
+  </BrowserRouter>,
   document.getElementById('root'),
 )
 

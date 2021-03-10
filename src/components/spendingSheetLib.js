@@ -15,7 +15,7 @@ import {
   formatIsoDateString,
   convertMontlyValueToPerPeriod,
   calculateStatus,
-} from './utils'
+} from '../utils/lib'
 
 function Title(props) {
   return (

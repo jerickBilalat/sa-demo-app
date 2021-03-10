@@ -1,6 +1,5 @@
 import * as React from 'react'
-import {CreateIntialPayPeriod} from '../components/cards'
-import {derivedUserData} from '../utils/lib'
+import {derivedUserData, formatWithCurrency} from '../utils/lib'
 
 import clsx from 'clsx'
 import {makeStyles} from '@material-ui/core/styles'
@@ -147,7 +146,6 @@ function Dashboard({
     freeMoney,
     actualRemainingBudget,
     regularSpendings,
-    formatWithCurrency,
   } = derivedUserData(data)
 
   const classes = useStyles()
@@ -171,32 +169,6 @@ function Dashboard({
     fixedSpendings.map(x => x._id),
   )
   const [spendingToEdit, setSpendingToEdit] = React.useState(null)
-
-  /**
-   * if pay < 0
-   * then Render Create Initial Period Form
-   */
-  if (parseInt(data.payPeriods[data.payPeriods.length - 1].pay) < 1)
-    return (
-      <div className={classes.root}>
-        <CssBaseline />
-        <main className={classes.content}>
-          <Container maxWidth="lg" className={classes.container}>
-            <Grid container spacing={3}>
-              {/* Create initila payPeriod card */}
-              <Grid item xs={12}>
-                <Paper className={classes.paper}>
-                  <CreateIntialPayPeriod data={data} dispatch={dispatch} />
-                </Paper>
-              </Grid>
-            </Grid>
-            <Box pt={4}>
-              <Copyright />
-            </Box>
-          </Container>
-        </main>
-      </div>
-    )
 
   const doToggleModal = setToggle => {
     const toggleHanlder = prevState => {

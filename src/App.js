@@ -1,81 +1,156 @@
-import React from 'react'
-import './App.css'
-import {clientFacade as client} from './utils/api-client'
-import {useAsync} from './utils/hooks'
-import * as auth from './auth-provider'
-import {AuthenticatedApp} from './authenticated-app'
-import {UnAuthenticatedApp} from './unauthenticated-app'
-import {BrowserRouter} from 'react-router-dom'
+import * as React from 'react'
+import {Link as RouterLink, Routes, Route, useMatch} from 'react-router-dom'
 
-async function getUser() {
-  let user = null
-  const token = await auth.getToken()
+import {About} from './screens/about'
+import {Dashboard} from './screens/dashboard'
+import {NotFound} from './screens/notFound'
+import appStateReducer from './utils/reducer'
+import defaultState from './utils/defaultState'
 
-  if (token) {
-    const data = await client('auth/get-user-current-data', {token})
-    user = data
-    user.token = token
+import Button from '@material-ui/core/Button'
+import Link from '@material-ui/core/Link'
+import Toolbar from '@material-ui/core/Toolbar'
+import {makeStyles} from '@material-ui/core/styles'
+import EditIcon from '@material-ui/icons/Edit'
+import SettinsIcon from '@material-ui/icons/Settings'
+import NavigateNextIcon from '@material-ui/icons/NavigateNext'
+
+const useStyles = makeStyles(theme => ({
+  toolbar: {
+    borderBottom: `1px solid ${theme.palette.divider}`,
+    justifyContent: 'flex-end',
+    overflowX: 'auto',
+  },
+  toolbarTitle: {
+    flex: 1,
+  },
+  toolbarSecondary: {
+    justifyContent: 'center',
+    overflowX: 'auto',
+  },
+  toolbarLink: {
+    padding: theme.spacing(1),
+    flexShrink: 0,
+  },
+  button: {
+    margin: theme.spacing(0.5),
+  },
+}))
+
+const AuthenticatedApp = () => {
+  const [userData, dispatch] = React.useReducer(appStateReducer, defaultState)
+  const [toggleCreatePayPeriodModal, setCreatePayPeriodModal] = React.useState(
+    false,
+  )
+  const [toggleEditPPModal, setEditPPModal] = React.useState(false)
+
+  const [toggleEditUPModal, setEditUPModal] = React.useState(true)
+
+  const classes = useStyles()
+  const isOnDashboard = useMatch('/')
+
+  const doOpenCreatePayPeriodModal = () => {
+    setCreatePayPeriodModal(true)
   }
-  return user
+  const doCloseCreatePayPeriodModal = () => {
+    setCreatePayPeriodModal(false)
+  }
+  const doOpenEditPPModal = () => {
+    setEditPPModal(true)
+  }
+  const doCloseEditPPModal = () => {
+    setEditPPModal(false)
+  }
+  const doOpenEditUPModal = () => {
+    setEditUPModal(true)
+  }
+  const doCloseEditUPModal = () => {
+    setEditUPModal(false)
+  }
+  return (
+    <>
+      <Toolbar component="nav" className={classes.toolbar}>
+        <Link
+          color="inherit"
+          component={RouterLink}
+          noWrap
+          variant="body2"
+          to={'/'}
+          className={classes.toolbarLink}
+          style={useMatch('/') && {textDecoration: 'underline'}}
+        >
+          Dashboard
+        </Link>
+        <Link
+          color="inherit"
+          component={RouterLink}
+          noWrap
+          variant="body2"
+          to={'/about'}
+          className={classes.toolbarLink}
+          style={useMatch('/about') && {textDecoration: 'underline'}}
+        >
+          How it Works
+        </Link>
+      </Toolbar>
+      {isOnDashboard && (
+        <Toolbar component="nav" className={classes.toolbarSecondary}>
+          <Link>
+            <Button
+              color="default"
+              variant="outlined"
+              size="small"
+              startIcon={<SettinsIcon />}
+              onClick={doOpenEditUPModal}
+            >
+              Settings
+            </Button>
+          </Link>
+          <Link>
+            <Button
+              color="default"
+              variant="outlined"
+              size="small"
+              startIcon={<EditIcon />}
+              onClick={doOpenEditPPModal}
+            >
+              Edit Period
+            </Button>
+          </Link>
+          <Link>
+            <Button
+              color="default"
+              variant="outlined"
+              size="small"
+              onClick={doOpenCreatePayPeriodModal}
+              endIcon={<NavigateNextIcon />}
+            >
+              Next Period
+            </Button>
+          </Link>
+        </Toolbar>
+      )}
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <Dashboard
+              data={userData}
+              dispatch={dispatch}
+              toggleCreatePayPeriodModal={toggleCreatePayPeriodModal}
+              doCloseCreatePayPeriodModal={doCloseCreatePayPeriodModal}
+              doCloseEditPPModal={doCloseEditPPModal}
+              toggleEditPPModal={toggleEditPPModal}
+              toggleEditUPModal={toggleEditUPModal}
+              doCloseEditUPModal={doCloseEditUPModal}
+            />
+          }
+        />
+        <Route path="/about" element={<About />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </>
+  )
 }
 
-function App() {
-  const {
-    data,
-    error,
-    isIdle,
-    isLoading,
-    isSuccess,
-    isError,
-    setData,
-  } = useAsync()
-
-  React.useEffect(() => {
-    getUser()
-      .then(userData => setData(userData))
-      .catch(console.log) // TODO: ADD HANDLER
-  }, [setData])
-
-  const login = credentials =>
-    auth.login({...credentials}).then(userData => setData(userData))
-
-  const logout = () => {
-    auth.logout()
-    setData(null)
-  }
-
-  const register = form =>
-    auth.register(form).then(() =>
-      getUser()
-        .then(userData => setData(userData))
-        .catch(err => {
-          throw new Error(err)
-        }),
-    )
-
-  const props = {user: data, login, logout, register}
-
-  if (isError) {
-    return <h1>Error - {error}. Please refreah the page.</h1>
-  }
-
-  if (isLoading) {
-    return <h1>Loading...</h1>
-  }
-
-  if (isIdle) {
-    return <h1>Fetching...</h1>
-  }
-
-  if (isSuccess) {
-    return data ? (
-      <BrowserRouter>
-        <AuthenticatedApp {...props} />
-      </BrowserRouter>
-    ) : (
-      <UnAuthenticatedApp {...props} />
-    )
-  }
-}
-
-export default App
+export {AuthenticatedApp}

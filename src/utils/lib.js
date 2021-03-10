@@ -62,35 +62,6 @@ function derivedUserData(data) {
     ...emrSpendings,
   ].sort(sortDatesLatestFirst)
 
-  //helpers
-  function sumOf(spendings) {
-    if (spendings.length === 0) return 0
-    return spendings
-      .map(x => {
-        if (
-          x.type === 'goal' &&
-          parseInt(x.goalBalance) >= parseInt(x.goalAmount)
-        )
-          return 0
-        return currency(x.amount).value
-      })
-      .reduce((a, b) => currency(a).add(b).value, 0)
-  }
-
-  function sortDatesLatestFirst(a, b) {
-    const prev = new Date(a.createdAt)
-    const next = new Date(b.createdAt)
-    return next - prev
-  }
-
-  function formatWithCurrency(value) {
-    return currency(value).format()
-  }
-
-  function calculateStatus(x, y) {
-    if (y === 0) return 0
-    return currency(x).divide(y).multiply(100).value
-  }
   return {
     emrGoal,
     emrCurrentBalance,
@@ -109,8 +80,51 @@ function derivedUserData(data) {
     freeSpendings,
     goalSpendings,
     currentPayPeriod,
-    formatWithCurrency,
   }
 }
 
-export {derivedUserData}
+function sumOf(spendings) {
+  if (spendings.length === 0) return 0
+  return spendings
+    .map(x => {
+      if (
+        x.type === 'goal' &&
+        parseInt(x.goalBalance) >= parseInt(x.goalAmount)
+      )
+        return 0
+      return currency(x.amount).value
+    })
+    .reduce((a, b) => currency(a).add(b).value, 0)
+}
+
+function sortDatesLatestFirst(a, b) {
+  const prev = new Date(a.createdAt)
+  const next = new Date(b.createdAt)
+  return next - prev
+}
+
+function formatWithCurrency(value) {
+  return currency(value).format()
+}
+
+function calculateStatus(x, y) {
+  if (y === 0) return 0
+  return currency(x).divide(y).multiply(100).value
+}
+
+function formatIsoDateString(isoString) {
+  const date = new Date(isoString)
+  return date.toUTCString().split(' ').slice(0, 3).join(' ')
+}
+
+function convertMontlyValueToPerPeriod(value, payPeriodPerMonth) {
+  return currency(value).divide(payPeriodPerMonth).value
+}
+
+export {
+  derivedUserData,
+  formatWithCurrency,
+  formatIsoDateString,
+  convertMontlyValueToPerPeriod,
+  calculateStatus,
+}

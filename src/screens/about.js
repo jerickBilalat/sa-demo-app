@@ -1,7 +1,7 @@
 import * as React from 'react'
 
 const About = () => {
-  return <h1>TODO</h1>
+  return <h1>Page Under Construction</h1>
 }
 
 export {About}

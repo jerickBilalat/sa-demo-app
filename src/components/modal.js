@@ -12,7 +12,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel'
 import {v4 as uuidv4} from 'uuid'
 import currency from 'currency.js'
 
-import {formatWithCurrency} from './utils'
+import {formatWithCurrency} from '../utils/lib'
 
 import {NumberFormatCustom} from './lib'
 
