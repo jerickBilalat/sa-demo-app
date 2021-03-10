@@ -23,9 +23,7 @@ import {
   GoalSpendingSheet,
 } from '../components/spendingSheetLib'
 import {
-  AddSpendingFormDialog,
-  EmrFundFormDialog,
-  FreeMoneyFormDialog,
+  SpendingFormDialog,
   FixedSpendingFormDialog,
   CreateGoalFormDialog,
   CreateNextPeriodFormDialog,
@@ -293,34 +291,40 @@ function Dashboard({
         </Container>
       </main>
       {toggleAddSpendingModal && (
-        <AddSpendingFormDialog
+        <SpendingFormDialog
           doToggleModal={() => doToggleModal(setAddSpendingModal)}
           spendingToEdit={spendingToEdit}
           modalToggle={toggleAddSpendingModal}
-          setSpendingToEdit={setSpendingToEdit}
-          data={data}
           dispatch={dispatch}
+          setSpendingToEdit={setSpendingToEdit}
+          currentPayPeriodID={currentPayPeriod._id}
+          modalTitle="Budget Spending"
+          modalContentText="Spend wisely."
         />
       )}
       {toggleUseEmrFundModal && (
-        <EmrFundFormDialog
+        <SpendingFormDialog
           doToggleModal={() => doToggleModal(setUseEmrFundModal)}
           spendingToEdit={spendingToEdit}
           modalToggle={toggleUseEmrFundModal}
           setSpendingToEdit={setSpendingToEdit}
           setUseEmrFundModal={setUseEmrFundModal}
-          data={data}
+          currentPayPeriodID={currentPayPeriod._id}
           dispatch={dispatch}
+          modalTitle="Emergency Fund Spending"
+          type="emr"
         />
       )}
       {toggleUseFreeMoneyModal && (
-        <FreeMoneyFormDialog
+        <SpendingFormDialog
           doToggleModal={() => doToggleModal(setUseFreeMoneyModal)}
           spendingToEdit={spendingToEdit}
           setSpendingToEdit={setSpendingToEdit}
           modalToggle={toggleUseFreeMoneyModal}
-          data={data}
           dispatch={dispatch}
+          currentPayPeriodID={currentPayPeriod._id}
+          modalTitle="Spludge Fund Spending"
+          type="free"
         />
       )}
       {toggleAddFixedSpendingModal && (

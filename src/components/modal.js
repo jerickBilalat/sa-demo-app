@@ -16,68 +16,46 @@ import {formatWithCurrency} from './utils'
 
 import {NumberFormatCustom} from './lib'
 
-function AddSpendingFormDialog({
+function SpendingFormDialog({
   doToggleModal,
   spendingToEdit,
   modalToggle,
-  data,
   dispatch,
   setSpendingToEdit,
+  currentPayPeriodID,
+  type = 'normal',
+  modalTitle = '',
+  modalContentText = '',
+  editButtonText = 'Edit',
+  createButtonText = 'Create',
 }) {
   const defaultState = spendingToEdit || {
     description: '',
     amount: '0',
-    type: 'normal',
-    payPeriodId: data.payPeriods[data.payPeriods.length - 1]._id,
+    type,
+    payPeriodId: currentPayPeriodID,
   }
   const [spending, setSpending] = React.useState(defaultState)
 
-  const onChange = async e => {
+  const onChange = e => {
     const target = e.target
-    spendingToEdit &&
-      (await setSpendingToEdit({...spending, [target.name]: target.value}))
+    if (spendingToEdit) {
+      setSpendingToEdit({...spending, [target.name]: target.value})
+    }
     setSpending({...spending, [target.name]: target.value})
   }
 
   const onSubmit = e => {
     e.preventDefault()
-    const body = {...spending}
-    const customConfig = {}
-    let url = spendingToEdit
-      ? 'spending/update-spending'
-      : 'spending/create-spending'
-
-    if (spendingToEdit) {
-      customConfig.method = 'PUT'
-    }
-    client(url, {
-      data: body,
-      token: data.token,
-      ...customConfig,
-    })
-      .then(res => {
-        dispatch({type: 'add-spending', payload: res})
-        setSpending(defaultState)
-        return doToggleModal()
-      })
-      .catch(console.log) // TODO: handle error to render error message
+    dispatch({type: 'add-spending', payload: spending})
+    setSpending(defaultState)
+    doToggleModal()
   }
 
   const doDelete = () => {
-    const body = {...spending}
-    let url = 'spending/delete-spending'
-
-    client(url, {
-      method: 'DELETE',
-      data: body,
-      token: data.token,
-    })
-      .then(res => {
-        dispatch({type: 'delete-spending', payload: res})
-        setSpending(defaultState)
-        return doToggleModal()
-      })
-      .catch(console.log) // TODO: handle error to render error message
+    dispatch({type: 'delete-spending', payload: spending})
+    setSpending(defaultState)
+    doToggleModal()
   }
 
   return (
@@ -86,11 +64,9 @@ function AddSpendingFormDialog({
       onClose={doToggleModal}
       aria-labelledby="form-dialog-title"
     >
-      <DialogTitle id="form-dialog-title">
-        {spendingToEdit ? 'Edit Spending' : 'Add Spending'}
-      </DialogTitle>
+      <DialogTitle id="form-dialog-title">{modalTitle}</DialogTitle>
       <DialogContent>
-        <DialogContentText>Spend wisely.</DialogContentText>
+        <DialogContentText>{modalContentText}</DialogContentText>
         <TextField
           autoFocus
           margin="dense"
@@ -126,244 +102,7 @@ function AddSpendingFormDialog({
           Cancel
         </Button>
         <Button onClick={onSubmit} color="primary">
-          {spendingToEdit ? 'Done' : 'Spend'}
-        </Button>
-      </DialogActions>
-    </Dialog>
-  )
-}
-
-function EmrFundFormDialog({
-  doToggleModal,
-  spendingToEdit,
-  modalToggle,
-  setSpendingToEdit,
-  data,
-  dispatch,
-}) {
-  const defaultState = spendingToEdit || {
-    description: '',
-    amount: '0',
-    type: 'emr',
-    payPeriodId: data.payPeriods[data.payPeriods.length - 1]._id,
-  }
-  const [spending, setSpending] = React.useState(defaultState)
-
-  const onChange = async e => {
-    const target = e.target
-    spendingToEdit &&
-      (await setSpendingToEdit({...spending, [target.name]: target.value}))
-    setSpending({...spending, [target.name]: target.value})
-  }
-
-  const onSubmit = e => {
-    e.preventDefault()
-    const body = {...spending}
-    const customConfig = {}
-    let url = spendingToEdit
-      ? 'spending/update-spending'
-      : 'spending/create-spending'
-
-    if (spendingToEdit) {
-      customConfig.method = 'PUT'
-    }
-    client(url, {
-      data: body,
-      token: data.token,
-      ...customConfig,
-    })
-      .then(res => {
-        dispatch({type: 'add-spending', payload: res})
-        setSpending(defaultState)
-        return doToggleModal()
-      })
-      .catch(console.log) // TODO: handle error to render error message
-  }
-
-  const doDelete = () => {
-    const body = {...spending}
-    let url = 'spending/delete-spending'
-
-    client(url, {
-      method: 'DELETE',
-      data: body,
-      token: data.token,
-    })
-      .then(res => {
-        dispatch({type: 'delete-spending', payload: res})
-        setSpending(defaultState)
-        return doToggleModal()
-      })
-      .catch(console.log) // TODO: handle error to render error message
-  }
-
-  return (
-    <Dialog
-      open={modalToggle}
-      onClose={() => doToggleModal()}
-      aria-labelledby="form-dialog-title"
-    >
-      <DialogTitle id="form-dialog-title">
-        {spendingToEdit ? 'Edit Emergency Spending' : 'Use Emergency Fund'}
-      </DialogTitle>
-      <DialogContent>
-        <DialogContentText>I got you covered!</DialogContentText>
-        <TextField
-          autoFocus
-          margin="dense"
-          id="description"
-          label="Description"
-          name="description"
-          type="text"
-          value={
-            spendingToEdit ? spendingToEdit.description : spending.description
-          }
-          onChange={e => onChange(e)}
-        />
-        <TextField
-          margin="dense"
-          id="amount"
-          name="amount"
-          label="Cost"
-          type="text"
-          value={spendingToEdit ? spendingToEdit.amount : spending.amount}
-          onChange={e => onChange(e)}
-          InputProps={{
-            inputComponent: NumberFormatCustom,
-          }}
-        />
-      </DialogContent>
-      <DialogActions>
-        {spendingToEdit && (
-          <Button onClick={doDelete} color="primary">
-            Delete
-          </Button>
-        )}
-        <Button onClick={() => doToggleModal()} color="primary">
-          Cancel
-        </Button>
-        <Button onClick={onSubmit} color="primary">
-          {spendingToEdit ? 'Done' : 'Use'}
-        </Button>
-      </DialogActions>
-    </Dialog>
-  )
-}
-
-function FreeMoneyFormDialog({
-  doToggleModal,
-  spendingToEdit,
-  setSpendingToEdit,
-  modalToggle,
-  data,
-  dispatch,
-}) {
-  const defaultState = spendingToEdit || {
-    description: '',
-    amount: '0',
-    type: 'free',
-    payPeriodId: data.payPeriods[data.payPeriods.length - 1]._id,
-  }
-  const [spending, setSpending] = React.useState(defaultState)
-
-  const onChange = async e => {
-    const target = e.target
-    spendingToEdit &&
-      (await setSpendingToEdit({...spending, [target.name]: target.value}))
-    setSpending({...spending, [target.name]: target.value})
-  }
-
-  const onSubmit = e => {
-    e.preventDefault()
-    const body = {...spending}
-    const customConfig = {}
-    let url = spendingToEdit
-      ? 'spending/update-spending'
-      : 'spending/create-spending'
-
-    if (spendingToEdit) {
-      customConfig.method = 'PUT'
-    }
-
-    client(url, {
-      data: body,
-      token: data.token,
-      ...customConfig,
-    })
-      .then(res => {
-        dispatch({type: 'add-spending', payload: res})
-        setSpending(defaultState)
-        return doToggleModal()
-      })
-      .catch(console.log) // TODO: handle error to render error message
-  }
-
-  const doDelete = () => {
-    const body = {...spending}
-    let url = 'spending/delete-spending'
-
-    client(url, {
-      method: 'DELETE',
-      data: body,
-      token: data.token,
-    })
-      .then(res => {
-        dispatch({type: 'delete-spending', payload: res})
-        setSpending(defaultState)
-        return doToggleModal()
-      })
-      .catch(console.log) // TODO: handle error to render error message
-  }
-
-  return (
-    <Dialog
-      open={modalToggle}
-      onClose={doToggleModal}
-      aria-labelledby="form-dialog-title"
-    >
-      <DialogTitle id="form-dialog-title">
-        {spendingToEdit ? 'Edit Spludgy Spending' : 'Spludge'}
-      </DialogTitle>
-      <DialogContent>
-        <DialogContentText>
-          Where Guilt Free spending happens.
-        </DialogContentText>
-        <TextField
-          autoFocus
-          margin="dense"
-          id="description"
-          label="Description"
-          name="description"
-          type="text"
-          value={
-            spendingToEdit ? spendingToEdit.description : spending.description
-          }
-          onChange={e => onChange(e)}
-        />
-        <TextField
-          margin="dense"
-          id="amount"
-          name="amount"
-          label="Cost"
-          type="text"
-          value={spendingToEdit ? spendingToEdit.amount : spending.amount}
-          onChange={e => onChange(e)}
-          InputProps={{
-            inputComponent: NumberFormatCustom,
-          }}
-        />
-      </DialogContent>
-      <DialogActions>
-        {spendingToEdit && (
-          <Button onClick={doDelete} color="primary">
-            Delete
-          </Button>
-        )}
-        <Button onClick={doToggleModal} color="primary">
-          Cancel
-        </Button>
-        <Button onClick={onSubmit} color="primary">
-          {spendingToEdit ? 'Done' : 'Spludge'}
+          {spendingToEdit ? editButtonText : createButtonText}
         </Button>
       </DialogActions>
     </Dialog>
@@ -996,9 +735,7 @@ function EditPayPeriodFormDialog({
 }
 
 export {
-  AddSpendingFormDialog,
-  EmrFundFormDialog,
-  FreeMoneyFormDialog,
+  SpendingFormDialog,
   CreateGoalFormDialog,
   FixedSpendingFormDialog,
   CreateNextPeriodFormDialog,

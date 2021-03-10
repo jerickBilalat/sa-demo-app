@@ -98,16 +98,34 @@ export default function userDataReducer(state, action) {
         ],
       }
     case 'add-spending':
-      const newSpendingId = action.payload._id
+      const {amount, description, payPeriodId, type} = action.payload
+      let spending
+      if (!action.payload._id) {
+        spending = {
+          _id: uuidv4(),
+          amount,
+          description,
+          refPayPeriods: [payPeriodId],
+          type,
+          refUser: state.userID,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        }
+      } else {
+        spending = action.payload
+      }
+
       let currentSpendings = state.currentSpendings
-      if (currentSpendings.map(x => x._id).includes(newSpendingId)) {
+
+      if (currentSpendings.map(x => x._id).includes(spending._id)) {
         currentSpendings = state.currentSpendings.filter(
-          x => x._id !== newSpendingId,
+          x => x._id !== spending._id,
         )
       }
+
       return {
         ...state,
-        currentSpendings: [...currentSpendings, action.payload],
+        currentSpendings: [...currentSpendings, spending],
       }
     case 'delete-spending':
       const deletedSpendingId = action.payload._id
