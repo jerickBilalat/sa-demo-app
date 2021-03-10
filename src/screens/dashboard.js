@@ -24,8 +24,6 @@ import {
 } from '../components/spendingSheetLib'
 import {
   SpendingFormDialog,
-  FixedSpendingFormDialog,
-  CreateGoalFormDialog,
   CreateNextPeriodFormDialog,
   EditPayPeriodFormDialog,
   EditUserPreferenceDialog,
@@ -292,6 +290,7 @@ function Dashboard({
       </main>
       {toggleAddSpendingModal && (
         <SpendingFormDialog
+          userData={data}
           doToggleModal={() => doToggleModal(setAddSpendingModal)}
           spendingToEdit={spendingToEdit}
           modalToggle={toggleAddSpendingModal}
@@ -304,6 +303,7 @@ function Dashboard({
       )}
       {toggleUseEmrFundModal && (
         <SpendingFormDialog
+          userData={data}
           doToggleModal={() => doToggleModal(setUseEmrFundModal)}
           spendingToEdit={spendingToEdit}
           modalToggle={toggleUseEmrFundModal}
@@ -317,6 +317,7 @@ function Dashboard({
       )}
       {toggleUseFreeMoneyModal && (
         <SpendingFormDialog
+          userData={data}
           doToggleModal={() => doToggleModal(setUseFreeMoneyModal)}
           spendingToEdit={spendingToEdit}
           setSpendingToEdit={setSpendingToEdit}
@@ -328,25 +329,31 @@ function Dashboard({
         />
       )}
       {toggleAddFixedSpendingModal && (
-        <FixedSpendingFormDialog
+        <SpendingFormDialog
+          userData={data}
           spendingToEdit={spendingToEdit}
           setSpendingToEdit={setSpendingToEdit}
           doToggleModal={() => doToggleModal(setAddFixedSpendingModal)}
           setCarryOverFixed={setCarryOverFixed}
           modalToggle={toggleAddFixedSpendingModal}
-          data={data}
           dispatch={dispatch}
+          currentPayPeriodID={currentPayPeriod._id}
+          modalTitle="Fixed Spending"
+          type="fixed"
         />
       )}
       {toggleCreateGoalModal && (
-        <CreateGoalFormDialog
+        <SpendingFormDialog
+          userData={data}
           spendingToEdit={spendingToEdit}
           setSpendingToEdit={setSpendingToEdit}
           doToggleModal={() => doToggleModal(setCreateGoalModal)}
           setCarryOverGoals={setCarryOverGoals}
           modalToggle={toggleCreateGoalModal}
-          data={data}
           dispatch={dispatch}
+          currentPayPeriodID={currentPayPeriod._id}
+          modalTitle="Goal Spending"
+          type="goal"
         />
       )}
       <CreateNextPeriodFormDialog

@@ -9,8 +9,8 @@ import DialogTitle from '@material-ui/core/DialogTitle'
 import Checkbox from '@material-ui/core/Checkbox'
 import FormGroup from '@material-ui/core/FormGroup'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
-
-import {clientFacade as client} from '../utils/api-client'
+import {v4 as uuidv4} from 'uuid'
+import currency from 'currency.js'
 
 import {formatWithCurrency} from './utils'
 
@@ -23,6 +23,17 @@ function SpendingFormDialog({
   dispatch,
   setSpendingToEdit,
   currentPayPeriodID,
+  userData,
+  setCarryOverFixed = () => {
+    console.error(
+      'Please provide setCarryOverFixed and do not use deafult callback',
+    )
+  },
+  setCarryOverGoals = () => {
+    console.error(
+      'Please provide setCarryOverGoals and do not use deafult callback',
+    )
+  },
   type = 'normal',
   modalTitle = '',
   modalContentText = '',
@@ -33,7 +44,9 @@ function SpendingFormDialog({
     description: '',
     amount: '0',
     type,
-    payPeriodId: currentPayPeriodID,
+    refUser: userData.userID,
+    goalAmount: '0',
+    goalBalance: '0',
   }
   const [spending, setSpending] = React.useState(defaultState)
 
@@ -47,7 +60,40 @@ function SpendingFormDialog({
 
   const onSubmit = e => {
     e.preventDefault()
-    dispatch({type: 'add-spending', payload: spending})
+    const {
+      description,
+      refUser,
+      amount,
+      type,
+      _id,
+      createdAt,
+      refPayPeriods,
+      goalAmount,
+      goalBalance,
+    } = spending
+    let payload = {
+      description,
+      amount,
+      _id: _id || uuidv4(),
+      type,
+      refUser,
+      refPayPeriods: refPayPeriods ? refPayPeriods : [currentPayPeriodID],
+      createdAt: createdAt || new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    }
+
+    if (type === 'fixed') {
+      setCarryOverFixed(prevState => [...prevState, payload._id])
+    } else if (type === 'goal') {
+      payload = {
+        ...payload,
+        goalAmount,
+        goalBalance: currency(goalBalance).add(amount).format(),
+      }
+      setCarryOverGoals(prevState => [...prevState, payload._id])
+    }
+
+    dispatch({type: 'add-spending', payload})
     setSpending(defaultState)
     doToggleModal()
   }
@@ -91,6 +137,38 @@ function SpendingFormDialog({
             inputComponent: NumberFormatCustom,
           }}
         />
+        {type === 'goal' && (
+          <TextField
+            margin="dense"
+            id="goalBalance"
+            name="goalBalance"
+            label="Current Balance"
+            type="text"
+            value={
+              spendingToEdit ? spendingToEdit.goalBalance : spending.goalBalance
+            }
+            onChange={e => onChange(e)}
+            InputProps={{
+              inputComponent: NumberFormatCustom,
+            }}
+          />
+        )}
+        {type === 'goal' && (
+          <TextField
+            margin="dense"
+            id="goalAmount"
+            name="goalAmount"
+            label="Goal Amount"
+            type="text"
+            value={
+              spendingToEdit ? spendingToEdit.goalAmount : spending.goalAmount
+            }
+            onChange={e => onChange(e)}
+            InputProps={{
+              inputComponent: NumberFormatCustom,
+            }}
+          />
+        )}
       </DialogContent>
       <DialogActions>
         {spendingToEdit && (
@@ -103,277 +181,6 @@ function SpendingFormDialog({
         </Button>
         <Button onClick={onSubmit} color="primary">
           {spendingToEdit ? editButtonText : createButtonText}
-        </Button>
-      </DialogActions>
-    </Dialog>
-  )
-}
-
-function FixedSpendingFormDialog({
-  spendingToEdit,
-  setSpendingToEdit,
-  doToggleModal,
-  setCarryOverFixed,
-  modalToggle,
-  data,
-  dispatch,
-}) {
-  const defaultState = spendingToEdit || {
-    description: '',
-    amount: '0',
-    type: 'fixed',
-    payPeriodId: data.payPeriods[data.payPeriods.length - 1]._id,
-  }
-  const [spending, setSpending] = React.useState(defaultState)
-
-  const onChange = async e => {
-    const target = e.target
-    spendingToEdit &&
-      (await setSpendingToEdit({...spending, [target.name]: target.value}))
-    setSpending({...spending, [target.name]: target.value})
-  }
-
-  const onSubmit = e => {
-    e.preventDefault()
-    const body = {...spending}
-    const customConfig = {}
-    let url = spendingToEdit
-      ? 'spending/update-spending'
-      : 'spending/create-spending'
-
-    if (spendingToEdit) {
-      customConfig.method = 'PUT'
-    }
-
-    client(url, {
-      data: body,
-      token: data.token,
-      ...customConfig,
-    })
-      .then(res => {
-        dispatch({type: 'add-spending', payload: res})
-        setCarryOverFixed(prevState => [...prevState, res._id])
-        setSpending(defaultState)
-        return doToggleModal()
-      })
-      .catch(console.log) // TODO: handle error to render error message
-  }
-
-  const doDelete = () => {
-    const body = {...spending}
-    let url = 'spending/delete-spending'
-
-    client(url, {
-      method: 'DELETE',
-      data: body,
-      token: data.token,
-    })
-      .then(res => {
-        dispatch({type: 'delete-spending', payload: res})
-        setSpending(defaultState)
-        return doToggleModal()
-      })
-      .catch(console.log) // TODO: handle error to render error message
-  }
-
-  return (
-    <Dialog
-      open={modalToggle}
-      onClose={doToggleModal}
-      aria-labelledby="form-dialog-title"
-    >
-      <DialogTitle id="form-dialog-title">
-        {spendingToEdit ? 'Edit Fixed Spending' : 'Add Fixed Spending'}
-      </DialogTitle>
-      <DialogContent>
-        <DialogContentText>Bills. Bills. Bills.</DialogContentText>
-        <TextField
-          autoFocus
-          margin="dense"
-          id="description"
-          label="Description"
-          name="description"
-          type="text"
-          value={
-            spendingToEdit ? spendingToEdit.description : spending.description
-          }
-          onChange={e => onChange(e)}
-        />
-        <TextField
-          margin="dense"
-          id="amount"
-          name="amount"
-          label="Cost"
-          type="text"
-          value={spendingToEdit ? spendingToEdit.amount : spending.amount}
-          onChange={e => onChange(e)}
-          InputProps={{
-            inputComponent: NumberFormatCustom,
-          }}
-        />
-      </DialogContent>
-      <DialogActions>
-        {spendingToEdit && (
-          <Button onClick={doDelete} color="primary">
-            Delete
-          </Button>
-        )}
-        <Button onClick={doToggleModal} color="primary">
-          Cancel
-        </Button>
-        <Button onClick={onSubmit} color="primary">
-          {spendingToEdit ? 'Done' : 'Add'}
-        </Button>
-      </DialogActions>
-    </Dialog>
-  )
-}
-
-function CreateGoalFormDialog({
-  spendingToEdit,
-  setSpendingToEdit,
-  doToggleModal,
-  setCarryOverGoals,
-  modalToggle,
-  data,
-  dispatch,
-}) {
-  const defaultState = spendingToEdit || {
-    description: '',
-    amount: '0',
-    type: 'goal',
-    payPeriodId: data.payPeriods[data.payPeriods.length - 1]._id,
-    goalAmount: '0',
-    goalBalance: '0',
-  }
-  const [spending, setSpending] = React.useState(defaultState)
-
-  const onChange = async e => {
-    const target = e.target
-    spendingToEdit &&
-      (await setSpendingToEdit({...spending, [target.name]: target.value}))
-    setSpending({...spending, [target.name]: target.value})
-  }
-  const onSubmit = e => {
-    e.preventDefault()
-    const body = {
-      ...spending,
-    }
-    const customConfig = {}
-    let url = spendingToEdit
-      ? 'spending/update-spending'
-      : 'spending/create-spending'
-
-    if (spendingToEdit) {
-      customConfig.method = 'PUT'
-    }
-
-    client(url, {
-      data: body,
-      token: data.token,
-      ...customConfig,
-    })
-      .then(res => {
-        dispatch({type: 'add-spending', payload: res})
-        setCarryOverGoals(prevState => [...prevState, res._id])
-        setSpending(defaultState)
-        return doToggleModal()
-      })
-      .catch(console.log) // TODO: handle error to render error message
-  }
-
-  const doDelete = () => {
-    const body = {...spending}
-    let url = 'spending/delete-spending'
-
-    client(url, {
-      method: 'DELETE',
-      data: body,
-      token: data.token,
-    })
-      .then(res => {
-        dispatch({type: 'delete-spending', payload: res})
-        setSpending(defaultState)
-        return doToggleModal()
-      })
-      .catch(console.log) // TODO: handle error to render error message
-  }
-
-  return (
-    <Dialog
-      open={modalToggle}
-      onClose={doToggleModal}
-      aria-labelledby="form-dialog-title"
-    >
-      <DialogTitle id="form-dialog-title">
-        {spendingToEdit ? 'Edit Goal' : 'Create Goal'}
-      </DialogTitle>
-      <DialogContent>
-        <DialogContentText>Set and execute.</DialogContentText>
-        <TextField
-          autoFocus
-          margin="dense"
-          id="description"
-          label="Description"
-          name="description"
-          type="text"
-          value={
-            spendingToEdit ? spendingToEdit.description : spending.description
-          }
-          onChange={e => onChange(e)}
-        />
-        <TextField
-          margin="dense"
-          id="amount"
-          name="amount"
-          label="Commitment"
-          type="text"
-          value={spendingToEdit ? spendingToEdit.amount : spending.amount}
-          onChange={e => onChange(e)}
-          InputProps={{
-            inputComponent: NumberFormatCustom,
-          }}
-        />
-        <TextField
-          margin="dense"
-          id="goalBalance"
-          name="goalBalance"
-          label="Current Balance"
-          type="text"
-          value={
-            spendingToEdit ? spendingToEdit.goalBalance : spending.goalBalance
-          }
-          onChange={e => onChange(e)}
-          InputProps={{
-            inputComponent: NumberFormatCustom,
-          }}
-        />
-        <TextField
-          margin="dense"
-          id="goalAmount"
-          name="goalAmount"
-          label="Goal Amount"
-          type="text"
-          value={
-            spendingToEdit ? spendingToEdit.goalAmount : spending.goalAmount
-          }
-          onChange={e => onChange(e)}
-          InputProps={{
-            inputComponent: NumberFormatCustom,
-          }}
-        />
-      </DialogContent>
-      <DialogActions>
-        {spendingToEdit && (
-          <Button onClick={doDelete} color="primary">
-            Delete
-          </Button>
-        )}
-        <Button onClick={doToggleModal} color="primary">
-          Cancel
-        </Button>
-        <Button onClick={onSubmit} color="primary">
-          {spendingToEdit ? 'Edit' : 'Create'}
         </Button>
       </DialogActions>
     </Dialog>
@@ -567,7 +374,6 @@ function EditUserPreferenceDialog({
     setForm({...form, [target.name]: target.value})
   }
   const onSubmit = e => {
-    console.log('form', form)
     e.preventDefault()
     if (defaultState === form) {
       // just close modal
@@ -736,8 +542,6 @@ function EditPayPeriodFormDialog({
 
 export {
   SpendingFormDialog,
-  CreateGoalFormDialog,
-  FixedSpendingFormDialog,
   CreateNextPeriodFormDialog,
   EditPayPeriodFormDialog,
   EditUserPreferenceDialog,
