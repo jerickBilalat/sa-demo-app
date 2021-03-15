@@ -1,1 +1,1 @@
-# Speding Awareness Application Client
+# Agile Spending Application Demo

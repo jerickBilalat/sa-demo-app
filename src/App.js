@@ -44,7 +44,7 @@ const AuthenticatedApp = () => {
   )
   const [toggleEditPPModal, setEditPPModal] = React.useState(false)
 
-  const [toggleEditUPModal, setEditUPModal] = React.useState(true)
+  const [toggleEditUPModal, setEditUPModal] = React.useState(false)
 
   const classes = useStyles()
   const isOnDashboard = useMatch('/dashboard')

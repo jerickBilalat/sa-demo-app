@@ -282,7 +282,7 @@ function CreateNextPeriodFormDialog({
         />
         {fixedSpendings.length > 0 ? (
           <DialogContentText>
-            Unchecked fixed spendings that does not apply to this period:
+            Uncheck fixed spendings that does not apply to this period:
           </DialogContentText>
         ) : null}
         <FormGroup>
@@ -310,7 +310,7 @@ function CreateNextPeriodFormDialog({
         </FormGroup>
         {goalSpendings.length > 0 ? (
           <DialogContentText>
-            Unchecked goals that does not apply to this period:
+            Uncheck goals that does not apply to this period:
           </DialogContentText>
         ) : null}
         <FormGroup>
@@ -514,12 +514,11 @@ function EditPayPeriodFormDialog({
     >
       <DialogTitle id="form-dialog-title">Edit Period</DialogTitle>
       <DialogContent>
-        <DialogContentText>Edit or add funds to Pay Period</DialogContentText>
         <TextField
           margin="dense"
           id="pay"
           name="pay"
-          label="Current Funds"
+          label="Income"
           type="text"
           value={form.pay}
           onChange={e => onChange(e)}
