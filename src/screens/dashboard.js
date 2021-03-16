@@ -13,18 +13,18 @@ import {
   EmrFundCard,
   FreeMoneyCard,
   BudgetCard,
-} from '../components/balanceCardLib'
+} from '../components/balanceCards'
 import {
   NormalSpendingSheets,
   FixedSpendingSheet,
   GoalSpendingSheet,
-} from '../components/spendingSheetLib'
+} from '../components/spendingSheets'
 import {
   SpendingFormDialog,
   CreateNextPeriodFormDialog,
   EditPayPeriodFormDialog,
   EditUserPreferenceDialog,
-} from '../components/modal'
+} from '../components/modals'
 import {Copyright} from '../components/lib'
 
 const useStyles = makeStyles(theme => ({
