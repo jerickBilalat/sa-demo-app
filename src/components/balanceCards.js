@@ -54,14 +54,7 @@ function EmrFundCard({
   )
 }
 
-function BudgetCard({
-  remainingBudget,
-  budget,
-  spent,
-  status,
-  doToggleModal,
-  setAddSpendingModal,
-}) {
+function BudgetCard({remainingBudget, budget, spent, status, doToggleModal}) {
   const classes = useStyles()
   return (
     <React.Fragment>

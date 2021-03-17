@@ -44,10 +44,10 @@ const AuthenticatedApp = () => {
   )
   const [toggleEditPPModal, setEditPPModal] = React.useState(false)
 
-  const [toggleEditUPModal, setEditUPModal] = React.useState(true)
+  const [toggleEditUPModal, setEditUPModal] = React.useState(false)
 
   const classes = useStyles()
-  const isOnDashboard = useMatch('/')
+  const isOnDashboard = useMatch('/dashboard')
 
   const doOpenCreatePayPeriodModal = () => {
     setCreatePayPeriodModal(true)
@@ -75,9 +75,9 @@ const AuthenticatedApp = () => {
           component={RouterLink}
           noWrap
           variant="body2"
-          to={'/'}
+          to={'/dashboard'}
           className={classes.toolbarLink}
-          style={useMatch('/') && {textDecoration: 'underline'}}
+          style={useMatch('/dashboard') && {textDecoration: 'underline'}}
         >
           Dashboard
         </Link>
@@ -86,9 +86,9 @@ const AuthenticatedApp = () => {
           component={RouterLink}
           noWrap
           variant="body2"
-          to={'/about'}
+          to={'/'}
           className={classes.toolbarLink}
-          style={useMatch('/about') && {textDecoration: 'underline'}}
+          style={useMatch('/') && {textDecoration: 'underline'}}
         >
           How it Works
         </Link>
@@ -132,7 +132,7 @@ const AuthenticatedApp = () => {
       )}
       <Routes>
         <Route
-          path="/"
+          path="/dashboard"
           element={
             <Dashboard
               data={userData}
@@ -146,7 +146,7 @@ const AuthenticatedApp = () => {
             />
           }
         />
-        <Route path="/about" element={<About />} />
+        <Route path="/" element={<About />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </>
