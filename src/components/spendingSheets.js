@@ -42,8 +42,8 @@ function NormalSpendingSheets({
   setUseFreeMoneyModal,
   doToggleModal,
 }) {
-  const doEdit = async spending => {
-    await setSpendingToEdit(spending)
+  const doEdit = spending => {
+    setSpendingToEdit(spending)
     switch (spending.type) {
       case 'emr':
         doToggleModal(setUseEmrFundModal)
