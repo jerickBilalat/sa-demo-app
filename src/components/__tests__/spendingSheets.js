@@ -94,3 +94,52 @@ describe('NormalSpendingSheets', () => {
     expect(props.doToggleModal).toHaveBeenCalledWith(props.setUseFreeMoneyModal)
   })
 })
+
+describe('FixedSpendingSheet', () => {
+  const spendings = [
+    {
+      refPayPeriods: ['603276bb4f02f09a95d3486e'],
+      _id: '6032801c4f02f09a95d34874',
+      description: 'phone',
+      amount: '50',
+      type: 'fixed',
+      refUser: '603276bb4f02f09a95d3486d',
+      createdAt: '2021-02-21T15:45:32.885Z',
+      updatedAt: '2021-02-21T15:46:50.979Z',
+      __v: 0,
+    },
+    {
+      refPayPeriods: ['603276bb4f02f09a95d3486e'],
+      _id: '6032801c4f02f09a95d34877',
+      description: 'rent',
+      amount: '1200',
+      type: 'fixed',
+      refUser: '603276bb4f02f09a95d3486d',
+      createdAt: '2021-02-21T15:45:32.885Z',
+      updatedAt: '2021-02-21T15:46:50.979Z',
+      __v: 0,
+    },
+  ]
+  const props = {
+    spendings,
+    doToggleModal: jest.fn(),
+    setSpendingToEdit: jest.fn(),
+    numberOfPayPeriodPerMonth: 2,
+  }
+  it('should render list of fixed spendings', () => {
+    const {getByText} = render(<FixedSpendingSheet {...props} />)
+    expect(getByText(/^phone$/i)).toBeInTheDocument()
+    expect(getByText(/^\$50.00$/i)).toBeInTheDocument()
+    expect(getByText(/^\$25.00$/i)).toBeInTheDocument()
+    expect(getByText(/^rent$/i)).toBeInTheDocument()
+    expect(getByText(/^\$1,200.00$/i)).toBeInTheDocument()
+    expect(getByText(/^\$600.00$/i)).toBeInTheDocument()
+  })
+  it('should trigger edit mode when item on a list is clicked', () => {
+    const {getByText} = render(<FixedSpendingSheet {...props} />)
+    const listItem = getByText(/^phone$/i)
+    userEvent.click(listItem)
+    expect(props.setSpendingToEdit).toHaveBeenCalledWith(spendings[0])
+    expect(props.doToggleModal).toHaveBeenCalled()
+  })
+})
