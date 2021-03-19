@@ -68,7 +68,7 @@ export default {
       description: 'New Car',
       amount: '50',
       type: 'goal',
-      goalBalance: '$5,100.00',
+      goalBalance: '5,100.00',
       goalAmount: '10000',
       refUser: '603276bb4f02f09a95d3486d',
       createdAt: '2021-02-21T15:45:54.869Z',
