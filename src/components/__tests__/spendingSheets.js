@@ -143,3 +143,40 @@ describe('FixedSpendingSheet', () => {
     expect(props.doToggleModal).toHaveBeenCalled()
   })
 })
+
+describe('GoalSpendingSheet', () => {
+  const spendings = [
+    {
+      refPayPeriods: ['603276bb4f02f09a95d3486e'],
+      _id: '603280324f02f09a95d34875',
+      description: 'New Car',
+      amount: '50',
+      type: 'goal',
+      goalBalance: '5,100.00',
+      goalAmount: '10000',
+      refUser: '603276bb4f02f09a95d3486d',
+      createdAt: '2021-02-21T15:45:54.869Z',
+      updatedAt: '2021-02-21T15:46:50.992Z',
+      __v: 0,
+    },
+  ]
+  const props = {
+    spendings,
+    doToggleModal: jest.fn(),
+    setSpendingToEdit: jest.fn(),
+  }
+  it('should render list of spendings', () => {
+    const {getByText} = render(<GoalSpendingSheet {...props} />)
+    expect(getByText(/^new car$/i)).toBeInTheDocument()
+    expect(getByText(/^\$50.00$/i)).toBeInTheDocument()
+    expect(getByText(/^\$5,100.00$/i)).toBeInTheDocument()
+    expect(getByText(/^\$10,000.00$/i)).toBeInTheDocument()
+  })
+  it('should trigger edit mode when item on a list is clicked', () => {
+    const {getByText} = render(<GoalSpendingSheet {...props} />)
+    const listItem = getByText(/^new car$/i)
+    userEvent.click(listItem)
+    expect(props.setSpendingToEdit).toHaveBeenCalledWith(spendings[0])
+    expect(props.doToggleModal).toHaveBeenCalled()
+  })
+})
