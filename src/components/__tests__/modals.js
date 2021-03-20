@@ -30,7 +30,7 @@ describe('SpendingFormDialog', () => {
     createButtonText: 'Create',
   }
 
-  it('should render budget fund spending modal dialog information with filled fields', () => {
+  it('should render budget/emr/spludge/fixed spending modal dialog with correct labels and with filled fields', () => {
     props = {
       ...props,
       spendingToEdit: {description: 'food', amount: '10.00'},
@@ -52,7 +52,7 @@ describe('SpendingFormDialog', () => {
     expect(getByText(/edit/i)).toBeInTheDocument()
   })
 
-  it('should render budget fund spending modal dialog with empty fields', () => {
+  it('should render budget/emr/spludge/fixed spending modal dialog with empty fields', () => {
     props = {
       ...props,
       spendingToEdit: undefined,
@@ -70,7 +70,7 @@ describe('SpendingFormDialog', () => {
     expect(inputNodeForCost.value).toBe(`$0`)
   })
 
-  it('should submits a new budget fund spending', () => {
+  it('should submits a new budget/emr/spludge/fixed fund spending', () => {
     props = {
       ...props,
       spendingToEdit: undefined,
@@ -95,7 +95,7 @@ describe('SpendingFormDialog', () => {
     unmount()
   })
 
-  it('should submits an existing edited budget fund spending', () => {
+  it('should submits an existing edited budget/emr/spludge/fixed fund spending', () => {
     props = {
       ...props,
       spendingToEdit: {
