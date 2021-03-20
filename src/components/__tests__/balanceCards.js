@@ -8,7 +8,7 @@ describe('BudgeCard', () => {
     remainingBudget: '$1300',
     budget: '$1500',
     spent: '$200',
-    status: '25',
+    status: 25,
     doToggleModal: jest.fn(),
   }
   it('should show all Budget card information ', () => {
