@@ -16,16 +16,8 @@ describe('SpendingFormDialog', () => {
     setSpendingToEdit: jest.fn(),
     currentPayPeriodID: 'jslkdjfldksjf',
     userData: {userID: 'jfsdlkjflsinwe'},
-    setCarryOverFixed: () => {
-      console.error(
-        'Please provide setCarryOverFixed and do not use deafult callback',
-      )
-    },
-    setCarryOverGoals: () => {
-      console.error(
-        'Please provide setCarryOverGoals and do not use deafult callback',
-      )
-    },
+    setCarryOverFixed: jest.fn(),
+    setCarryOverGoals: jest.fn(),
     editButtonText: 'Edit',
     createButtonText: 'Create',
   }
@@ -159,5 +151,49 @@ describe('SpendingFormDialog', () => {
       }),
     })
     expect(props.doToggleModal).toHaveBeenCalled()
+  })
+  it('should be able cancel while creating a new spending', () => {
+    const {getByText} = render(<SpendingFormDialog {...props} />)
+    userEvent.click(getByText(/cancel/i))
+    expect(props.doToggleModal).toHaveBeenCalled()
+  })
+  it('should show additional fields when modifying a Goal typed spending', () => {
+    props = {...props, type: 'goal'}
+    const {getByLabelText} = render(<SpendingFormDialog {...props} />)
+    expect(getByLabelText(/current balance/i)).toBeInTheDocument()
+    expect(getByLabelText(/goal amount/i)).toBeInTheDocument()
+  })
+  it('should be able to modify Goal typed spending additional fields', () => {
+    props = {...props, type: 'goal', spendingToEdit: undefined}
+    const {getByText, getByLabelText, unmount} = render(
+      <SpendingFormDialog {...props} />,
+    )
+    userEvent.type(getByLabelText(/description/i), 'vacation fund')
+    userEvent.type(getByLabelText(/cost/i), '10')
+    userEvent.type(getByLabelText(/current balance/i), '100')
+    userEvent.type(getByLabelText(/goal amount/i), '500')
+    userEvent.click(getByText(/create/i))
+    //TODO: test values, same issues of event not triggering
+    expect(props.dispatch).toHaveBeenCalledWith({
+      type: 'add-spending',
+      payload: expect.objectContaining({
+        description: 'vacation fund',
+        refPayPeriods: [props.currentPayPeriodID],
+      }),
+    })
+    expect(props.doToggleModal).toHaveBeenCalled()
+    unmount()
+  })
+  it('should call setCarryOverFixed when spending type is fixed', () => {
+    props = {...props, type: 'fixed', spendingToEdit: undefined}
+    const {getByText} = render(<SpendingFormDialog {...props} />)
+    userEvent.click(getByText(/create/i))
+    expect(props.setCarryOverFixed).toHaveBeenCalled()
+  })
+  it('should call setCarryOverGoals when spending type is goals', () => {
+    props = {...props, type: 'goal', spendingToEdit: undefined}
+    const {getByText} = render(<SpendingFormDialog {...props} />)
+    userEvent.click(getByText(/create/i))
+    expect(props.setCarryOverGoals).toHaveBeenCalled()
   })
 })
