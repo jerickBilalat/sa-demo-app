@@ -19,12 +19,10 @@ import {
   FixedSpendingSheet,
   GoalSpendingSheet,
 } from '../components/spendingSheets'
-import {
-  EditPayPeriodFormDialog,
-  EditUserPreferenceDialog,
-} from '../components/modals'
+import {EditPayPeriodFormDialog} from '../components/modals/editPeriodForm'
 import {SpendingFormDialog} from '../components/modals/spendingForm'
 import {CreateNextPeriodFormDialog} from '../components/modals/createPeriodForm'
+import {EditUserPreferenceDialog} from '../components/modals/editUserSettings'
 import {Copyright} from '../components/lib'
 
 const useStyles = makeStyles(theme => ({
