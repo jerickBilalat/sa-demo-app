@@ -12,7 +12,6 @@ function EditPayPeriodFormDialog({
   modalToggle,
   doCloseModal,
   currentPayPeriod,
-  data,
   dispatch,
 }) {
   const defaultState = {pay: currentPayPeriod.pay}
