@@ -22,11 +22,9 @@ function CreateNextPeriodFormDialog({
   setCarryOverGoals,
   goalSpendings,
   remainingBudget,
-  prevPayPeriodID,
   emrCurrentBalance,
   modalToggle,
   doCloseModal,
-  data,
   dispatch,
 }) {
   // TODO: normalize the input into the right format of type string
