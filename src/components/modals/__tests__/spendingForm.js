@@ -1,12 +1,8 @@
 import * as React from 'react'
-import {
-  SpendingFormDialog,
-  CreateNextPeriodFormDialog,
-  EditPayPeriodFormDialog,
-  EditUserPreferenceDialog,
-} from '../modals'
 import {render, screen, act} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+
+import {SpendingFormDialog} from '../spendingForm'
 
 describe('SpendingFormDialog', () => {
   let props = {

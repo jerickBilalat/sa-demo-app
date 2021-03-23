@@ -20,11 +20,11 @@ import {
   GoalSpendingSheet,
 } from '../components/spendingSheets'
 import {
-  SpendingFormDialog,
   CreateNextPeriodFormDialog,
   EditPayPeriodFormDialog,
   EditUserPreferenceDialog,
 } from '../components/modals'
+import {SpendingFormDialog} from '../components/modals/spendingForm'
 import {Copyright} from '../components/lib'
 
 const useStyles = makeStyles(theme => ({
