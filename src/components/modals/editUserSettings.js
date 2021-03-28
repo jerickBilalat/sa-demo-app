@@ -8,6 +8,7 @@ import DialogContentText from '@material-ui/core/DialogContentText'
 import DialogTitle from '@material-ui/core/DialogTitle'
 
 import {NumberFormatCustom} from '../lib'
+import {parse} from 'uuid'
 
 function EditUserPreferenceDialog({
   userData,
@@ -40,10 +41,10 @@ function EditUserPreferenceDialog({
       return doCloseModal()
     }
     const body = {
-      numberOfPayPeriodPerMonth: form.numberOfPayPeriodPerMonth,
+      numberOfPayPeriodPerMonth: parseInt(form.numberOfPayPeriodPerMonth),
       emrCommitmentAmount: form.emrCommitmentAmount,
       emrRemainingBalance: form.emrRemainingBalance,
-      emrtype: form.emrtype,
+      emrtype: parseInt(form.emrtype),
     }
     dispatch({type: 'update-user-settings', payload: body})
     doCloseModal()
