@@ -8,7 +8,7 @@ import DialogContentText from '@material-ui/core/DialogContentText'
 import DialogTitle from '@material-ui/core/DialogTitle'
 
 import {NumberFormatCustom} from '../lib'
-import {parse} from 'uuid'
+import actions from '../../utils/actions'
 
 function EditUserPreferenceDialog({
   userData,
@@ -46,7 +46,7 @@ function EditUserPreferenceDialog({
       emrRemainingBalance: form.emrRemainingBalance,
       emrtype: parseInt(form.emrtype),
     }
-    dispatch({type: 'update-user-settings', payload: body})
+    dispatch({type: actions.UPDATE_USER_SETTINGS, payload: body})
     doCloseModal()
   }
 

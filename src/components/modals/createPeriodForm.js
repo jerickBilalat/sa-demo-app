@@ -13,6 +13,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel'
 import {formatWithCurrency} from '../../utils/lib'
 
 import {NumberFormatCustom} from '../lib'
+import actions from '../../utils/actions'
 
 function CreateNextPeriodFormDialog({
   fixedSpendings,
@@ -64,7 +65,7 @@ function CreateNextPeriodFormDialog({
       continuedGoals: carryOverGoals,
       emrCurrentBalance,
     }
-    dispatch({type: 'create-next-period', payload})
+    dispatch({type: actions.CREATE_PERIOD, payload})
     setIsLoading(false)
     doCloseModal()
   }

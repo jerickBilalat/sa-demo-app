@@ -3,6 +3,7 @@ import {render, screen, act} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import {SpendingFormDialog} from '../spendingForm'
+import actions from '../../../utils/actions'
 
 describe('SpendingFormDialog', () => {
   let props = {
@@ -73,7 +74,7 @@ describe('SpendingFormDialog', () => {
     userEvent.click(getByText(/create/i))
 
     expect(props.dispatch).toHaveBeenCalledWith({
-      type: 'add-spending',
+      type: actions.ADD_SPENDING,
       payload: expect.objectContaining({
         description: 'gas',
         refPayPeriods: [props.currentPayPeriodID],
@@ -108,7 +109,7 @@ describe('SpendingFormDialog', () => {
     userEvent.click(getByText(/edit/i))
 
     expect(props.dispatch).toHaveBeenCalledWith({
-      type: 'add-spending',
+      type: actions.ADD_SPENDING,
       payload: expect.objectContaining({
         refPayPeriods: ['603276bb4f02f09a95d3486e'],
         _id: '6032801c4f02f09a95d34876',
@@ -141,7 +142,7 @@ describe('SpendingFormDialog', () => {
     userEvent.click(getByText(/delete/i))
 
     expect(props.dispatch).toHaveBeenCalledWith({
-      type: 'delete-spending',
+      type: actions.DELETE_SPENDING,
       payload: expect.objectContaining({
         ...props.spendingToEdit,
       }),
@@ -171,7 +172,7 @@ describe('SpendingFormDialog', () => {
     userEvent.click(getByText(/create/i))
     //TODO: test values, same issues of event not triggering
     expect(props.dispatch).toHaveBeenCalledWith({
-      type: 'add-spending',
+      type: actions.ADD_SPENDING,
       payload: expect.objectContaining({
         description: 'vacation fund',
         refPayPeriods: [props.currentPayPeriodID],
