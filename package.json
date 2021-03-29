@@ -31,7 +31,8 @@
     "test:ci": "yarn test",
     "eject": "react-scripts eject",
     "lint": "eslint './src/**/*.{js,jsx}'",
-    "lint:fix": "eslint './src/**/*.{js,jsx}' --fix"
+    "lint:fix": "eslint './src/**/*.{js,jsx}' --fix",
+    "cy:open": "cypress open"
   },
   "husky": {
     "hooks": {
@@ -54,6 +55,7 @@
     ]
   },
   "devDependencies": {
+    "cypress": "^6.8.0",
     "eslint": "6.6.0",
     "eslint-config-prettier": "^6.15.0",
     "eslint-loader": "^4.0.2",
