@@ -43,14 +43,25 @@ export default function userDataReducer(state, action) {
         continuedFixedSpendings,
         continuedGoals,
       } = action.payload
-      const nextPayPeriod = {
+
+      const currentUpdatedPeriod = {
+        ...state.payPeriods[state.payPeriods.length - 1],
+        remainingBudget,
+      }
+
+      const newPayPeriod = {
         _id: uuidv4(),
         pay,
-        remainingBudget,
+        remainingBudget: '0.00',
         refUser: state.userID,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       }
+
+      const oldPeriods = state.payPeriods.filter(
+        x => x._id !== currentUpdatedPeriod._id,
+      )
+
       const carryOverFixedSpendings = [
         ...state.currentSpendings
           .filter(spending => {
@@ -64,7 +75,7 @@ export default function userDataReducer(state, action) {
           .map(spending => {
             return {
               ...spending,
-              refPayPeriods: [...spending.refPayPeriods, nextPayPeriod._id],
+              refPayPeriods: [...spending.refPayPeriods, newPayPeriod._id],
             }
           }),
       ]
@@ -81,7 +92,7 @@ export default function userDataReducer(state, action) {
           .map(spending => {
             return {
               ...spending,
-              refPayPeriods: [...spending.refPayPeriods, nextPayPeriod._id],
+              refPayPeriods: [...spending.refPayPeriods, newPayPeriod._id],
               goalBalance: currency(spending.amount).add(spending.goalBalance),
             }
           }),
@@ -91,7 +102,7 @@ export default function userDataReducer(state, action) {
         emrRemainingBalance: currency(state.emrRemainingBalance)
           .add(state.emrCommitmentAmount)
           .format(),
-        payPeriods: [...state.payPeriods, nextPayPeriod],
+        payPeriods: [...oldPeriods, currentUpdatedPeriod, newPayPeriod],
         currentSpendings: [
           ...carryOverFixedSpendings,
           ...carryOverGoalSpendings,
