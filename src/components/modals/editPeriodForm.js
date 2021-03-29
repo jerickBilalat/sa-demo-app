@@ -7,6 +7,7 @@ import DialogContent from '@material-ui/core/DialogContent'
 import DialogTitle from '@material-ui/core/DialogTitle'
 
 import {NumberFormatCustom} from '../lib'
+import actions from '../../utils/actions'
 
 function EditPayPeriodFormDialog({
   modalToggle,
@@ -31,7 +32,7 @@ function EditPayPeriodFormDialog({
       pay: form.pay,
     }
 
-    dispatch({type: 'edit-period', payload: body})
+    dispatch({type: actions.MODIFY_PERIOD, payload: body})
     doCloseModal()
   }
 

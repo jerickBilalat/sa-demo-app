@@ -1,11 +1,12 @@
 import reducer from '../reducer'
 import defaultState from '../defaultState'
+import actions from '../actions'
 
 describe('app main reducer', () => {
   it('should update user settings', () => {
     expect(
       reducer(defaultState, {
-        type: 'update-user-settings',
+        type: actions.UPDATE_USER_SETTINGS,
         payload: {
           emrtype: 4,
           emrRemainingBalance: '100.00',
@@ -23,59 +24,9 @@ describe('app main reducer', () => {
     )
   })
 
-  it('should add-payPeriod', () => {
-    expect(
-      reducer(defaultState, {
-        type: 'add-payPeriod',
-        payload: {
-          pay: '1500',
-          remainingBudget: '0.00',
-          _id: 'someid123',
-          refUser: '603276bb4f02f09a95d3486d',
-          createdAt: '2021-02-21T15:05:31.357Z',
-          updatedAt: '2021-02-21T15:46:50.975Z',
-        },
-      }).payPeriods[1],
-    ).toStrictEqual(
-      expect.objectContaining({
-        pay: '1500',
-        remainingBudget: '0.00',
-        _id: 'someid123',
-        refUser: '603276bb4f02f09a95d3486d',
-        createdAt: '2021-02-21T15:05:31.357Z',
-        updatedAt: '2021-02-21T15:46:50.975Z',
-      }),
-    )
-  })
-
-  it('should update-payPeriod', () => {
-    expect(
-      reducer(defaultState, {
-        type: 'update-payPeriod',
-        payload: {
-          pay: '1700',
-          remainingBudget: '0.00',
-          _id: '603276bb4f02f09a95d3486e',
-          refUser: '603276bb4f02f09a95d3486d',
-          createdAt: '2021-02-21T15:05:31.357Z',
-          updatedAt: '2021-02-21T15:46:50.975Z',
-        },
-      }).payPeriods[0],
-    ).toStrictEqual(
-      expect.objectContaining({
-        pay: '1700',
-        remainingBudget: '0.00',
-        _id: '603276bb4f02f09a95d3486e',
-        refUser: '603276bb4f02f09a95d3486d',
-        createdAt: '2021-02-21T15:05:31.357Z',
-        updatedAt: '2021-02-21T15:46:50.975Z',
-      }),
-    )
-  })
-
-  it('should edit-period', () => {
+  it('should modify current period', () => {
     const newState = reducer(defaultState, {
-      type: 'edit-period',
+      type: actions.MODIFY_PERIOD,
       payload: {
         payPeriodID: '603276bb4f02f09a95d3486e',
         pay: '1700.00',
@@ -91,9 +42,9 @@ describe('app main reducer', () => {
     )
   })
 
-  it('should create-next-payPeriod', () => {
+  it('should create new period', () => {
     const newState = reducer(defaultState, {
-      type: 'create-next-period',
+      type: actions.CREATE_PERIOD,
       payload: {
         pay: '1700.00',
         remainingBudget: '100.00',
@@ -130,7 +81,7 @@ describe('app main reducer', () => {
     }
 
     const newState = reducer(defaultState, {
-      type: 'add-spending',
+      type: actions.ADD_SPENDING,
       payload: newSpending,
     })
 
@@ -156,7 +107,7 @@ describe('app main reducer', () => {
     }
 
     const newState = reducer(defaultState, {
-      type: 'add-spending',
+      type: actions.ADD_SPENDING,
       payload: modifiedSpending,
     })
 
@@ -172,7 +123,7 @@ describe('app main reducer', () => {
   it('should delete a spending', () => {
     const deleteSpendingID = '6032801c4f02f09a95d34876'
     const newState = reducer(defaultState, {
-      type: 'delete-spending',
+      type: actions.DELETE_SPENDING,
       payload: {
         _id: deleteSpendingID,
       },

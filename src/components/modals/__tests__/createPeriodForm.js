@@ -3,6 +3,7 @@ import {render, screen} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import {CreateNextPeriodFormDialog} from '../createPeriodForm'
+import actions from '../../../utils/actions'
 
 describe('CreateNextPeriodFormDialog', () => {
   let props = {
@@ -74,7 +75,7 @@ describe('CreateNextPeriodFormDialog', () => {
     userEvent.click(screen.getByText(/^create$/i))
 
     expect(props.dispatch).toHaveBeenCalledWith({
-      type: 'create-next-period',
+      type: actions.CREATE_PERIOD,
       payload: expect.objectContaining({
         pay: '1500',
         emrCurrentBalance: '1100',

@@ -2,6 +2,7 @@ import * as React from 'react'
 import {render, screen, fireEvent} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
+import actions from '../../../utils/actions'
 import {EditUserPreferenceDialog} from '../editUserSettings'
 
 describe('Name of the group', () => {
@@ -49,7 +50,7 @@ describe('Name of the group', () => {
     userEvent.click(screen.getByText(/done/i))
 
     expect(props.dispatch).toHaveBeenCalledWith({
-      type: 'update-user-settings',
+      type: actions.UPDATE_USER_SETTINGS,
       payload: expect.objectContaining({
         emrtype: 3,
         numberOfPayPeriodPerMonth: 1,

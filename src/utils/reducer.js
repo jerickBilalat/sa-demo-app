@@ -1,9 +1,10 @@
 import {v4 as uuidv4} from 'uuid'
 import currency from 'currency.js'
+import actions from './actions'
 
 export default function userDataReducer(state, action) {
   switch (action.type) {
-    case 'update-user-settings':
+    case actions.UPDATE_USER_SETTINGS:
       const {
         emrtype,
         emrRemainingBalance,
@@ -18,14 +19,7 @@ export default function userDataReducer(state, action) {
         emrRemainingBalance,
         numberOfPayPeriodPerMonth,
       }
-    case 'add-payPeriod':
-      return {...state, payPeriods: [...state.payPeriods, action.payload]}
-    case 'update-payPeriod':
-      const payPeriods = state.payPeriods.filter(
-        x => x._id !== action.payload._id,
-      )
-      return {...state, payPeriods: [...payPeriods, action.payload]}
-    case 'edit-period':
+    case actions.MODIFY_PERIOD:
       const periods = state.payPeriods.filter(
         x => x._id !== action.payload.payPeriodID,
       )
@@ -36,7 +30,7 @@ export default function userDataReducer(state, action) {
         pay: action.payload.pay,
       }
       return {...state, payPeriods: [...periods, modifiedPeriod]}
-    case 'create-next-period':
+    case actions.CREATE_PERIOD:
       const {
         pay,
         remainingBudget,
@@ -108,7 +102,7 @@ export default function userDataReducer(state, action) {
           ...carryOverGoalSpendings,
         ],
       }
-    case 'add-spending':
+    case actions.ADD_SPENDING:
       let spending = action.payload
       let currentSpendings = state.currentSpendings
 
@@ -122,7 +116,7 @@ export default function userDataReducer(state, action) {
         ...state,
         currentSpendings: [...currentSpendings, spending],
       }
-    case 'delete-spending':
+    case actions.DELETE_SPENDING:
       const deletedSpendingId = action.payload._id
       return {
         ...state,

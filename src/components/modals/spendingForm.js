@@ -10,6 +10,7 @@ import {v4 as uuidv4} from 'uuid'
 import currency from 'currency.js'
 
 import {NumberFormatCustom} from '../lib'
+import actions from '../../utils/actions'
 
 function SpendingFormDialog({
   doToggleModal,
@@ -88,13 +89,13 @@ function SpendingFormDialog({
       setCarryOverGoals(prevState => [...prevState, payload._id])
     }
 
-    dispatch({type: 'add-spending', payload})
+    dispatch({type: actions.ADD_SPENDING, payload})
     setSpending(defaultState)
     doToggleModal()
   }
 
   const doDelete = () => {
-    dispatch({type: 'delete-spending', payload: spending})
+    dispatch({type: actions.DELETE_SPENDING, payload: spending})
     setSpending(defaultState)
     doToggleModal()
   }
