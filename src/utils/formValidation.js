@@ -3,7 +3,7 @@ const isFormValid = (formState, defaultState, setState) => {
   let formErrors = {...defaultState}
   let errorCount = 0
   for (let field in formState) {
-    if (!formState[field]) {
+    if (formState[field] === '') {
       formErrors[field].push('Can not be empty')
       errorCount++
     }

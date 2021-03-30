@@ -11,6 +11,7 @@ import currency from 'currency.js'
 
 import {NumberFormatCustom} from '../lib'
 import actions from '../../utils/actions'
+import {getErrorText, isFormValid} from '../../utils/formValidation'
 
 function SpendingFormDialog({
   doToggleModal,
@@ -44,7 +45,16 @@ function SpendingFormDialog({
     goalAmount: '0',
     goalBalance: '0',
   }
+  const defaultFormErrors = {
+    description: [],
+    amount: [],
+    goalAmount: [],
+    goalBalance: [],
+  }
   const [spending, setSpending] = React.useState(defaultState)
+  const [formValidationError, setFormValidationError] = React.useState(
+    defaultFormErrors,
+  )
 
   const onChange = e => {
     const target = e.target
@@ -56,6 +66,9 @@ function SpendingFormDialog({
 
   const onSubmit = e => {
     e.preventDefault()
+    if (!isFormValid(spending, defaultFormErrors, setFormValidationError)) {
+      return
+    }
     const {
       description,
       refUser,
@@ -110,6 +123,8 @@ function SpendingFormDialog({
       <DialogContent>
         <DialogContentText>{modalContentText}</DialogContentText>
         <TextField
+          error={formValidationError.description.length > 0 ? true : false}
+          helperText={getErrorText(formValidationError, 'description')}
           autoFocus
           margin="dense"
           id="description"
@@ -122,6 +137,8 @@ function SpendingFormDialog({
           onChange={e => onChange(e)}
         />
         <TextField
+          error={formValidationError.amount.length > 0 ? true : false}
+          helperText={getErrorText(formValidationError, 'amount')}
           margin="dense"
           id="amount"
           name="amount"
@@ -135,6 +152,8 @@ function SpendingFormDialog({
         />
         {type === 'goal' && (
           <TextField
+            error={formValidationError.goalBalance.length > 0 ? true : false}
+            helperText={getErrorText(formValidationError, 'goalBalance')}
             margin="dense"
             id="goalBalance"
             name="goalBalance"
@@ -151,6 +170,8 @@ function SpendingFormDialog({
         )}
         {type === 'goal' && (
           <TextField
+            error={formValidationError.goalAmount.length > 0 ? true : false}
+            helperText={getErrorText(formValidationError, 'goalAmount')}
             margin="dense"
             id="goalAmount"
             name="goalAmount"
