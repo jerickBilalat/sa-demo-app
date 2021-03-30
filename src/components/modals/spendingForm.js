@@ -66,9 +66,6 @@ function SpendingFormDialog({
 
   const onSubmit = e => {
     e.preventDefault()
-    if (!isFormValid(spending, defaultFormErrors, setFormValidationError)) {
-      return
-    }
     const {
       description,
       refUser,
@@ -80,6 +77,10 @@ function SpendingFormDialog({
       goalAmount,
       goalBalance,
     } = spending
+    if (!isFormValid(spending, defaultFormErrors, setFormValidationError)) {
+      return
+    }
+
     let payload = {
       description,
       amount,
@@ -90,7 +91,7 @@ function SpendingFormDialog({
       createdAt: createdAt || new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     }
-
+    console.log(type)
     if (type === 'fixed') {
       setCarryOverFixed(prevState => [...prevState, payload._id])
     } else if (type === 'goal') {

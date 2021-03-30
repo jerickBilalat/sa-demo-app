@@ -182,15 +182,31 @@ describe('SpendingFormDialog', () => {
     unmount()
   })
   it('should call setCarryOverFixed when spending type is fixed', () => {
-    props = {...props, type: 'fixed', spendingToEdit: undefined}
+    props = {
+      ...props,
+      spendingToEdit: {
+        type: 'fixed',
+        description: 'sample_bill',
+        amount: '10.00',
+      },
+    }
     const {getByText} = render(<SpendingFormDialog {...props} />)
-    userEvent.click(getByText(/create/i))
+    userEvent.click(getByText(/edit/i))
     expect(props.setCarryOverFixed).toHaveBeenCalled()
   })
   it('should call setCarryOverGoals when spending type is goals', () => {
-    props = {...props, type: 'goal', spendingToEdit: undefined}
+    props = {
+      ...props,
+      spendingToEdit: {
+        type: 'goal',
+        description: 'sample_goal',
+        goalAmount: '10000',
+        goalBalance: '1000',
+        amount: '100.00',
+      },
+    }
     const {getByText} = render(<SpendingFormDialog {...props} />)
-    userEvent.click(getByText(/create/i))
+    userEvent.click(getByText(/edit/i))
     expect(props.setCarryOverGoals).toHaveBeenCalled()
   })
 })

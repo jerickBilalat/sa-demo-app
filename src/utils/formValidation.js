@@ -1,4 +1,5 @@
 const isFormValid = (formState, defaultState, setState) => {
+  console.log(formState)
   let result = true
   let formErrors = {...defaultState}
   let errorCount = 0
@@ -13,7 +14,7 @@ const isFormValid = (formState, defaultState, setState) => {
     setState({...formErrors})
     result = false
   }
-
+  console.log(result)
   return result
 }
 
