@@ -8,6 +8,7 @@ import DialogTitle from '@material-ui/core/DialogTitle'
 
 import {NumberFormatCustom} from '../lib'
 import actions from '../../utils/actions'
+import {getErrorText, isFormValid} from '../../utils/formValidation'
 
 function EditPayPeriodFormDialog({
   modalToggle,
@@ -16,7 +17,13 @@ function EditPayPeriodFormDialog({
   dispatch,
 }) {
   const defaultState = {pay: currentPayPeriod.pay}
+  const defaultFormErrors = {
+    pay: [],
+  }
   const [form, setForm] = React.useState(defaultState)
+  const [formValidationError, setFormValidationError] = React.useState(
+    defaultFormErrors,
+  )
 
   const onChange = e => {
     const target = e.target
@@ -24,6 +31,7 @@ function EditPayPeriodFormDialog({
   }
   const onSubmit = e => {
     e.preventDefault()
+    if (!isFormValid(form, defaultFormErrors, setFormValidationError)) return
     if (defaultState === form) {
       return doCloseModal()
     }
@@ -45,6 +53,8 @@ function EditPayPeriodFormDialog({
       <DialogTitle id="form-dialog-title">Edit Period</DialogTitle>
       <DialogContent>
         <TextField
+          error={formValidationError.pay.length > 0 ? true : false}
+          helperText={getErrorText(formValidationError, 'pay')}
           margin="dense"
           id="pay"
           name="pay"
