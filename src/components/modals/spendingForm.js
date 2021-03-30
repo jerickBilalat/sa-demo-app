@@ -91,7 +91,6 @@ function SpendingFormDialog({
       createdAt: createdAt || new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     }
-    console.log(type)
     if (type === 'fixed') {
       setCarryOverFixed(prevState => [...prevState, payload._id])
     } else if (type === 'goal') {
