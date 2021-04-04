@@ -17,7 +17,7 @@ describe('Name of the group', () => {
     modalToggle: true,
     doCloseModal: jest.fn(),
   }
-  it.only('should submit properly with valid data ', () => {
+  it('should submit properly with valid data ', () => {
     render(<EditUserPreferenceDialog {...props} />)
 
     const numberofPeriodPerMonth = screen.getByLabelText(
@@ -45,7 +45,9 @@ describe('Name of the group', () => {
     )
     expect(emrtype.value).toBe(`${props.userData.emrtype}`)
 
+    userEvent.clear(numberofPeriodPerMonth)
     userEvent.type(numberofPeriodPerMonth, '1')
+    userEvent.clear(emrtype)
     userEvent.type(emrtype, '3')
     userEvent.click(screen.getByText(/done/i))
 
