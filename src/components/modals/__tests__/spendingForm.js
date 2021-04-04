@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {render, screen, act} from '@testing-library/react'
+import {render} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import {SpendingFormDialog} from '../spendingForm'
@@ -66,32 +66,32 @@ describe('SpendingFormDialog', () => {
       type: 'normal',
     }
 
-    const {getByText, getByLabelText, unmount} = render(
+    const {getByText, getByLabelText} = render(
       <SpendingFormDialog {...props} />,
     )
     userEvent.type(getByLabelText(/description/i), 'gas')
-    userEvent.type(getByLabelText(/cost/i), '30') //TODO: not working, this causing the need to unmount because it is getting triggered late
+    userEvent.type(getByLabelText(/cost/i), '30')
     userEvent.click(getByText(/create/i))
 
     expect(props.dispatch).toHaveBeenCalledWith({
       type: actions.ADD_SPENDING,
       payload: expect.objectContaining({
         description: 'gas',
+        amount: '30',
         refPayPeriods: [props.currentPayPeriodID],
       }),
     })
     expect(props.doToggleModal).toHaveBeenCalled()
-    unmount()
   })
 
-  it('should submits an existing edited budget/emr/spludge/fixed fund spending', () => {
+  it('should submits an existing edited budget/emr/spludge/fixed fund spending', async () => {
     props = {
       ...props,
       spendingToEdit: {
         refPayPeriods: ['603276bb4f02f09a95d3486e'],
         _id: '6032801c4f02f09a95d34876',
-        description: 'groceries',
-        amount: '100',
+        description: 'food',
+        amount: '30',
         type: 'normal',
         refUser: '603276bb4f02f09a95d3486d',
         createdAt: '2021-02-21T15:45:32.885Z',
@@ -101,27 +101,48 @@ describe('SpendingFormDialog', () => {
       type: 'normal',
     }
 
-    const {getByText, getByLabelText, unmount} = render(
+    const {getByText, getByLabelText} = render(
       <SpendingFormDialog {...props} />,
     )
-    userEvent.type(getByLabelText(/description/i), 'groceries and more')
-    userEvent.type(getByLabelText(/cost/i), '30') //TODO: not working, this causing the need to unmount because it is getting triggered late
-    userEvent.click(getByText(/edit/i))
 
+    userEvent.type(getByLabelText(/description/i), 's')
+
+    userEvent.click(getByText(/edit/i))
     expect(props.dispatch).toHaveBeenCalledWith({
       type: actions.ADD_SPENDING,
       payload: expect.objectContaining({
         refPayPeriods: ['603276bb4f02f09a95d3486e'],
         _id: '6032801c4f02f09a95d34876',
-        description: 'groceries and more',
+        description: 'foods',
         type: 'normal',
         refUser: '603276bb4f02f09a95d3486d',
         createdAt: '2021-02-21T15:45:32.885Z',
       }),
     })
     expect(props.doToggleModal).toHaveBeenCalled()
-    unmount()
   })
+
+  it('should validate form data before submitting', () => {
+    props = {
+      ...props,
+      spendingToEdit: undefined,
+      type: 'normal',
+    }
+
+    const {getAllByText, getByText, getByLabelText} = render(
+      <SpendingFormDialog {...props} />,
+    )
+
+    userEvent.clear(getByLabelText(/cost/i))
+    userEvent.click(getByText(/create/i))
+
+    expect(props.dispatch).not.toHaveBeenCalled()
+    expect(props.doToggleModal).not.toHaveBeenCalled()
+
+    expect(getAllByText(/can not be empty/i)[0]).toBeInTheDocument()
+    expect(getAllByText(/can not be empty/i)[1]).toBeInTheDocument()
+  })
+
   it('should delete existing item', () => {
     props = {
       ...props,
@@ -182,15 +203,31 @@ describe('SpendingFormDialog', () => {
     unmount()
   })
   it('should call setCarryOverFixed when spending type is fixed', () => {
-    props = {...props, type: 'fixed', spendingToEdit: undefined}
+    props = {
+      ...props,
+      spendingToEdit: {
+        type: 'fixed',
+        description: 'sample_bill',
+        amount: '10.00',
+      },
+    }
     const {getByText} = render(<SpendingFormDialog {...props} />)
-    userEvent.click(getByText(/create/i))
+    userEvent.click(getByText(/edit/i))
     expect(props.setCarryOverFixed).toHaveBeenCalled()
   })
   it('should call setCarryOverGoals when spending type is goals', () => {
-    props = {...props, type: 'goal', spendingToEdit: undefined}
+    props = {
+      ...props,
+      spendingToEdit: {
+        type: 'goal',
+        description: 'sample_goal',
+        goalAmount: '10000',
+        goalBalance: '1000',
+        amount: '100.00',
+      },
+    }
     const {getByText} = render(<SpendingFormDialog {...props} />)
-    userEvent.click(getByText(/create/i))
+    userEvent.click(getByText(/edit/i))
     expect(props.setCarryOverGoals).toHaveBeenCalled()
   })
 })

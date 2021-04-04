@@ -9,6 +9,7 @@ import DialogTitle from '@material-ui/core/DialogTitle'
 
 import {NumberFormatCustom} from '../lib'
 import actions from '../../utils/actions'
+import {isFormValid, getErrorText} from '../../utils/formValidation'
 
 function EditUserPreferenceDialog({
   userData,
@@ -28,7 +29,17 @@ function EditUserPreferenceDialog({
     emrRemainingBalance,
     emrtype,
   }
+
+  const defaultFormErrorState = {
+    numberOfPayPeriodPerMonth: [],
+    emrRemainingBalance: [],
+    emrtype: [],
+    emrCommitmentAmount: [],
+  }
   const [form, setForm] = React.useState(defaultState)
+  const [formValidationError, setFormValidationError] = React.useState(
+    defaultFormErrorState,
+  )
 
   const onChange = e => {
     const target = e.target
@@ -36,6 +47,9 @@ function EditUserPreferenceDialog({
   }
   const onSubmit = e => {
     e.preventDefault()
+    if (!isFormValid(form, defaultFormErrorState, setFormValidationError)) {
+      return
+    }
     if (defaultState === form) {
       // just close modal
       return doCloseModal()
@@ -60,6 +74,15 @@ function EditUserPreferenceDialog({
       <DialogContent>
         <DialogContentText>All fields are required</DialogContentText>
         <TextField
+          error={
+            formValidationError.numberOfPayPeriodPerMonth.length > 0
+              ? true
+              : false
+          }
+          helperText={getErrorText(
+            formValidationError,
+            'numberOfPayPeriodPerMonth',
+          )}
           variant="outlined"
           type="number"
           margin="normal"
@@ -75,6 +98,10 @@ function EditUserPreferenceDialog({
           onChange={onChange}
         />
         <TextField
+          error={
+            formValidationError.emrRemainingBalance.length > 0 ? true : false
+          }
+          helperText={getErrorText(formValidationError, 'emrRemainingBalance')}
           variant="outlined"
           margin="normal"
           required
@@ -93,13 +120,20 @@ function EditUserPreferenceDialog({
           onChange={onChange}
         />
         <TextField
+          error={
+            formValidationError.emrCommitmentAmount.length > 0 ? true : false
+          }
+          helperText={
+            formValidationError.emrCommitmentAmount.length > 0
+              ? getErrorText(formValidationError, 'emrCommitmentAmount')
+              : '5%-10% of your current budget period fund is recommended'
+          }
           variant="outlined"
           margin="normal"
           required
           fullWidth
           id="emrCommitmentAmount"
           label="How much do you want to transfer to Emergency Fund every budget period?"
-          helperText="5%-10% of your current budget period fund is recommended"
           name="emrCommitmentAmount"
           autoComplete="emrCommitmentAmount"
           InputLabelProps={{
@@ -112,6 +146,8 @@ function EditUserPreferenceDialog({
           onChange={onChange}
         />
         <TextField
+          error={formValidationError.emrtype.length > 0 ? true : false}
+          helperText={getErrorText(formValidationError, 'emrtype')}
           variant="outlined"
           type="number"
           margin="normal"
