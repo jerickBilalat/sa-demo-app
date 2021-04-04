@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {render, screen, act} from '@testing-library/react'
+import {render, screen, act, fireEvent} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import {SpendingFormDialog} from '../spendingForm'
@@ -66,32 +66,32 @@ describe('SpendingFormDialog', () => {
       type: 'normal',
     }
 
-    const {getByText, getByLabelText, unmount} = render(
+    const {getByText, getByLabelText} = render(
       <SpendingFormDialog {...props} />,
     )
     userEvent.type(getByLabelText(/description/i), 'gas')
-    userEvent.type(getByLabelText(/cost/i), '30') //TODO: not working, this causing the need to unmount because it is getting triggered late
+    userEvent.type(getByLabelText(/cost/i), '30')
     userEvent.click(getByText(/create/i))
 
     expect(props.dispatch).toHaveBeenCalledWith({
       type: actions.ADD_SPENDING,
       payload: expect.objectContaining({
         description: 'gas',
+        amount: '30',
         refPayPeriods: [props.currentPayPeriodID],
       }),
     })
     expect(props.doToggleModal).toHaveBeenCalled()
-    unmount()
   })
 
-  it('should submits an existing edited budget/emr/spludge/fixed fund spending', () => {
+  it('should submits an existing edited budget/emr/spludge/fixed fund spending', async () => {
     props = {
       ...props,
       spendingToEdit: {
         refPayPeriods: ['603276bb4f02f09a95d3486e'],
         _id: '6032801c4f02f09a95d34876',
-        description: 'groceries',
-        amount: '100',
+        description: 'food',
+        amount: '30',
         type: 'normal',
         refUser: '603276bb4f02f09a95d3486d',
         createdAt: '2021-02-21T15:45:32.885Z',
@@ -101,27 +101,27 @@ describe('SpendingFormDialog', () => {
       type: 'normal',
     }
 
-    const {getByText, getByLabelText, unmount} = render(
+    const {getByText, getByLabelText} = render(
       <SpendingFormDialog {...props} />,
     )
-    userEvent.type(getByLabelText(/description/i), 'groceries and more')
-    userEvent.type(getByLabelText(/cost/i), '30') //TODO: not working, this causing the need to unmount because it is getting triggered late
-    userEvent.click(getByText(/edit/i))
 
+    userEvent.type(getByLabelText(/description/i), 's')
+
+    userEvent.click(getByText(/edit/i))
     expect(props.dispatch).toHaveBeenCalledWith({
       type: actions.ADD_SPENDING,
       payload: expect.objectContaining({
         refPayPeriods: ['603276bb4f02f09a95d3486e'],
         _id: '6032801c4f02f09a95d34876',
-        description: 'groceries and more',
+        description: 'foods',
         type: 'normal',
         refUser: '603276bb4f02f09a95d3486d',
         createdAt: '2021-02-21T15:45:32.885Z',
       }),
     })
     expect(props.doToggleModal).toHaveBeenCalled()
-    unmount()
   })
+
   it('should delete existing item', () => {
     props = {
       ...props,
@@ -210,3 +210,25 @@ describe('SpendingFormDialog', () => {
     expect(props.setCarryOverGoals).toHaveBeenCalled()
   })
 })
+
+// {
+//   description: 'gas',
+//   amount: '30',
+//   _id: '763e28ef-740e-46dd-bf6b-00e482ed2c3e',
+//   type: 'normal',
+//   refUser: 'jfsdlkjflsinwe',
+//   refPayPeriods: [ 'jslkdjfldksjf' ],
+//   createdAt: '2021-04-04T18:01:26.786Z',
+//   updatedAt: '2021-04-04T18:01:26.786Z'
+// }
+
+// {
+//   description: 'foods',
+//   amount: '30',
+//   _id: '6032801c4f02f09a95d34876',
+//   type: 'normal',
+//   refUser: '603276bb4f02f09a95d3486d',
+//   refPayPeriods: [ '603276bb4f02f09a95d3486e' ],
+//   createdAt: '2021-02-21T15:45:32.885Z',
+//   updatedAt: '2021-04-04T18:02:31.008Z'
+// }

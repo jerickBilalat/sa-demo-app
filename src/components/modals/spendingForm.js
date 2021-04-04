@@ -101,7 +101,6 @@ function SpendingFormDialog({
       }
       setCarryOverGoals(prevState => [...prevState, payload._id])
     }
-
     dispatch({type: actions.ADD_SPENDING, payload})
     setSpending(defaultState)
     doToggleModal()
