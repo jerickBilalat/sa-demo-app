@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {render, screen, act, fireEvent} from '@testing-library/react'
+import {render} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import {SpendingFormDialog} from '../spendingForm'
@@ -120,6 +120,27 @@ describe('SpendingFormDialog', () => {
       }),
     })
     expect(props.doToggleModal).toHaveBeenCalled()
+  })
+
+  it('should validate form data before submitting', () => {
+    props = {
+      ...props,
+      spendingToEdit: undefined,
+      type: 'normal',
+    }
+
+    const {getAllByText, getByText, getByLabelText} = render(
+      <SpendingFormDialog {...props} />,
+    )
+
+    userEvent.clear(getByLabelText(/cost/i))
+    userEvent.click(getByText(/create/i))
+
+    expect(props.dispatch).not.toHaveBeenCalled()
+    expect(props.doToggleModal).not.toHaveBeenCalled()
+
+    expect(getAllByText(/can not be empty/i)[0]).toBeInTheDocument()
+    expect(getAllByText(/can not be empty/i)[1]).toBeInTheDocument()
   })
 
   it('should delete existing item', () => {
