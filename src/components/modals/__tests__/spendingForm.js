@@ -231,25 +231,3 @@ describe('SpendingFormDialog', () => {
     expect(props.setCarryOverGoals).toHaveBeenCalled()
   })
 })
-
-// {
-//   description: 'gas',
-//   amount: '30',
-//   _id: '763e28ef-740e-46dd-bf6b-00e482ed2c3e',
-//   type: 'normal',
-//   refUser: 'jfsdlkjflsinwe',
-//   refPayPeriods: [ 'jslkdjfldksjf' ],
-//   createdAt: '2021-04-04T18:01:26.786Z',
-//   updatedAt: '2021-04-04T18:01:26.786Z'
-// }
-
-// {
-//   description: 'foods',
-//   amount: '30',
-//   _id: '6032801c4f02f09a95d34876',
-//   type: 'normal',
-//   refUser: '603276bb4f02f09a95d3486d',
-//   refPayPeriods: [ '603276bb4f02f09a95d3486e' ],
-//   createdAt: '2021-02-21T15:45:32.885Z',
-//   updatedAt: '2021-04-04T18:02:31.008Z'
-// }
