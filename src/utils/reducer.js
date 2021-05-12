@@ -2,34 +2,44 @@ import {v4 as uuidv4} from 'uuid'
 import currency from 'currency.js'
 import actions from './actions'
 
+const modifyUserSettings = (state, action) => {
+  const {
+    emrtype,
+    emrRemainingBalance,
+    numberOfPayPeriodPerMonth,
+    emrCommitmentAmount,
+  } = action.payload
+
+  return {
+    ...state,
+    emrtype,
+    emrCommitmentAmount,
+    emrRemainingBalance,
+    numberOfPayPeriodPerMonth,
+  }
+}
+
+const modifyPeriod = (state, action) => {
+  const {payPeriodID, pay} = action.payload
+  const {payPeriods} = state
+  return {
+    ...state,
+    payPeriods: [
+      ...payPeriods.filter(period => period._id !== payPeriodID),
+      {
+        ...payPeriods.filter(x => x._id === payPeriodID)[0],
+        pay: pay,
+      },
+    ],
+  }
+}
+
 export default function userDataReducer(state, action) {
   switch (action.type) {
     case actions.UPDATE_USER_SETTINGS:
-      const {
-        emrtype,
-        emrRemainingBalance,
-        numberOfPayPeriodPerMonth,
-        emrCommitmentAmount,
-      } = action.payload
-
-      return {
-        ...state,
-        emrtype,
-        emrCommitmentAmount,
-        emrRemainingBalance,
-        numberOfPayPeriodPerMonth,
-      }
+      return modifyUserSettings(state, action)
     case actions.MODIFY_PERIOD:
-      const periods = state.payPeriods.filter(
-        x => x._id !== action.payload.payPeriodID,
-      )
-      const modifiedPeriod = {
-        ...state.payPeriods.filter(
-          x => x._id === action.payload.payPeriodID,
-        )[0],
-        pay: action.payload.pay,
-      }
-      return {...state, payPeriods: [...periods, modifiedPeriod]}
+      return modifyPeriod(state, action)
     case actions.CREATE_PERIOD:
       const {
         pay,
